@@ -1,0 +1,8 @@
+name: Border
+main: world.bentobox.border.Border
+version: ${version}${build.number}
+icon: BEDROCK
+
+prefix: Border
+
+authors: [tastybento]

@@ -1,6 +1,7 @@
 package world.bentobox.border.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,24 +40,27 @@ public class PlayerListener implements Listener {
     public void onPlayerEnterWorld(PlayerJoinEvent e) {
         setBorder(e.getPlayer());
     }
-    
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onIslandExitEvent(IslandExitEvent e) {
         BorderAPI.getApi().resetWorldBorderToGlobal(Bukkit.getPlayer(e.getPlayerUUID()));
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandEnterEvent(IslandEnterEvent e) {
         setBorder(Bukkit.getPlayer(e.getPlayerUUID()));
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandExitEvent(IslandDeleteEvent e) {
-        BorderAPI.getApi().resetWorldBorderToGlobal(Bukkit.getPlayer(e.getPlayerUUID()));
+        OfflinePlayer p = Bukkit.getOfflinePlayer(e.getOwner());
+        if (p.isOnline()) {
+            BorderAPI.getApi().resetWorldBorderToGlobal(p.getPlayer());
+        }
     }
-        
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onIslandExitEvent(PlayerTeleportEvent e) {
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
         setBorder(e.getPlayer());
     }
 }

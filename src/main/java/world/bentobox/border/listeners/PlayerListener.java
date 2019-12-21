@@ -1,6 +1,7 @@
 package world.bentobox.border.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,21 +25,21 @@ public class PlayerListener implements Listener {
 
     private final BentoBox plugin = BentoBox.getInstance();
 
-    private void setBorder(Player player) {
+    private void setBorder(Player player, Location location) {
         BorderAPI.getApi().resetWorldBorderToGlobal(player);
-        plugin.getIslands().getIslandAt(player.getLocation()).ifPresent(island -> {
+        plugin.getIslands().getIslandAt(location).ifPresent(island -> {
             Bukkit.getScheduler().runTask(plugin, () -> BorderAPI
                     .getApi()
                     .setBorder(
-                            player, 
-                            island.getProtectionRange() * 2, 
+                            player,
+                            island.getProtectionRange() * 2,
                             island.getCenter()));
         });
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerEnterWorld(PlayerJoinEvent e) {
-        setBorder(e.getPlayer());
+        setBorder(e.getPlayer(), e.getPlayer().getLocation());
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -48,7 +49,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onIslandEnterEvent(IslandEnterEvent e) {
-        setBorder(Bukkit.getPlayer(e.getPlayerUUID()));
+        setBorder(Bukkit.getPlayer(e.getPlayerUUID()), e.getLocation());
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -58,9 +59,9 @@ public class PlayerListener implements Listener {
             BorderAPI.getApi().resetWorldBorderToGlobal(p.getPlayer());
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        setBorder(e.getPlayer());
+        setBorder(e.getPlayer(), e.getTo());
     }
 }

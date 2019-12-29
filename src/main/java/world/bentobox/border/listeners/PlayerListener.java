@@ -53,10 +53,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onIslandExitEvent(IslandDeleteEvent e) {
-        OfflinePlayer p = Bukkit.getOfflinePlayer(e.getOwner());
-        if (p.isOnline()) {
-            BorderAPI.getApi().resetWorldBorderToGlobal(p.getPlayer());
+    public void onIslandDeleteEvent(IslandDeleteEvent e) {
+        if (e.getPlayerUUID() != null) {
+            OfflinePlayer p = Bukkit.getOfflinePlayer(e.getPlayerUUID());
+            if (p.isOnline()) {
+                BorderAPI.getApi().resetWorldBorderToGlobal(p.getPlayer());
+            }
         }
     }
 

@@ -18,7 +18,7 @@ public final class Border extends Addon {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
 
         if (plugin == null || !plugin.isEnabled()) {
-            getLogger().info("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
+            getLogger().warning("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
             this.setState(State.DISABLED);
             return;
         }

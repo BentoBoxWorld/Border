@@ -55,13 +55,8 @@ public final class Border extends Addon {
         if (data == null) {
             return;
         }
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                handler.saveObject(data);
-            }
-        }.runTaskAsynchronously(getPlugin());
+        // NOTE: saveObject is NOT a blocking operation
+        handler.saveObject(data);
     }
 
     public void updateBorder(Player player, Location location) {
@@ -70,11 +65,8 @@ public final class Border extends Addon {
             if (!data.isEnabled()) {
                 return;
             }
-            Island island = getPlugin().getIslands().getIslandAt(location).orElse(null);
-            if (island == null) {
-                return;
-            }
-            worldBorderApi.setBorder(player, island.getProtectionRange() * 2, island.getCenter());
+            getPlugin().getIslands().getIslandAt(location)
+                    .ifPresent(island -> worldBorderApi.setBorder(player, island.getProtectionRange() * 2, island.getCenter()));
         });
     }
 

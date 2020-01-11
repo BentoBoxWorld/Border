@@ -1,0 +1,5 @@
+border:
+  toggle:
+    description: "toggles the border on/off"
+    border-on: "&a Border enabled."
+    border-off: "&a Border disabled."

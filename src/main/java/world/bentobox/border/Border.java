@@ -1,25 +1,25 @@
 package world.bentobox.border;
 
-import com.github.yannicklamprecht.worldborder.api.BorderAPI;
-import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.border.commands.IslandBorderCommand;
-import world.bentobox.border.listeners.PlayerListener;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import com.github.yannicklamprecht.worldborder.api.BorderAPI;
+import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
+
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.border.commands.IslandBorderCommand;
+import world.bentobox.border.listeners.PlayerListener;
 
 public final class Border extends Addon {
 
@@ -33,21 +33,15 @@ public final class Border extends Addon {
             callback.accept(borderData);
             return;
         }
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                String uniqueId = targetPlayer.toString();
-                BorderData data = Optional.ofNullable(handler.loadObject(uniqueId))
-                        .orElseGet(() -> new BorderData(uniqueId));
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        borderCache.put(targetPlayer, data);
-                        callback.accept(data);
-                    }
-                }.runTask(getPlugin());
-            }
-        }.runTaskAsynchronously(getPlugin());
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            String uniqueId = targetPlayer.toString();
+            // Check if data exists before trying to load it
+            BorderData data = handler.objectExists(uniqueId) ? Optional.ofNullable(handler.loadObject(uniqueId)).orElse(new BorderData(uniqueId)): new BorderData(uniqueId);
+            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                borderCache.put(targetPlayer, data);
+                callback.accept(data);
+            });
+        });
     }
 
     public void uncachePlayer(@Nullable UUID uniqueId) {
@@ -66,7 +60,7 @@ public final class Border extends Addon {
                 return;
             }
             getPlugin().getIslands().getIslandAt(location)
-                    .ifPresent(island -> worldBorderApi.setBorder(player, island.getProtectionRange() * 2, island.getCenter()));
+            .ifPresent(island -> worldBorderApi.setBorder(player, island.getProtectionRange() * 2, island.getCenter()));
         });
     }
 

@@ -1,0 +1,7 @@
+# Translation by: CZghost
+
+border:
+  toggle:
+    description: "přepíná hranice ostrova zapnuto/vypnuto"
+    border-on: "&a Hranice zapnuta."
+    border-off: "&a Hranice vypnuta."

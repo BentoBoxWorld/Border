@@ -1,0 +1,6 @@
+---
+border:
+  toggle:
+    description: attiva o disattiva il bordo
+    border-on: "&a Bordo attivato."
+    border-off: "&c Bordo disattivato."

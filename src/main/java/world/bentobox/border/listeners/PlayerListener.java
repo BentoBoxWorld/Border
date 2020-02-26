@@ -1,5 +1,6 @@
 package world.bentobox.border.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -46,7 +47,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        addon.updateBorder(e.getPlayer(), e.getTo());
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.updateBorder(e.getPlayer(), e.getTo()));
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

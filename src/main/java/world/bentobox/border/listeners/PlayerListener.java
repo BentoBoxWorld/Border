@@ -1,5 +1,6 @@
 package world.bentobox.border.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,6 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandEnterEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandExitEvent;
@@ -44,7 +47,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        addon.updateBorder(e.getPlayer(), e.getTo());
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.updateBorder(e.getPlayer(), e.getTo()));
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -66,5 +69,22 @@ public class PlayerListener implements Listener {
             return;
         }
         addon.removeBorder(player);
+    }
+
+
+    /**
+     * Monitor island range change event.
+     * If island protection range is changed, then update border.
+     * @param e instance of IslandProtectionRangeChangeEvent.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onIslandRangeChange(IslandEvent.IslandProtectionRangeChangeEvent e) {
+        Player player = this.addon.getServer().getPlayer(e.getPlayerUUID());
+
+        if (player == null) {
+            return;
+        }
+
+        this.addon.updateBorder(player, e.getLocation());
     }
 }

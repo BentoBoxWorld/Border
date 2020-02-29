@@ -70,7 +70,6 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
-        worldBorderApi = BorderAPI.getApi();
         handler = new Database<>(this, BorderData.class);
         borderCache = new HashMap<>();
 
@@ -80,7 +79,7 @@ public final class Border extends Addon {
             this.setState(State.DISABLED);
             return;
         }
-
+        worldBorderApi = BorderAPI.getApi();
         // Register listeners
         registerListener(new PlayerListener(this));
 

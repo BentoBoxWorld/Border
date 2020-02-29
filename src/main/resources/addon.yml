@@ -1,10 +1,12 @@
 name: Border
 main: world.bentobox.border.Border
 version: ${version}${build.number}
+api-version: ${bentobox.version}
 icon: BEDROCK
 
 prefix: Border
 
-softdepend: BSkyBlock, AcidIsland, SkyGrid, CaveBlock
+# depend: WorldBorderAPI
+softdepend: BSkyBlock, AcidIsland, SkyGrid, CaveBlock, WorldBorderAPI
 
 authors: [tastybento]

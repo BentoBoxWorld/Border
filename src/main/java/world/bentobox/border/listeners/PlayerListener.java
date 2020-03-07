@@ -34,7 +34,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        addon.updateBorder(e.getPlayer(), e.getPlayer().getLocation());
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.updateBorder(e.getPlayer(), e.getRespawnLocation()));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

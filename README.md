@@ -1,4 +1,5 @@
 # Border
+[![Build Status](https://ci.codemc.io/job/BentoBoxWorld/job/Border/badge/icon)](https://ci.codemc.io/job/BentoBoxWorld/job/Border/)
 
 Requires WorldBorderAPI plugin. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases
 

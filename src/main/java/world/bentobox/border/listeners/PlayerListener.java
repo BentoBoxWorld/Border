@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -29,6 +30,11 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
         addon.updateBorder(e.getPlayer(), e.getPlayer().getLocation());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerRespawn(PlayerRespawnEvent e) {
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.updateBorder(e.getPlayer(), e.getRespawnLocation()));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

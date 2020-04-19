@@ -7,6 +7,6 @@ icon: BEDROCK
 prefix: Border
 
 # depend: WorldBorderAPI
-softdepend: BSkyBlock, AcidIsland, SkyGrid, CaveBlock, WorldBorderAPI
+softdepend: BSkyBlock, AcidIsland, SkyGrid, CaveBlock, WorldBorderAPI, AOneBlock
 
 authors: [tastybento]

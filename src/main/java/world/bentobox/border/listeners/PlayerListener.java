@@ -98,7 +98,7 @@ public class PlayerListener implements Listener {
 
         this.addon.updateBorder(player, e.getLocation());
     }
-    
+
     /**
      * Teleports a player back home if they use a vehicle to glitch out of the world border
      * @param event - event
@@ -112,7 +112,7 @@ public class PlayerListener implements Listener {
                 Bukkit.getScheduler().runTask(addon.getPlugin(), () -> {
                     if (!addon.getIslands().getProtectedIslandAt(p.getLocation()).isPresent()
                             && addon.getIslands().getIslandAt(p.getLocation()).equals(is)) {
-                        addon.getIslands().homeTeleport(Util.getWorld(p.getWorld()), p);
+                        addon.getIslands().homeTeleportAsync(Util.getWorld(p.getWorld()), p);
                     }
                 });
             }

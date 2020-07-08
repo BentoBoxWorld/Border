@@ -70,7 +70,6 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
-        log("Border enabling");
         handler = new Database<>(this, BorderData.class);
         borderCache = new HashMap<>();
 

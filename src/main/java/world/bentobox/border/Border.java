@@ -50,7 +50,7 @@ public final class Border extends Addon {
             return;
         }
         // NOTE: saveObject is NOT a blocking operation
-        handler.saveObject(data);
+        handler.saveObjectAsync(data);
     }
 
     public void updateBorder(Player player, Location location) {
@@ -93,7 +93,7 @@ public final class Border extends Addon {
     @Override
     public void onDisable() {
         if (borderCache != null) {
-            borderCache.values().forEach(handler::saveObject);
+            borderCache.values().forEach(handler::saveObjectAsync);
         }
     }
 

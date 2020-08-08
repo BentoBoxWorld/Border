@@ -1,10 +1,10 @@
 package world.bentobox.border.commands;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.border.Border;
-
-import java.util.List;
 
 public class IslandBorderCommand extends CompositeCommand {
 
@@ -27,17 +27,15 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Border addon = (Border) this.getAddon();
-        addon.getLevelsData(user.getUniqueId(), data -> {
-            data.setEnabled(!data.isEnabled());
-            if (data.isEnabled()) {
-                user.sendMessage("border.toggle.border-on");
-                addon.updateBorder(user.getPlayer(), user.getPlayer().getLocation());
-            } else {
-                user.sendMessage("border.toggle.border-off");
-                addon.removeBorder(user.getPlayer());
-            }
-        });
+        String perm = this.getIWM().getPermissionPrefix(getWorld()) + "border.off";
+        if (user.getEffectivePermissions().stream().map(pa -> pa.getPermission()).anyMatch(perm::equalsIgnoreCase)) {
+            user.sendMessage("border.toggle.border-on");
+            user.removePerm(perm);
+        } else {
+            user.sendMessage("border.toggle.border-off");
+            user.addPerm(perm);
+        }
         return true;
     }
+
 }

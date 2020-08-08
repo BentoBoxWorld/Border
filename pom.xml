@@ -50,12 +50,11 @@
         <powermock.version>1.7.4</powermock.version>
         <!-- More visible way how to change dependency versions -->
         <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
-        <bentobox.version>1.14.0</bentobox.version>
-        <worldborderapi.version>1.161.2</worldborderapi.version>
+        <bentobox.version>1.15.0-SNAPSHOT</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>1.0.9</build.version>
+        <build.version>2.0.0</build.version>
         <build.number>-LOCAL</build.number>
     </properties>
 
@@ -150,11 +149,6 @@
             <artifactId>bentobox</artifactId>
             <version>${bentobox.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.yannicklamprecht</groupId>
-            <artifactId>WorldBorderAPI</artifactId>
-            <version>${worldborderapi.version}</version>
         </dependency>
     </dependencies>
 

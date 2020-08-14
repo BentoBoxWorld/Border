@@ -24,6 +24,7 @@ public final class Border extends Addon {
 
     @Override
     public void onDisable() {
+        // Nothing to do here
     }
 
     /**

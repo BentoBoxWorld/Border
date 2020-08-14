@@ -41,7 +41,7 @@ public class PlayerBorder implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent e) {
-        // Only trigger if the player move horizontally
+        // Only trigger if the player moves horizontally
         if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
             addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> showBarrier(e.getPlayer(), i));
         }
@@ -49,7 +49,7 @@ public class PlayerBorder implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onVehicleMove(VehicleMoveEvent e) {
-        // Only trigger if the vehicle move horizontally
+        // Only trigger if the vehicle moves horizontally
         if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
             e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p ->
             addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> showBarrier(p, i)));

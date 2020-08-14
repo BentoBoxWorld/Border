@@ -1,12 +1,17 @@
 # Border
 [![Build Status](https://ci.codemc.io/job/BentoBoxWorld/job/Border/badge/icon)](https://ci.codemc.io/job/BentoBoxWorld/job/Border/)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=bugs)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=security_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
 
-Requires WorldBorderAPI plugin. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases
+Border puts a border around player's islands. Players will see particles when they get close to the border and be prevented from crossing by barrier blocks. Barrier blocks only exist in the player's client and take the place of air or liquid blocks. Clever players may work out ways to get past the border, so it's more there to discourage than 100% prevent.
 
 ## Installation
 1. Put this jar into the BentoBox addons folder
-2. Put WorldBorderAPI jar into the plugins folder
-3. Restart
+2. Restart
 
 ## Like this addon?
 [Sponsor tastybento](https://github.com/sponsors/tastybento) to get more addons like this and make this one better!
+
+## Are you a coder?
+This is one of the easier addons from a code perspective. Maybe you could make it better! Border is open source and we love Pull Requests. Become a BentoBox co-author today!

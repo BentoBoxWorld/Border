@@ -1,5 +1,11 @@
 package world.bentobox.border.listeners;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,6 +35,7 @@ public class PlayerBorder implements Listener {
     private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.BLUE, 1.0F);
     private static final int BARRIER_RADIUS = 5;
+    private final Map<UUID, Set<BarrierBlock>> barrierBlocks = new HashMap<>();
 
 
     /**
@@ -41,16 +48,16 @@ public class PlayerBorder implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent e) {
-        // Only trigger if the player moves horizontally
-        if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+        // Remove head movement
+        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> showBarrier(e.getPlayer(), i));
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onVehicleMove(VehicleMoveEvent e) {
-        // Only trigger if the vehicle moves horizontally
-        if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+        // Remove head movement
+        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p ->
             addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> showBarrier(p, i)));
         }
@@ -112,8 +119,43 @@ public class PlayerBorder implements Listener {
                 player.sendBlockChange(l, BLOCK);
             }
             User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, i + 0.5D, j + 0.0D, k + 0.5D);
+            barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
         });
+    }
 
+    /**
+     * Hide the barrier
+     * @param user - user
+     */
+    public void hideBarrier(User user) {
+        if (barrierBlocks.containsKey(user.getUniqueId())) {
+            barrierBlocks.get(user.getUniqueId()).stream()
+            .filter(v -> v.l.getWorld().equals(user.getWorld()))
+            .forEach(v -> {
+                user.getPlayer().sendBlockChange(v.l, v.oldBlockData); 
+            });
+            // Clean up
+            clearUser(user);
+        }
+    }
+    
+    /**
+     * Removes any cached barrier blocks
+     * @param user - user
+     */
+    public void clearUser(User user) {
+        barrierBlocks.remove(user.getUniqueId()); 
+    }
+    
+    private class BarrierBlock {
+        Location l;
+        BlockData oldBlockData;
+        public BarrierBlock(Location l, BlockData oldBlockData) {
+            super();
+            this.l = l;
+            this.oldBlockData = oldBlockData;
+        }
+        
     }
 
 }

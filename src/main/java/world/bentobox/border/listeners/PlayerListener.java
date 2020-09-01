@@ -8,10 +8,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
@@ -29,18 +31,26 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
+        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
         addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
         addon.getPlayerBorder().showBarrier(e.getPlayer(), i));
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
+        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
         addon.getPlayerBorder().showBarrier(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
+        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
         // Check if border is on and if from is inside island and to location is outside of
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
         addon.getPlayerBorder().showBarrier(e.getPlayer(), i)));

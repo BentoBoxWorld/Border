@@ -10,8 +10,11 @@ import world.bentobox.border.Border;
 
 public class IslandBorderCommand extends CompositeCommand {
 
+    private Border addon;
+
     public IslandBorderCommand(Border addon, CompositeCommand parent, String label) {
         super(addon, parent, label);
+        this.addon = addon;
     }
 
     @Override
@@ -36,6 +39,7 @@ public class IslandBorderCommand extends CompositeCommand {
         } else {
             user.sendMessage("border.toggle.border-off");
             user.addPerm(perm);
+            addon.getPlayerBorder().hideBarrier(user);
         }
         return true;
     }

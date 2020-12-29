@@ -32,7 +32,7 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        boolean on = user.getMetaData("Border_state").map(md -> md.asBoolean()).orElse(false);
+        boolean on = user.getMetaData(PlayerBorder.BORDER_STATE).map(md -> md.asBoolean()).orElse(false);
         if (on) {
             user.sendMessage("border.toggle.border-off");
             user.putMetaData(PlayerBorder.BORDER_STATE, new MetaDataValue(false));

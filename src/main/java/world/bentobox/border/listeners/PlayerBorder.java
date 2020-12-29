@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
@@ -30,6 +31,7 @@ import world.bentobox.border.Border;
  */
 public class PlayerBorder implements Listener {
 
+    public static final String BORDER_STATE = "Border_state";
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private final Border addon;
     private static final Particle PARTICLE = Particle.REDSTONE;
@@ -69,9 +71,9 @@ public class PlayerBorder implements Listener {
      * @param island - island
      */
     public void showBarrier(Player player, Island island) {
-        // Only show if the player has the permission
-        String perm = addon.getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + "border.off";
-        if (player.getEffectivePermissions().stream().map(pa -> pa.getPermission()).anyMatch(perm::equalsIgnoreCase)) return;
+        if (!User.getInstance(player).getMetaData(BORDER_STATE).map(MetaDataValue::asBoolean).orElse(false)) {
+            return;
+        }
         // Get the locations to show
         Location loc = player.getLocation();
         int xMin = island.getMinProtectedX();
@@ -132,21 +134,21 @@ public class PlayerBorder implements Listener {
             barrierBlocks.get(user.getUniqueId()).stream()
             .filter(v -> v.l.getWorld().equals(user.getWorld()))
             .forEach(v -> {
-                user.getPlayer().sendBlockChange(v.l, v.oldBlockData); 
+                user.getPlayer().sendBlockChange(v.l, v.oldBlockData);
             });
             // Clean up
             clearUser(user);
         }
     }
-    
+
     /**
      * Removes any cached barrier blocks
      * @param user - user
      */
     public void clearUser(User user) {
-        barrierBlocks.remove(user.getUniqueId()); 
+        barrierBlocks.remove(user.getUniqueId());
     }
-    
+
     private class BarrierBlock {
         Location l;
         BlockData oldBlockData;
@@ -155,7 +157,7 @@ public class PlayerBorder implements Listener {
             this.l = l;
             this.oldBlockData = oldBlockData;
         }
-        
+
     }
 
 }

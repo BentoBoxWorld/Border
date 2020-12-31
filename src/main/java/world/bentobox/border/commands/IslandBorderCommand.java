@@ -2,16 +2,19 @@ package world.bentobox.border.commands;
 
 import java.util.List;
 
-import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.border.Border;
+import world.bentobox.border.listeners.PlayerBorder;
 
 public class IslandBorderCommand extends CompositeCommand {
 
+    private Border addon;
+
     public IslandBorderCommand(Border addon, CompositeCommand parent, String label) {
         super(addon, parent, label);
+        this.addon = addon;
     }
 
     @Override
@@ -29,13 +32,14 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        String perm = this.getIWM().getPermissionPrefix(getWorld()) + "border.off";
-        if (user.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission).anyMatch(perm::equalsIgnoreCase)) {
-            user.sendMessage("border.toggle.border-on");
-            user.removePerm(perm);
-        } else {
+        boolean on = user.getMetaData(PlayerBorder.BORDER_STATE).map(md -> md.asBoolean()).orElse(false);
+        if (on) {
             user.sendMessage("border.toggle.border-off");
-            user.addPerm(perm);
+            user.putMetaData(PlayerBorder.BORDER_STATE, new MetaDataValue(false));
+            addon.getPlayerBorder().hideBarrier(user);
+        } else {
+            user.sendMessage("border.toggle.border-on");
+            user.putMetaData(PlayerBorder.BORDER_STATE, new MetaDataValue(true));
         }
         return true;
     }

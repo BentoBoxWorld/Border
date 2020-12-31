@@ -1,0 +1,6 @@
+---
+border:
+  toggle:
+    description: переключает границу вкл/выкл
+    border-on: "&a Барьер включен."
+    border-off: "&a Бареьер выключен."

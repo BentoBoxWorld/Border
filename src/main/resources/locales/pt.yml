@@ -1,0 +1,6 @@
+---
+border:
+  toggle:
+    description: Ativa/Desativa a borda
+    border-on: "&a Borda ativada."
+    border-off: "&a Borda desativada."

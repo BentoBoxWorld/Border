@@ -1,6 +1,6 @@
 #
-# This list stores GameModes in which Challenges addon should not work.
-# To disable addon it is necessary to write its name in new line that starts with -. Example:
+# This list stores GameModes in which the addon should not work.
+# To disable the addon it is necessary to write its name in new line that starts with -. Example:
 # disabled-gamemodes:
 #  - BSkyBlock
 disabled-gamemodes: []

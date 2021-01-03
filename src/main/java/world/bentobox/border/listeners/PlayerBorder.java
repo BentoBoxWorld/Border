@@ -71,6 +71,10 @@ public class PlayerBorder implements Listener {
      * @param island - island
      */
     public void showBarrier(Player player, Island island) {
+
+        if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode()))
+            return;
+
         if (!User.getInstance(player).getMetaData(BORDER_STATE).map(MetaDataValue::asBoolean).orElse(false)) {
             return;
         }

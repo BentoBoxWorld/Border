@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
+import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -63,6 +64,13 @@ public class PlayerBorder implements Listener {
             e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p ->
             addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> showBarrier(p, i)));
         }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
+
+        // Cleans up barrier blocks that were on old range
+        e.getIsland().getPlayersOnIsland().forEach(player -> hideBarrier(User.getInstance(player)));
     }
 
     /**

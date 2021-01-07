@@ -125,7 +125,9 @@ public class PlayerBorder implements Listener {
                 player.sendBlockChange(l, BLOCK);
             }
             User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, i + 0.5D, j + 0.0D, k + 0.5D);
-            barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
+            if (addon.getSettings().isUseBarrierBlocks()) {
+                barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
+            }
         });
     }
 

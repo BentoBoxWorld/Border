@@ -4,3 +4,6 @@
 # disabled-gamemodes:
 #  - BSkyBlock
 disabled-gamemodes: []
+
+# Use barrier blocks. If false, the border is indicated by particles only.
+use-barrier-blocks: true

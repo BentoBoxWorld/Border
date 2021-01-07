@@ -18,7 +18,11 @@ public class Settings implements ConfigObject {
     @ConfigComment(" - BSkyBlock")
     @ConfigEntry(path = "disabled-gamemodes")
     private Set<String> disabledGameModes = new HashSet<>();
-    
+
+    @ConfigComment("")
+    @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
+    private boolean useBarrierBlocks = true;
+
     /**
      * @param disabledGameModes new disabledGameModes value.
      */
@@ -33,5 +37,19 @@ public class Settings implements ConfigObject {
     public Set<String> getDisabledGameModes()
     {
         return this.disabledGameModes;
+    }
+
+    /**
+     * @return the useBarrierBlocks
+     */
+    public boolean isUseBarrierBlocks() {
+        return useBarrierBlocks;
+    }
+
+    /**
+     * @param useBarrierBlocks the useBarrierBlocks to set
+     */
+    public void setUseBarrierBlocks(boolean useBarrierBlocks) {
+        this.useBarrierBlocks = useBarrierBlocks;
     }
 }

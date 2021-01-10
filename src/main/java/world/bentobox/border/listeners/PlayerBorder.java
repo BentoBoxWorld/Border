@@ -16,7 +16,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
@@ -35,7 +37,8 @@ public class PlayerBorder implements Listener {
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private final Border addon;
     private static final Particle PARTICLE = Particle.REDSTONE;
-    private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.BLUE, 1.0F);
+    private static final Particle.DustOptions PARTICLE_DUST_RED = new Particle.DustOptions(Color.RED, 1.0F);
+    private static final Particle.DustOptions PARTICLE_DUST_BLUE = new Particle.DustOptions(Color.BLUE, 1.0F);
     private static final int BARRIER_RADIUS = 5;
     private final Map<UUID, Set<BarrierBlock>> barrierBlocks = new HashMap<>();
 
@@ -75,7 +78,7 @@ public class PlayerBorder implements Listener {
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode()))
             return;
 
-        if (!User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(false)) {
+        if (!User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
         // Get the locations to show
@@ -121,17 +124,33 @@ public class PlayerBorder implements Listener {
 
     private void showPlayer(Player player, int i, int j, int k) {
         // Get if on or in border
-        if (player.getLocation().getBlockX() == i && player.getLocation().getBlockZ() == k) {
-            addon.getIslands().homeTeleportAsync(player.getWorld(), player);
+        if (addon.getSettings().isUseBarrierBlocks()
+                && player.getGameMode().equals(addon.getPlugin().getIWM().getDefaultGameMode(player.getWorld()))
+                && player.getLocation().getBlockX() == i
+                && player.getLocation().getBlockZ() == k) {
+            teleportPlayer(player);
             return;
         }
         Location l = new Location(player.getWorld(), i, j, k);
         Util.getChunkAtAsync(l).thenAccept(c -> {
-            User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, i + 0.5D, j + 0.0D, k + 0.5D);
+            if (j < 0 || j > player.getWorld().getMaxHeight()) {
+                User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
+            } else {
+                User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
+            }
             if (addon.getSettings().isUseBarrierBlocks() && l.getBlock().isEmpty() || l.getBlock().isLiquid()) {
                 player.sendBlockChange(l, BLOCK);
                 barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
             }
+        });
+    }
+
+    private void teleportPlayer(Player p) {
+        addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
+            Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
+                    .multiply(new Vector(1,0,1));
+            p.setVelocity(new Vector (0,0,0));
+            Util.teleportAsync(p, p.getLocation().toVector().add(unitVector).toLocation(p.getWorld()), TeleportCause.PLUGIN);
         });
     }
 

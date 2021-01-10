@@ -21,7 +21,13 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("")
     @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
+    @ConfigEntry(path = "use-barrier-blocks")
     private boolean useBarrierBlocks = true;
+    
+    @ConfigComment("")
+    @ConfigComment("Default border behavior")
+    @ConfigEntry(path = "show-by-default")
+    private boolean showByDefault= true;
 
     /**
      * @param disabledGameModes new disabledGameModes value.
@@ -51,5 +57,19 @@ public class Settings implements ConfigObject {
      */
     public void setUseBarrierBlocks(boolean useBarrierBlocks) {
         this.useBarrierBlocks = useBarrierBlocks;
+    }
+
+    /**
+     * @return the showByDefault
+     */
+    public boolean isShowByDefault() {
+        return showByDefault;
+    }
+
+    /**
+     * @param showByDefault the showByDefault to set
+     */
+    public void setShowByDefault(boolean showByDefault) {
+        this.showByDefault = showByDefault;
     }
 }

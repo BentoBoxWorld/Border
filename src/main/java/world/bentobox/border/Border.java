@@ -14,6 +14,8 @@ public final class Border extends Addon {
 
     private boolean hooked;
 
+    private Config<Settings> config = new Config<>(this, Settings.class);
+
     @Override
     public void onLoad() {
         // Save default config.yml
@@ -24,8 +26,6 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
-
-
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
@@ -62,13 +62,16 @@ public final class Border extends Addon {
      * This method loads addon configuration settings in memory.
      */
     private void loadSettings() {
-        this.settings = new Config<>(this, Settings.class).loadConfigObject();
+        this.settings = config.loadConfigObject();
 
         if (this.settings == null) {
             // Disable
             this.logError("Challenges settings could not load! Addon disabled.");
             this.setState(State.DISABLED);
+            return;
         }
+        // Save new version
+        this.config.saveConfigObject(settings);
     }
 
     public Settings getSettings() {

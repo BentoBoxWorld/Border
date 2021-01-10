@@ -71,7 +71,6 @@ public class PlayerBorder implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
-
         // Cleans up barrier blocks that were on old range
         e.getIsland().getPlayersOnIsland().forEach(player -> hideBarrier(User.getInstance(player)));
     }
@@ -157,7 +156,10 @@ public class PlayerBorder implements Listener {
             Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
                     .multiply(new Vector(1,0,1));
             p.setVelocity(new Vector (0,0,0));
-            Util.teleportAsync(p, p.getLocation().toVector().add(unitVector).toLocation(p.getWorld()), TeleportCause.PLUGIN);
+            Location to = p.getLocation().toVector().add(unitVector).toLocation(p.getWorld());
+            to.setPitch(p.getLocation().getPitch());
+            to.setYaw(p.getLocation().getYaw());
+            Util.teleportAsync(p, to, TeleportCause.PLUGIN);
         });
     }
 

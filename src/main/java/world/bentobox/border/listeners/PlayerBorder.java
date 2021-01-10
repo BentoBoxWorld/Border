@@ -125,7 +125,6 @@ public class PlayerBorder implements Listener {
     private void showPlayer(Player player, int i, int j, int k) {
         // Get if on or in border
         if (addon.getSettings().isUseBarrierBlocks()
-                && player.getGameMode().equals(addon.getPlugin().getIWM().getDefaultGameMode(player.getWorld()))
                 && player.getLocation().getBlockX() == i
                 && player.getLocation().getBlockZ() == k) {
             teleportPlayer(player);

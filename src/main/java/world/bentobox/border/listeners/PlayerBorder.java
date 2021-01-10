@@ -31,7 +31,7 @@ import world.bentobox.border.Border;
  */
 public class PlayerBorder implements Listener {
 
-    public static final String BORDER_STATE = "Border_state";
+    public static final String BORDER_STATE_META_DATA = "Border_state";
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private final Border addon;
     private static final Particle PARTICLE = Particle.REDSTONE;
@@ -75,7 +75,7 @@ public class PlayerBorder implements Listener {
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode()))
             return;
 
-        if (!User.getInstance(player).getMetaData(BORDER_STATE).map(MetaDataValue::asBoolean).orElse(false)) {
+        if (!User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(false)) {
             return;
         }
         // Get the locations to show
@@ -84,34 +84,35 @@ public class PlayerBorder implements Listener {
         int xMax = island.getMaxProtectedX();
         int zMin = island.getMinProtectedZ();
         int zMax = island.getMaxProtectedZ();
-        if (loc.getBlockX() - xMin < BARRIER_RADIUS) {
+        int radius = Math.min(island.getProtectionRange(), BARRIER_RADIUS);
+        if (loc.getBlockX() - xMin < radius) {
             // Close to min x
-            for (int z = -BARRIER_RADIUS; z < BARRIER_RADIUS; z++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+            for (int z = -radius; z < radius; z++) {
+                for (int y = -radius; y < radius; y++) {
                     showPlayer(player, xMin-1, loc.getBlockY() + y, loc.getBlockZ() + z);
                 }
             }
         }
-        if (loc.getBlockZ() - zMin < BARRIER_RADIUS) {
+        if (loc.getBlockZ() - zMin < radius) {
             // Close to min z
-            for (int x = -BARRIER_RADIUS; x < BARRIER_RADIUS; x++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+            for (int x = -radius; x < radius; x++) {
+                for (int y = -radius; y < radius; y++) {
                     showPlayer(player, loc.getBlockX() + x, loc.getBlockY() + y, zMin-1);
                 }
             }
         }
-        if (xMax - loc.getBlockX() < BARRIER_RADIUS) {
+        if (xMax - loc.getBlockX() < radius) {
             // Close to max x
-            for (int z = -BARRIER_RADIUS; z < BARRIER_RADIUS; z++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+            for (int z = -radius; z < radius; z++) {
+                for (int y = -radius; y < radius; y++) {
                     showPlayer(player, xMax, loc.getBlockY() + y, loc.getBlockZ() + z); // not xMax+1, that's outside the region
                 }
             }
         }
-        if (zMax - loc.getBlockZ() < BARRIER_RADIUS) {
+        if (zMax - loc.getBlockZ() < radius) {
             // Close to max z
-            for (int x = -BARRIER_RADIUS; x < BARRIER_RADIUS; x++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+            for (int x = -radius; x < radius; x++) {
+                for (int y = -radius; y < radius; y++) {
                     showPlayer(player, loc.getBlockX() + x, loc.getBlockY() + y, zMax); // not zMax+1, that's outside the region
                 }
             }
@@ -121,11 +122,9 @@ public class PlayerBorder implements Listener {
     private void showPlayer(Player player, int i, int j, int k) {
         Location l = new Location(player.getWorld(), i, j, k);
         Util.getChunkAtAsync(l).thenAccept(c -> {
-            if (l.getBlock().isEmpty() || l.getBlock().isLiquid()) {
-                player.sendBlockChange(l, BLOCK);
-            }
             User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, i + 0.5D, j + 0.0D, k + 0.5D);
-            if (addon.getSettings().isUseBarrierBlocks()) {
+            if (addon.getSettings().isUseBarrierBlocks() && l.getBlock().isEmpty() || l.getBlock().isLiquid()) {
+                player.sendBlockChange(l, BLOCK);
                 barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
             }
         });

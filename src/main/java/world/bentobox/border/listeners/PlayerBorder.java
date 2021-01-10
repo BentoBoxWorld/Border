@@ -120,6 +120,11 @@ public class PlayerBorder implements Listener {
     }
 
     private void showPlayer(Player player, int i, int j, int k) {
+        // Get if on or in border
+        if (player.getLocation().getBlockX() == i && player.getLocation().getBlockZ() == k) {
+            addon.getIslands().homeTeleportAsync(player.getWorld(), player);
+            return;
+        }
         Location l = new Location(player.getWorld(), i, j, k);
         Util.getChunkAtAsync(l).thenAccept(c -> {
             User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, i + 0.5D, j + 0.0D, k + 0.5D);

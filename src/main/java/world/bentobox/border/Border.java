@@ -1,7 +1,15 @@
 package world.bentobox.border;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.World;
+import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
+import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.PlayerBorder;
 import world.bentobox.border.listeners.PlayerListener;
@@ -16,6 +24,8 @@ public final class Border extends Addon {
 
     private Config<Settings> config = new Config<>(this, Settings.class);
 
+    private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
+
     @Override
     public void onLoad() {
         // Save default config.yml
@@ -26,13 +36,14 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
+        gameModes.clear();
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
-            if (!this.settings.getDisabledGameModes().contains(
-                    gameModeAddon.getDescription().getName())) {
+            if (!this.settings.getDisabledGameModes().contains(gameModeAddon.getDescription().getName())) {
 
                 hooked = true;
+                gameModes.add(gameModeAddon);
 
                 log("Border hooking into " + gameModeAddon.getDescription().getName());
                 gameModeAddon.getPlayerCommand().ifPresent(c -> new IslandBorderCommand(this, c, "border"));
@@ -78,4 +89,11 @@ public final class Border extends Addon {
         return this.settings;
     }
 
+    /**
+     * @param world
+     * @return true if world is being handled by Border
+     */
+    public boolean inGameWorld(World world) {
+        return gameModes.stream().anyMatch(gm -> gm.inWorld(Util.getWorld(world)));
+    }
 }

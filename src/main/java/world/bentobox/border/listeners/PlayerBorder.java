@@ -88,6 +88,7 @@ public class PlayerBorder implements Listener {
         if (!User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
+
         // Get the locations to show
         Location loc = player.getLocation();
         int xMin = island.getMinProtectedX();
@@ -156,6 +157,8 @@ public class PlayerBorder implements Listener {
             Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
                     .multiply(new Vector(1,0,1));
             p.setVelocity(new Vector (0,0,0));
+            // Get distance from border
+
             Location to = p.getLocation().toVector().add(unitVector).toLocation(p.getWorld());
             to.setPitch(p.getLocation().getPitch());
             to.setYaw(p.getLocation().getYaw());

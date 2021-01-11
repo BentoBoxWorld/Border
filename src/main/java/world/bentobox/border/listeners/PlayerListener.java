@@ -1,17 +1,24 @@
 package world.bentobox.border.listeners;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -23,10 +30,13 @@ import world.bentobox.border.Border;
  */
 public class PlayerListener implements Listener {
 
+    private static final Vector XZ = new Vector(1,0,1);
     private final Border addon;
+    private Set<UUID> inTeleport;
 
     public PlayerListener(Border addon) {
         this.addon = addon;
+        inTeleport = new HashSet<>();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -35,7 +45,7 @@ public class PlayerListener implements Listener {
         addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
         addon.getPlayerBorder().showBarrier(e.getPlayer(), i));
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent e) {
         addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
@@ -54,6 +64,52 @@ public class PlayerListener implements Listener {
         // Check if border is on and if from is inside island and to location is outside of
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
         addon.getPlayerBorder().showBarrier(e.getPlayer(), i)));
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerLeaveIsland(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+        Location from = e.getFrom();
+        if (!outsideCheck(e.getPlayer(), from, e.getTo())) {
+            return;
+        }
+        // Move the player back inside the border
+        if (addon.getIslands().getProtectedIslandAt(from).isPresent()) {
+            e.setCancelled(true);
+            inTeleport.add(p.getUniqueId());
+            Util.teleportAsync(p, from).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+            return;
+        }
+        // Backtrack
+        addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
+            Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
+                    .multiply(new Vector(1,0,1));
+            RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
+            if (r != null) {
+                inTeleport.add(p.getUniqueId());
+                Util.teleportAsync(p, r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch()))
+                .thenRun(() -> {
+                    addon.getPlugin().logDebug("Teleport done");
+                    inTeleport.remove(p.getUniqueId());
+                });
+            }
+        });
+
+
+    }
+
+    private boolean outsideCheck(Player player, Location from, Location to) {
+        User user = User.getInstance(player);
+        // Only process if there is a change in X or Z coords
+        if ((from.getWorld() != null && from.getWorld().equals(to.getWorld())
+                && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ)))
+                || !addon.getSettings().isUseBarrierBlocks()
+                || !addon.inGameWorld(player.getWorld())
+                || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getCenter())).isPresent()
+                || !user.getMetaData(PlayerBorder.BORDER_STATE_META_DATA).map(md -> md.asBoolean()).orElse(addon.getSettings().isShowByDefault())) {
+            return false;
+        }
+        return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();
     }
 
     /**

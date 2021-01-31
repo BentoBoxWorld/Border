@@ -1,0 +1,12 @@
+#
+# This list stores GameModes in which the addon should not work.
+# To disable the addon it is necessary to write its name in new line that starts with -. Example:
+# disabled-gamemodes:
+#  - BSkyBlock
+disabled-gamemodes: []
+
+# Use barrier blocks. If false, the border is indicated by particles only.
+use-barrier-blocks: true
+
+# Default border behavior
+show-by-default: true

@@ -32,14 +32,14 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        boolean on = user.getMetaData(PlayerBorder.BORDER_STATE).map(md -> md.asBoolean()).orElse(false);
+        boolean on = user.getMetaData(PlayerBorder.BORDER_STATE_META_DATA).map(md -> md.asBoolean()).orElse(addon.getSettings().isShowByDefault());
         if (on) {
             user.sendMessage("border.toggle.border-off");
-            user.putMetaData(PlayerBorder.BORDER_STATE, new MetaDataValue(false));
+            user.putMetaData(PlayerBorder.BORDER_STATE_META_DATA, new MetaDataValue(false));
             addon.getPlayerBorder().hideBarrier(user);
         } else {
             user.sendMessage("border.toggle.border-on");
-            user.putMetaData(PlayerBorder.BORDER_STATE, new MetaDataValue(true));
+            user.putMetaData(PlayerBorder.BORDER_STATE_META_DATA, new MetaDataValue(true));
         }
         return true;
     }

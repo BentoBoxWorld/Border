@@ -95,36 +95,36 @@ public class PlayerBorder implements Listener {
         int xMax = island.getMaxProtectedX();
         int zMin = island.getMinProtectedZ();
         int zMax = island.getMaxProtectedZ();
-        int radius = Math.min(island.getProtectionRange(), BARRIER_RADIUS);
+        int radius = BARRIER_RADIUS;
         if (loc.getBlockX() - xMin < radius) {
             // Close to min x
-            for (int z = -radius; z < radius; z++) {
+            for (int z = Math.max(loc.getBlockZ() - radius, zMin); z < loc.getBlockZ() + radius && z < zMax; z++) {
                 for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, xMin-1, loc.getBlockY() + y, loc.getBlockZ() + z);
+                    showPlayer(player, xMin-1, loc.getBlockY() + y, z);
                 }
             }
         }
         if (loc.getBlockZ() - zMin < radius) {
             // Close to min z
-            for (int x = -radius; x < radius; x++) {
+            for (int x = Math.max(loc.getBlockX() - radius, xMin); x < loc.getBlockX() + radius && x < xMax; x++) {
                 for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, loc.getBlockX() + x, loc.getBlockY() + y, zMin-1);
+                    showPlayer(player, x, loc.getBlockY() + y, zMin-1);
                 }
             }
         }
         if (xMax - loc.getBlockX() < radius) {
             // Close to max x
-            for (int z = -radius; z < radius; z++) {
+            for (int z = Math.max(loc.getBlockZ() - radius, zMin); z < loc.getBlockZ() + radius && z < zMax; z++) {
                 for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, xMax, loc.getBlockY() + y, loc.getBlockZ() + z); // not xMax+1, that's outside the region
+                    showPlayer(player, xMax, loc.getBlockY() + y, z); // not xMax+1, that's outside the region
                 }
             }
         }
         if (zMax - loc.getBlockZ() < radius) {
             // Close to max z
-            for (int x = -radius; x < radius; x++) {
+            for (int x = Math.max(loc.getBlockX() - radius, xMin); x < loc.getBlockX() + radius && x < xMax; x++) {
                 for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, loc.getBlockX() + x, loc.getBlockY() + y, zMax); // not zMax+1, that's outside the region
+                    showPlayer(player, x, loc.getBlockY() + y, zMax); // not zMax+1, that's outside the region
                 }
             }
         }
@@ -145,7 +145,7 @@ public class PlayerBorder implements Listener {
             } else {
                 User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
             }
-            if (addon.getSettings().isUseBarrierBlocks() && l.getBlock().isEmpty() || l.getBlock().isLiquid()) {
+            if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
                 player.sendBlockChange(l, BLOCK);
                 barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
             }

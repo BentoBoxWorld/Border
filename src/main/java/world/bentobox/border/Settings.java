@@ -23,11 +23,16 @@ public class Settings implements ConfigObject {
     @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
     @ConfigEntry(path = "use-barrier-blocks")
     private boolean useBarrierBlocks = true;
-    
+
     @ConfigComment("")
     @ConfigComment("Default border behavior")
     @ConfigEntry(path = "show-by-default")
     private boolean showByDefault= true;
+
+    @ConfigComment("")
+    @ConfigComment("Show max-protection range border. This is a visual border only and not a barrier.")
+    @ConfigEntry(path = "show-max-border")
+    private boolean showMaxBorder= true;
 
     /**
      * @param disabledGameModes new disabledGameModes value.
@@ -71,5 +76,19 @@ public class Settings implements ConfigObject {
      */
     public void setShowByDefault(boolean showByDefault) {
         this.showByDefault = showByDefault;
+    }
+
+    /**
+     * @return the showMaxBorder
+     */
+    public boolean isShowMaxBorder() {
+        return showMaxBorder;
+    }
+
+    /**
+     * @param showMaxBorder the showMaxBorder to set
+     */
+    public void setShowMaxBorder(boolean showMaxBorder) {
+        this.showMaxBorder = showMaxBorder;
     }
 }

@@ -10,3 +10,7 @@ use-barrier-blocks: true
 
 # Default border behavior
 show-by-default: true
+
+# Show max-protection range border. This is a visual border only and not a barrier
+show-max-border: true
+

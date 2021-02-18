@@ -38,6 +38,7 @@ public class PlayerBorder implements Listener {
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private final Border addon;
     private static final Particle PARTICLE = Particle.REDSTONE;
+    private static final Particle MAX_PARTICLE = Particle.BARRIER;
     private static final Particle.DustOptions PARTICLE_DUST_RED = new Particle.DustOptions(Color.RED, 1.0F);
     private static final Particle.DustOptions PARTICLE_DUST_BLUE = new Particle.DustOptions(Color.BLUE, 1.0F);
     private static final int BARRIER_RADIUS = 5;
@@ -91,46 +92,59 @@ public class PlayerBorder implements Listener {
 
         // Get the locations to show
         Location loc = player.getLocation();
-        int xMin = island.getMinProtectedX();
-        int xMax = island.getMaxProtectedX();
-        int zMin = island.getMinProtectedZ();
-        int zMax = island.getMaxProtectedZ();
-        int radius = BARRIER_RADIUS;
-        if (loc.getBlockX() - xMin < radius) {
-            // Close to min x
-            for (int z = Math.max(loc.getBlockZ() - radius, zMin); z < loc.getBlockZ() + radius && z < zMax; z++) {
-                for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, xMin-1, loc.getBlockY() + y, z);
-                }
-            }
+        showWalls(player, loc,
+                island.getMinProtectedX(),
+                island.getMaxProtectedX(),
+                island.getMinProtectedZ(),
+                island.getMaxProtectedZ(), false);
+        // If the max border needs to be shown, show it as well
+        if (addon.getSettings().isShowMaxBorder()) {
+            showWalls(player, loc,
+                    island.getMinX(),
+                    island.getMaxX(),
+                    island.getMinZ(),
+                    island.getMaxZ(), true);
         }
-        if (loc.getBlockZ() - zMin < radius) {
-            // Close to min z
-            for (int x = Math.max(loc.getBlockX() - radius, xMin); x < loc.getBlockX() + radius && x < xMax; x++) {
-                for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, x, loc.getBlockY() + y, zMin-1);
-                }
-            }
-        }
-        if (xMax - loc.getBlockX() < radius) {
-            // Close to max x
-            for (int z = Math.max(loc.getBlockZ() - radius, zMin); z < loc.getBlockZ() + radius && z < zMax; z++) {
-                for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, xMax, loc.getBlockY() + y, z); // not xMax+1, that's outside the region
-                }
-            }
-        }
-        if (zMax - loc.getBlockZ() < radius) {
-            // Close to max z
-            for (int x = Math.max(loc.getBlockX() - radius, xMin); x < loc.getBlockX() + radius && x < xMax; x++) {
-                for (int y = -radius; y < radius; y++) {
-                    showPlayer(player, x, loc.getBlockY() + y, zMax); // not zMax+1, that's outside the region
-                }
-            }
-        }
+
     }
 
-    private void showPlayer(Player player, int i, int j, int k) {
+    private void showWalls(Player player, Location loc, int xMin, int xMax, int zMin, int zMax, boolean max) {
+        if (loc.getBlockX() - xMin < BARRIER_RADIUS) {
+            // Close to min x
+            for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
+                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+                    showPlayer(player, xMin-1, loc.getBlockY() + y, z, max);
+                }
+            }
+        }
+        if (loc.getBlockZ() - zMin < BARRIER_RADIUS) {
+            // Close to min z
+            for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
+                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+                    showPlayer(player, x, loc.getBlockY() + y, zMin-1, max);
+                }
+            }
+        }
+        if (xMax - loc.getBlockX() < BARRIER_RADIUS) {
+            // Close to max x
+            for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
+                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+                    showPlayer(player, xMax, loc.getBlockY() + y, z, max); // not xMax+1, that's outside the region
+                }
+            }
+        }
+        if (zMax - loc.getBlockZ() < BARRIER_RADIUS) {
+            // Close to max z
+            for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
+                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+                    showPlayer(player, x, loc.getBlockY() + y, zMax, max); // not zMax+1, that's outside the region
+                }
+            }
+        }
+
+    }
+
+    private void showPlayer(Player player, int i, int j, int k, boolean max) {
         // Get if on or in border
         if (addon.getSettings().isUseBarrierBlocks()
                 && player.getLocation().getBlockX() == i
@@ -141,9 +155,9 @@ public class PlayerBorder implements Listener {
         Location l = new Location(player.getWorld(), i, j, k);
         Util.getChunkAtAsync(l).thenAccept(c -> {
             if (j < 0 || j > player.getWorld().getMaxHeight()) {
-                User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
+                User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
             } else {
-                User.getInstance(player).spawnParticle(PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
+                User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
             }
             if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
                 player.sendBlockChange(l, BLOCK);

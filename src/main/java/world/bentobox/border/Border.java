@@ -77,7 +77,7 @@ public final class Border extends Addon {
 
         if (this.settings == null) {
             // Disable
-            this.logError("Challenges settings could not load! Addon disabled.");
+            this.logError("Border settings could not load! Addon disabled.");
             this.setState(State.DISABLED);
             return;
         }

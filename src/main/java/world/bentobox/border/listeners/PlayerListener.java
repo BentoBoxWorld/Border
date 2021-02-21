@@ -44,8 +44,8 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
         shower.clearUser(User.getInstance(e.getPlayer()));
-        addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        shower.showBorder(e.getPlayer(), i));
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
+        shower.showBorder(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -70,6 +70,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
+        if (addon.getSettings().isUseWbapi()) {
+            return;
+        }
         Player p = e.getPlayer();
         Location from = e.getFrom();
         if (!outsideCheck(e.getPlayer(), from, e.getTo())) {

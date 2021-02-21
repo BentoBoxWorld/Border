@@ -38,6 +38,16 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
+        // Check for WorldBorderAPI
+        if (getSettings().isUseWbapi()) {
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
+            if (plugin == null || !plugin.isEnabled()) {
+                logError("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
+                logError("Disabling addon");
+                this.setState(State.DISABLED);
+                return;
+            }
+        }
         gameModes.clear();
         playerBorder = new PlayerBorder(this);
         // Register commands
@@ -87,15 +97,6 @@ public final class Border extends Addon {
         // Save new version
         this.config.saveConfigObject(settings);
 
-        // Check for WorldBorderAPI
-        if (getSettings().isUseWbapi()) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
-            if (plugin == null || !plugin.isEnabled()) {
-                getLogger().warning("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
-                this.setState(State.DISABLED);
-                return;
-            }
-        }
     }
 
     public Settings getSettings() {

@@ -41,7 +41,7 @@ public class PlayerBorder implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent e) {
         // Remove head movement
-        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
+        if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> barrier.showBorder(e.getPlayer(), i));
         }
     }
@@ -49,7 +49,7 @@ public class PlayerBorder implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
-        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
+        if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p ->
             addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> barrier.showBorder(p, i)));
         }
@@ -57,8 +57,11 @@ public class PlayerBorder implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
-        // Cleans up barrier blocks that were on old range
-        e.getIsland().getPlayersOnIsland().forEach(player -> barrier.hideBorder(User.getInstance(player)));
+        // Hide and show again
+        e.getIsland().getPlayersOnIsland().forEach(player -> {
+            barrier.hideBorder(User.getInstance(player));
+            barrier.showBorder(player, e.getIsland());
+        });
     }
 
 

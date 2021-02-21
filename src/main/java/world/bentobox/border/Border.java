@@ -3,7 +3,9 @@ package world.bentobox.border;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.addons.Addon;
@@ -16,7 +18,7 @@ import world.bentobox.border.listeners.PlayerListener;
 
 public final class Border extends Addon {
 
-    private final PlayerBorder playerBorder = new PlayerBorder(this);
+    private PlayerBorder playerBorder;
 
     private Settings settings;
 
@@ -37,6 +39,7 @@ public final class Border extends Addon {
     @Override
     public void onEnable() {
         gameModes.clear();
+        playerBorder = new PlayerBorder(this);
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
@@ -83,6 +86,16 @@ public final class Border extends Addon {
         }
         // Save new version
         this.config.saveConfigObject(settings);
+
+        // Check for WorldBorderAPI
+        if (getSettings().isUseWbapi()) {
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
+            if (plugin == null || !plugin.isEnabled()) {
+                getLogger().warning("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
+                this.setState(State.DISABLED);
+                return;
+            }
+        }
     }
 
     public Settings getSettings() {

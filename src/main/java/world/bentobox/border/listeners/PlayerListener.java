@@ -33,37 +33,39 @@ public class PlayerListener implements Listener {
     private static final Vector XZ = new Vector(1,0,1);
     private final Border addon;
     private Set<UUID> inTeleport;
+    private final BorderShower shower;
 
     public PlayerListener(Border addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
+        this.shower = addon.getPlayerBorder().getBorder();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
-        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
+        shower.clearUser(User.getInstance(e.getPlayer()));
         addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        addon.getPlayerBorder().showBarrier(e.getPlayer(), i));
+        shower.showBorder(e.getPlayer(), i));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent e) {
-        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
+        shower.clearUser(User.getInstance(e.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
+        shower.clearUser(User.getInstance(e.getPlayer()));
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        addon.getPlayerBorder().showBarrier(e.getPlayer(), i)));
+        shower.showBorder(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        addon.getPlayerBorder().clearUser(User.getInstance(e.getPlayer()));
+        shower.clearUser(User.getInstance(e.getPlayer()));
         // Check if border is on and if from is inside island and to location is outside of
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getProtectedIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        addon.getPlayerBorder().showBarrier(e.getPlayer(), i)));
+        shower.showBorder(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -88,10 +90,7 @@ public class PlayerListener implements Listener {
             if (r != null) {
                 inTeleport.add(p.getUniqueId());
                 Util.teleportAsync(p, r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch()))
-                .thenRun(() -> {
-                    addon.getPlugin().logDebug("Teleport done");
-                    inTeleport.remove(p.getUniqueId());
-                });
+                .thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
         });
 
@@ -106,7 +105,7 @@ public class PlayerListener implements Listener {
                 || !addon.getSettings().isUseBarrierBlocks()
                 || !addon.inGameWorld(player.getWorld())
                 || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getCenter())).isPresent()
-                || !user.getMetaData(PlayerBorder.BORDER_STATE_META_DATA).map(md -> md.asBoolean()).orElse(addon.getSettings().isShowByDefault())) {
+                || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(md -> md.asBoolean()).orElse(addon.getSettings().isShowByDefault())) {
             return false;
         }
         return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();

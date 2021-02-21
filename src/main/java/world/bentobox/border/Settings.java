@@ -20,7 +20,14 @@ public class Settings implements ConfigObject {
     private Set<String> disabledGameModes = new HashSet<>();
 
     @ConfigComment("")
+    @ConfigComment("Use vanilla world border. Requires WorldBorderAPI plugin.")
+    @ConfigComment("Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases")
+    @ConfigEntry(path = "use-wbapi")
+    private boolean useWbapi = false;
+
+    @ConfigComment("")
     @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
+    @ConfigComment("Only applicable if vanilla world border is not used")
     @ConfigEntry(path = "use-barrier-blocks")
     private boolean useBarrierBlocks = true;
 
@@ -90,5 +97,19 @@ public class Settings implements ConfigObject {
      */
     public void setShowMaxBorder(boolean showMaxBorder) {
         this.showMaxBorder = showMaxBorder;
+    }
+
+    /**
+     * @return the useWbapi
+     */
+    public boolean isUseWbapi() {
+        return useWbapi;
+    }
+
+    /**
+     * @param useWbapi the useWbapi to set
+     */
+    public void setUseWbapi(boolean useWbapi) {
+        this.useWbapi = useWbapi;
     }
 }

@@ -32,7 +32,7 @@ If you want to use the vanilla world border then you must download the WorldBord
 
 Players cannot exit past the vanilla world border, so it will completely block movement outside of a player's protected island area. If you do not want this, then do not use WBAPI.
 
-To activate WABI, set this to true in the config.yml:
+To activate WBAPI, set this to true in the config.yml:
 
 ```
 use-wbapi: true
@@ -60,7 +60,7 @@ show-by-default: true
 
 ### Show max-protection range border.
 
-This only applies if you are not using WABBI.
+This only applies if you are not using WBAPI.
 
 This is a visual border only and not a barrier. It displays the 🚫 particle. This is useful for game modes like Boxed where the player's protection area can move around.
 

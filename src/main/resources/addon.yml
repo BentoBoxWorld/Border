@@ -11,4 +11,4 @@ authors: [tastybento]
 permissions:
   '[gamemode].border.toggle':
     description: Player can use border toggle command
-    default: true
+    default: op

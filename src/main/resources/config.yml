@@ -1,16 +1,20 @@
-#
-# This list stores GameModes in which the addon should not work.
-# To disable the addon it is necessary to write its name in new line that starts with -. Example:
+# 
+# This list stores GameModes in which Border addon should not work.
+# To disable addon it is necessary to write its name in new line that starts with -. Example:
 # disabled-gamemodes:
 #  - BSkyBlock
 disabled-gamemodes: []
-
+# 
+# Use vanilla world border. Requires WorldBorderAPI plugin.
+# Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases
+use-wbapi: true
+# 
 # Use barrier blocks. If false, the border is indicated by particles only.
+# Only applicable if vanilla world border is not used
 use-barrier-blocks: true
-
+# 
 # Default border behavior
 show-by-default: true
-
-# Show max-protection range border. This is a visual border only and not a barrier
+# 
+# Show max-protection range border. This is a visual border only and not a barrier.
 show-max-border: true
-

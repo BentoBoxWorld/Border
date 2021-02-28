@@ -4,9 +4,9 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=security_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
 
-Border puts a border around player's islands.
+**Border** shows a world border around islands. The world border is the Minecraft world border and players cannot go outside of it or a barrier block border that can show up when required.
 
-Features:
+##Features##
 
 * Minecraft vanilla world border (requires WorldBorderAPI plugin - see below)
 * Alternative barrier blocks border - can block transit or just show where the border is using particles.
@@ -27,10 +27,10 @@ By default, Border will operate in all game mode worlds on the BentoBox server. 
    - BSkyBlock
 ```
 
-### Use WorldBorderAPI (WABI)
+### Use WorldBorderAPI (WBAPI)
 If you want to use the vanilla world border then you must download the WorldBorderAPI plugin. You can find them here: https://github.com/yannicklamprecht/WorldBorderAPI/releases
 
-Players cannot exit past the vanilla world border, so it will completely block movement outside of a player's protected island area. If you do not want this, then do not use WABI.
+Players cannot exit past the vanilla world border, so it will completely block movement outside of a player's protected island area. If you do not want this, then do not use WBAPI.
 
 To activate WABI, set this to true in the config.yml:
 
@@ -39,7 +39,7 @@ use-wbapi: true
 ```
 
 ### Use barrier blocks.
-This only applies if you are not using WABBI.
+This only applies if you are not using WBAPI.
 
 If true, the the border will use barrier blocks to prevent most players from exiting the border. If players do manage to exit it, they will get teleported back inside it. 
 

@@ -5,12 +5,14 @@ import java.util.List;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.Border;
 import world.bentobox.border.listeners.BorderShower;
 
 public class IslandBorderCommand extends CompositeCommand {
 
     private Border addon;
+    private Island island;
 
     public IslandBorderCommand(Border addon, CompositeCommand parent, String label) {
         super(addon, parent, label);
@@ -27,7 +29,8 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        return getIslands().getIsland(getWorld(), user) != null;
+        island = getIslands().getIsland(getWorld(), user);
+        return island != null;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class IslandBorderCommand extends CompositeCommand {
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
+            addon.getPlayerBorder().getBorder().showBorder(user.getPlayer(), island);
         }
         return true;
     }

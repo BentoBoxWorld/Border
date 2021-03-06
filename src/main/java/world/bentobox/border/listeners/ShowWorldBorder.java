@@ -29,7 +29,7 @@ public class ShowWorldBorder implements BorderShower {
                 || !User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
-        BorderAPI.getApi().setBorder(player, island.getProtectionRange() * 2, island.getProtectionCenter());
+        BorderAPI.getApi().setBorder(player, island.getProtectionRange() * 2D, island.getProtectionCenter());
     }
 
     @Override

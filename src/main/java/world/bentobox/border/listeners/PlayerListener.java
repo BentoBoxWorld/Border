@@ -20,6 +20,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
@@ -108,7 +109,7 @@ public class PlayerListener implements Listener {
                 || !addon.getSettings().isUseBarrierBlocks()
                 || !addon.inGameWorld(player.getWorld())
                 || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getCenter())).isPresent()
-                || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(md -> md.asBoolean()).orElse(addon.getSettings().isShowByDefault())) {
+                || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return false;
         }
         return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();

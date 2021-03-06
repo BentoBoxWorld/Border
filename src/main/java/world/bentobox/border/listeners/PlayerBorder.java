@@ -50,7 +50,7 @@ public class PlayerBorder implements Listener {
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
         if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
-            e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p ->
+            e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p ->
             addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> barrier.showBorder(p, i)));
         }
     }

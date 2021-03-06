@@ -30,7 +30,9 @@ public interface BorderShower {
      * Removes any cache
      * @param user - user
      */
-    default public void clearUser(User user) {};
+    public default void clearUser(User user) {
+        // Do nothing
+    };
 
 
 }

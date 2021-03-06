@@ -35,7 +35,7 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        boolean on = user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(md -> md.asBoolean()).orElse(addon.getSettings().isShowByDefault());
+        boolean on = user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault());
         if (on) {
             user.sendMessage("border.toggle.border-off");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(false));

@@ -50,12 +50,16 @@
         <powermock.version>1.7.4</powermock.version>
         <!-- More visible way how to change dependency versions -->
         <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
-        <bentobox.version>1.15.4</bentobox.version>
+        <bentobox.version>1.16.0-SNAPSHOT</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>2.1.0</build.version>
+        <build.version>3.0.0</build.version>
         <build.number>-LOCAL</build.number>
+        <!-- Sonar Cloud -->
+        <sonar.projectKey>BentoBoxWorld_Border</sonar.projectKey>
+        <sonar.organization>bentobox-world</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <profiles>
@@ -149,6 +153,11 @@
             <artifactId>bentobox</artifactId>
             <version>${bentobox.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yannicklamprecht.WorldBorderAPI</groupId>
+            <artifactId>API</artifactId>
+            <version>1.165.0</version>
         </dependency>
     </dependencies>
 

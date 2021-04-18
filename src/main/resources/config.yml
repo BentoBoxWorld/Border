@@ -8,10 +8,14 @@ disabled-gamemodes: []
 # Use vanilla world border. Requires WorldBorderAPI plugin.
 # Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases
 use-wbapi: true
+#
+# Teleport players back inside the border if they somehow get outside.
+# This will teleport players back inside if they toggle the border with a command.
+return-teleport: true
 # 
 # Use barrier blocks. If false, the border is indicated by particles only.
 # Only applicable if vanilla world border is not used
-use-barrier-blocks: true
+use-barrier-blocks: false
 # 
 # Default border behavior
 show-by-default: true

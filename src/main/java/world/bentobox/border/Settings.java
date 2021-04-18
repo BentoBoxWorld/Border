@@ -11,6 +11,7 @@ import java.util.Set;
 @StoreAt(filename = "config.yml", path = "addons/Border")
 public class Settings implements ConfigObject {
 
+    @ConfigComment("Border Configuration file by tastybento")
     @ConfigComment("")
     @ConfigComment("This list stores GameModes in which Border addon should not work.")
     @ConfigComment("To disable addon it is necessary to write its name in new line that starts with -. Example:")
@@ -24,6 +25,12 @@ public class Settings implements ConfigObject {
     @ConfigComment("Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases")
     @ConfigEntry(path = "use-wbapi")
     private boolean useWbapi = false;
+
+    @ConfigComment("")
+    @ConfigComment("Teleport players back inside the border if they somehow get outside.")
+    @ConfigComment("This will teleport players back inside if they toggle the border with a command.")
+    @ConfigEntry(path = "return-teleport")
+    private boolean returnTeleport = true;
 
     @ConfigComment("")
     @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
@@ -111,5 +118,19 @@ public class Settings implements ConfigObject {
      */
     public void setUseWbapi(boolean useWbapi) {
         this.useWbapi = useWbapi;
+    }
+
+    /**
+     * @return the returnTeleport
+     */
+    public boolean isReturnTeleport() {
+        return returnTeleport;
+    }
+
+    /**
+     * @param returnTeleport the returnTeleport to set
+     */
+    public void setReturnTeleport(boolean returnTeleport) {
+        this.returnTeleport = returnTeleport;
     }
 }

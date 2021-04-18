@@ -71,12 +71,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
-        if (addon.getSettings().isUseWbapi()) {
-            return;
-        }
         Player p = e.getPlayer();
         Location from = e.getFrom();
-        if (!outsideCheck(e.getPlayer(), from, e.getTo())) {
+        if (!addon.getSettings().isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
             return;
         }
         // Move the player back inside the border
@@ -101,9 +98,16 @@ public class PlayerListener implements Listener {
 
     }
 
+    /**
+     * Check if the player is outside the island protection zone that they are supposed to be in.
+     * @param player - player moving
+     * @param from - from location
+     * @param to - to location
+     * @return true if outside the island protection zone
+     */
     private boolean outsideCheck(Player player, Location from, Location to) {
         User user = User.getInstance(player);
-        // Only process if there is a change in X or Z coords
+
         if ((from.getWorld() != null && from.getWorld().equals(to.getWorld())
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ)))
                 || !addon.getSettings().isUseBarrierBlocks()

@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -85,17 +87,28 @@ public class PlayerListener implements Listener {
         }
         // Backtrack
         addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
-            Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
+            Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
                     .multiply(new Vector(1,0,1));
             RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
             if (r != null) {
                 inTeleport.add(p.getUniqueId());
-                Util.teleportAsync(p, r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch()))
-                .thenRun(() -> inTeleport.remove(p.getUniqueId()));
+                Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+                if (!addon.getIslands().isSafeLocation(targetPos)) {
+                    switch (targetPos.getWorld().getEnvironment()) {
+                    case NETHER:
+                        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
+                        break;
+                    case THE_END:
+                        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.END_STONE);
+                        break;
+                    default:
+                        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.STONE);
+                        break;
+                    }
+                }
+                Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
         });
-
-
     }
 
     /**
@@ -110,7 +123,6 @@ public class PlayerListener implements Listener {
 
         if ((from.getWorld() != null && from.getWorld().equals(to.getWorld())
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ)))
-                || !addon.getSettings().isUseBarrierBlocks()
                 || !addon.inGameWorld(player.getWorld())
                 || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getCenter())).isPresent()
                 || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {

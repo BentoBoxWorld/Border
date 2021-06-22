@@ -47,7 +47,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>16</java.version>
-        <powermock.version>1.7.4</powermock.version>
+        <powermock.version>2.0.9</powermock.version>
         <!-- More visible way how to change dependency versions -->
         <spigot.version>1.17-R0.1-SNAPSHOT</spigot.version>
         <bentobox.version>1.17.0-SNAPSHOT</bentobox.version>
@@ -62,12 +62,12 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
+    <!-- Profiles will allow to automatically change build version. -->
     <profiles>
-        <!-- Build profile is activated by BUILD_NUMBER variable. It replaces 
-            0 with correct build number. -->
-        <!-- This profile will be used only if BUILD_NUMBER environment variable 
-            exists. -->
         <profile>
+            <!-- ci profile is activated if exist environment variable BUILD_NUMBER. -->
+            <!-- It replaces ${build.number} that is currently '-LOCAL' with 
+                correct build number from JENKINS machine. -->
             <id>ci</id>
             <activation>
                 <property>
@@ -77,15 +77,17 @@
             <properties>
                 <!-- Override only if necessary -->
                 <build.number>-b${env.BUILD_NUMBER}</build.number>
-                <!-- GIT_BRANCH -->
             </properties>
         </profile>
-        <!-- master profile is activated by GIT_BRANCH variable. It removes 
-            '-SNAPSHOT' at the end of -->
-        <!-- ${build.version} -->
-        <!-- This profile will be used only if environment variable GIT_BRANCH 
-            is origin/master. -->
         <profile>
+            <!-- Master profile is activated if exist environment variable 
+                GIT_BRANCH and its value is origin/master. -->
+            <!-- It will replace 'revision' with '${build.version}' so it 
+                removes '-SNAPSHOT' string at the end. -->
+            <!-- Also, as this is release build, build number can be set 
+                to empty string. -->
+            <!-- This profile will be used only if exist environment variable 
+                GIT_BRANCH with value origin/master. -->
             <id>master</id>
             <activation>
                 <property>
@@ -96,7 +98,7 @@
             <properties>
                 <!-- Override only if necessary -->
                 <revision>${build.version}</revision>
-                <!-- Empties build.number value -->
+                <!-- Empties build number variable. -->
                 <build.number></build.number>
             </properties>
         </profile>
@@ -104,14 +106,14 @@
             <id>sonar</id>
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.organization>bentobox-world</sonar.organization>
+                <sonar.organization>tastybento-github</sonar.organization>
             </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>3.6.0.1398</version>
+                        <version>3.4.1.1168</version>
                         <executions>
                             <execution>
                                 <phase>verify</phase>
@@ -132,6 +134,10 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
         <repository>
+            <id>codemc</id>
+            <url>https://repo.codemc.org/repository/maven-snapshots/</url>
+        </repository>
+        <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
@@ -142,11 +148,31 @@
     </repositories>
 
     <dependencies>
+        <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Mockito (Unit testing) -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.11.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>world.bentobox</groupId>
@@ -161,7 +187,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <!-- By default ${revision} is ${build.version}-SNAPSHOT -->
         <!-- If GIT_BRANCH variable is set to origin/master, then it will 
@@ -174,6 +199,7 @@
         <finalName>${project.name}-${revision}${build.number}</finalName>
 
         <defaultGoal>clean package</defaultGoal>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -183,17 +209,15 @@
                 <directory>src/main/resources/locales</directory>
                 <targetPath>./locales</targetPath>
                 <filtering>false</filtering>
+                <includes>
+                    <include>*.yml</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
                 <version>3.1.0</version>
             </plugin>
             <plugin>

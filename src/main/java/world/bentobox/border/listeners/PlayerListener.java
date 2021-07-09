@@ -1,6 +1,7 @@
 package world.bentobox.border.listeners;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -119,7 +120,7 @@ public class PlayerListener implements Listener {
      * @return true if outside the island protection zone
      */
     private boolean outsideCheck(Player player, Location from, Location to) {
-        User user = User.getInstance(player);
+        User user = Objects.requireNonNull(User.getInstance(player));
 
         if ((from.getWorld() != null && from.getWorld().equals(to.getWorld())
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ)))

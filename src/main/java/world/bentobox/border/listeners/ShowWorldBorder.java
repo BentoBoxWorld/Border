@@ -1,5 +1,7 @@
 package world.bentobox.border.listeners;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -40,7 +42,7 @@ public class ShowWorldBorder implements BorderShower {
     public void showBorder(Player player, Island island) {
         worldBorderApi.resetWorldBorderToGlobal(player);
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode())
-                || !User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
+                || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
         worldBorderApi.setBorder(player, island.getProtectionRange() * 2D, island.getProtectionCenter());

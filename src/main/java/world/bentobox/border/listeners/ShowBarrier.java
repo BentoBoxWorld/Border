@@ -3,6 +3,7 @@ package world.bentobox.border.listeners;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -56,7 +57,7 @@ public class ShowBarrier implements BorderShower {
     public void showBorder(Player player, Island island) {
 
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode())
-                || !User.getInstance(player).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
+                || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
 

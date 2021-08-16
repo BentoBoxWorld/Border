@@ -125,10 +125,12 @@ public class ShowBarrier implements BorderShower {
         }
         Location l = new Location(player.getWorld(), i, j, k);
         Util.getChunkAtAsync(l).thenAccept(c -> {
-            if (j < 0 || j > player.getWorld().getMaxHeight()) {
-                User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
-            } else {
-                User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
+            if (addon.getSettings().isShowParticles()) {
+                if (j < 0 || j > player.getWorld().getMaxHeight()) {
+                    User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
+                } else {
+                    User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
+                }
             }
             if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
                 player.sendBlockChange(l, BLOCK);

@@ -22,3 +22,5 @@ show-by-default: true
 # 
 # Show max-protection range border. This is a visual border only and not a barrier.
 show-max-border: true
+# Show particles. If WABI isn't used, then enable/disable the particles
+show-particles: true

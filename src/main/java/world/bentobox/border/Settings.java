@@ -48,6 +48,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "show-max-border")
     private boolean showMaxBorder= true;
 
+    @ConfigComment("")
+    @ConfigComment("Show particles. If WBAPI isn't used, then enable/disable the particles")
+    @ConfigEntry(path = "show-particles")
+    private boolean showParticles = true;
+
     /**
      * @param disabledGameModes new disabledGameModes value.
      */
@@ -132,5 +137,19 @@ public class Settings implements ConfigObject {
      */
     public void setReturnTeleport(boolean returnTeleport) {
         this.returnTeleport = returnTeleport;
+    }
+
+    /**
+     * @return the showParticles
+     */
+    public boolean isShowParticles() {
+        return showParticles;
+    }
+
+    /**
+     * @param showParticles the showParticles to set
+     */
+    public void setShowParticles(boolean showParticles) {
+        this.showParticles = showParticles;
     }
 }

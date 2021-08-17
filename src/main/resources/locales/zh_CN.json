@@ -1,0 +1,5 @@
+border:
+  toggle:
+    description: 打开或关闭边界
+    border-on: '&a 已打开边界.'
+    border-off: '&a 已关闭边界.'

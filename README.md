@@ -39,7 +39,7 @@ use-wbapi: true
 ```
 
 ### Use barrier blocks.
-This only applies if you are not using WBAPI.
+Only applies if WBAPI isn't used.
 
 If true, the the border will use barrier blocks to prevent most players from exiting the border. If players do manage to exit it, they will get teleported back inside it. 
 
@@ -60,7 +60,7 @@ show-by-default: true
 
 ### Show max-protection range border.
 
-This only applies if you are not using WBAPI.
+Only applies if WBAPI isn't used.
 
 This is a visual border only and not a barrier. It displays the 🚫 particle. This is useful for game modes like Boxed where the player's protection area can move around.
 

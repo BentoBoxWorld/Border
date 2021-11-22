@@ -51,7 +51,7 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("")
     @ConfigComment("Only applies if WBAPI isn't used.")
-    @ConfigComment("Enable/disable the particles")
+    @ConfigComment("Enables/disables all types of wall particles shown by the addon")
     @ConfigEntry(path = "show-particles")
     private boolean showParticles = true;
 

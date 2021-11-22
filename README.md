@@ -71,7 +71,7 @@ show-max-border: true
 ### Show particles
 Only applies if WBAPI isn't used.
 
-Enable/disable the particles.
+Enables/disables all types of wall particles shown by the addon. 
 
 ```
 show-particles: true

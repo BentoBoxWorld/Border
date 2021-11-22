@@ -68,6 +68,15 @@ This is a visual border only and not a barrier. It displays the 🚫 particle. T
 show-max-border: true
 ```
 
+### Show particles
+Only applies if WBAPI isn't used.
+
+Enable/disable the particles.
+
+```
+show-particles: true
+```
+
 ## Commands
 
 There is one command that turns the border on or off. Since Version 3.0.0 it requires a permission:

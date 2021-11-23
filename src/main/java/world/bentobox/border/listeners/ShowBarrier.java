@@ -29,7 +29,7 @@ import world.bentobox.border.BorderAddon;
  * @author tastybento
  *
  */
-public class ShowBarrier implements BorderShower {
+public class ShowBarrier implements Border {
 
     private final BorderAddon addon;
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();

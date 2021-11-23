@@ -7,7 +7,7 @@ import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.BorderAddon;
-import world.bentobox.border.listeners.BorderShower;
+import world.bentobox.border.listeners.Border;
 
 public class IslandBorderCommand extends CompositeCommand {
 
@@ -35,14 +35,14 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        boolean on = user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault());
+        boolean on = user.getMetaData(Border.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault());
         if (on) {
             user.sendMessage("border.toggle.border-off");
-            user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(false));
+            user.putMetaData(Border.BORDER_STATE_META_DATA, new MetaDataValue(false));
             addon.getPlayerBorder().getBorder().disable(user);
         } else {
             user.sendMessage("border.toggle.border-on");
-            user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
+            user.putMetaData(Border.BORDER_STATE_META_DATA, new MetaDataValue(true));
             addon.getPlayerBorder().getBorder().enable(user.getPlayer(), island);
         }
         return true;

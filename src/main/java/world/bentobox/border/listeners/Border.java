@@ -6,11 +6,11 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * A border shower class
+ * Border manager
  * @author tastybento
  *
  */
-public interface BorderShower {
+public interface Border {
     public static final String BORDER_STATE_META_DATA = "Border_state";
 
     /**

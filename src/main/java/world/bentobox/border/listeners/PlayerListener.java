@@ -37,7 +37,7 @@ public class PlayerListener implements Listener {
     private static final Vector XZ = new Vector(1,0,1);
     private final BorderAddon addon;
     private Set<UUID> inTeleport;
-    private final BorderShower border;
+    private final Border border;
 
     public PlayerListener(BorderAddon addon) {
         this.addon = addon;
@@ -126,7 +126,7 @@ public class PlayerListener implements Listener {
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ)))
                 || !addon.inGameWorld(player.getWorld())
                 || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getCenter())).isPresent()
-                || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
+                || !user.getMetaData(Border.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return false;
         }
         return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();

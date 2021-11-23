@@ -19,7 +19,7 @@ import world.bentobox.border.BorderAddon;
  * @author tastybento
  *
  */
-public class ShowWorldBorder implements BorderShower {
+public class ShowWorldBorder implements Border {
 
     private final BorderAddon addon;
     private final WorldBorderApi worldBorderApi;

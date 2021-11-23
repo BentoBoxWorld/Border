@@ -19,7 +19,7 @@ import world.bentobox.border.BorderAddon;
 public class PlayerBorder implements Listener {
 
     private final BorderAddon addon;
-    private final BorderShower border;
+    private final Border border;
 
     /**
      * @param addon
@@ -33,7 +33,7 @@ public class PlayerBorder implements Listener {
     /**
      * @return the barrier
      */
-    public BorderShower getBorder() {
+    public Border getBorder() {
         return border;
     }
 

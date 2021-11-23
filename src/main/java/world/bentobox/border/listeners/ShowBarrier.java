@@ -158,7 +158,7 @@ public class ShowBarrier implements BorderShower {
      * @param user - user
      */
     @Override
-    public void hideBorder(User user) {
+    public void disable(User user) {
         if (barrierBlocks.containsKey(user.getUniqueId())) {
             barrierBlocks.get(user.getUniqueId()).stream()
             .filter(v -> v.l.getWorld().equals(user.getWorld()))

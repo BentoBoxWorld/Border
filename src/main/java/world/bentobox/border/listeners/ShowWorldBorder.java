@@ -49,7 +49,7 @@ public class ShowWorldBorder implements BorderShower {
     }
 
     @Override
-    public void hideBorder(User user) {
+    public void disable(User user) {
         worldBorderApi.resetWorldBorderToGlobal(user.getPlayer());
     }
 

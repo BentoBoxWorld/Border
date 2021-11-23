@@ -59,7 +59,7 @@ public class PlayerBorder implements Listener {
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
         // Hide and show again
         e.getIsland().getPlayersOnIsland().forEach(player -> {
-            barrier.hideBorder(User.getInstance(player));
+            barrier.disable(User.getInstance(player));
             barrier.enable(player, e.getIsland());
         });
     }

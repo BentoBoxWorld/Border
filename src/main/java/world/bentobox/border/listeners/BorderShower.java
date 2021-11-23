@@ -21,10 +21,10 @@ public interface BorderShower {
     public void enable(Player player, Island island);
 
     /**
-     * Hide the barrier
+     * Disables the border
      * @param user - user
      */
-    public void hideBorder(User user);
+    public void disable(User user);
 
     /**
      * Removes any cache

@@ -15,16 +15,16 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.BorderAddon;
 
 /**
- * Show a border using WorldBorderAPI
+ * A border using WorldBorderAPI
  * @author tastybento
  *
  */
-public class ShowWorldBorder implements Border {
+public class WorldBorderApiBorder implements Border {
 
     private final BorderAddon addon;
     private final WorldBorderApi worldBorderApi;
 
-    public ShowWorldBorder(BorderAddon addon) {
+    public WorldBorderApiBorder(BorderAddon addon) {
         this.addon = addon;
         RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider = Bukkit.getServer().getServicesManager().getRegistration(WorldBorderApi.class);
 

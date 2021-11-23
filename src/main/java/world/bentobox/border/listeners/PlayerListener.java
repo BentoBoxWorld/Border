@@ -37,39 +37,39 @@ public class PlayerListener implements Listener {
     private static final Vector XZ = new Vector(1,0,1);
     private final Border addon;
     private Set<UUID> inTeleport;
-    private final BorderShower show;
+    private final BorderShower border;
 
     public PlayerListener(Border addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
-        this.show = addon.getPlayerBorder().getBorder();
+        this.border = addon.getPlayerBorder().getBorder();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
-        show.clearUser(User.getInstance(e.getPlayer()));
+        border.clearUser(User.getInstance(e.getPlayer()));
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        show.showBorder(e.getPlayer(), i)));
+        border.showBorder(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent e) {
-        show.clearUser(User.getInstance(e.getPlayer()));
+        border.clearUser(User.getInstance(e.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        show.clearUser(User.getInstance(e.getPlayer()));
+        border.clearUser(User.getInstance(e.getPlayer()));
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        show.showBorder(e.getPlayer(), i)));
+        border.showBorder(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        show.clearUser(User.getInstance(e.getPlayer()));
+        border.clearUser(User.getInstance(e.getPlayer()));
         // Check if border is on and if from is inside island and to location is outside of
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        show.showBorder(e.getPlayer(), i)));
+        border.showBorder(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

@@ -27,7 +27,7 @@ import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.border.Border;
+import world.bentobox.border.BorderAddon;
 
 /**
  * @author tastybento
@@ -35,11 +35,11 @@ import world.bentobox.border.Border;
 public class PlayerListener implements Listener {
 
     private static final Vector XZ = new Vector(1,0,1);
-    private final Border addon;
+    private final BorderAddon addon;
     private Set<UUID> inTeleport;
     private final BorderShower border;
 
-    public PlayerListener(Border addon) {
+    public PlayerListener(BorderAddon addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
         this.border = addon.getPlayerBorder().getBorder();

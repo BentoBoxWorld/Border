@@ -9,7 +9,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.border.Border;
+import world.bentobox.border.BorderAddon;
 
 /**
  * Displays a border to a player
@@ -18,13 +18,13 @@ import world.bentobox.border.Border;
  */
 public class PlayerBorder implements Listener {
 
-    private final Border addon;
+    private final BorderAddon addon;
     private final BorderShower border;
 
     /**
      * @param addon
      */
-    public PlayerBorder(Border addon) {
+    public PlayerBorder(BorderAddon addon) {
         super();
         this.addon = addon;
         this.border = addon.getSettings().isUseWbapi() ? new ShowWorldBorder(addon) : new ShowBarrier(addon);

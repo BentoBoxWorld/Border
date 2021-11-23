@@ -16,7 +16,7 @@ import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.PlayerBorder;
 import world.bentobox.border.listeners.PlayerListener;
 
-public final class Border extends Addon {
+public final class BorderAddon extends Addon {
 
     private PlayerBorder playerBorder;
 

@@ -1,5 +1,5 @@
 name: Border
-main: world.bentobox.border.Border
+main: world.bentobox.border.BorderAddon
 version: ${version}${build.number}
 api-version: 1.17
 icon: BEDROCK

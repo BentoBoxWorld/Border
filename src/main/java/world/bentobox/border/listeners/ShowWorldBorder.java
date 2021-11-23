@@ -12,7 +12,7 @@ import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.border.Border;
+import world.bentobox.border.BorderAddon;
 
 /**
  * Show a border using WorldBorderAPI
@@ -21,10 +21,10 @@ import world.bentobox.border.Border;
  */
 public class ShowWorldBorder implements BorderShower {
 
-    private final Border addon;
+    private final BorderAddon addon;
     private final WorldBorderApi worldBorderApi;
 
-    public ShowWorldBorder(Border addon) {
+    public ShowWorldBorder(BorderAddon addon) {
         this.addon = addon;
         RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider = Bukkit.getServer().getServicesManager().getRegistration(WorldBorderApi.class);
 

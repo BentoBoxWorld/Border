@@ -20,7 +20,7 @@ import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.border.Border;
+import world.bentobox.border.BorderAddon;
 
 /**
  *
@@ -31,7 +31,7 @@ import world.bentobox.border.Border;
  */
 public class ShowBarrier implements BorderShower {
 
-    private final Border addon;
+    private final BorderAddon addon;
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle MAX_PARTICLE = Particle.BARRIER;
@@ -44,7 +44,7 @@ public class ShowBarrier implements BorderShower {
     /**
      * @param addon - addon
      */
-    public ShowBarrier(Border addon) {
+    public ShowBarrier(BorderAddon addon) {
         this.addon = addon;
     }
 

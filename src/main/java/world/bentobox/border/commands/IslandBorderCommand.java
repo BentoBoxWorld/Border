@@ -6,15 +6,15 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.border.Border;
+import world.bentobox.border.BorderAddon;
 import world.bentobox.border.listeners.BorderShower;
 
 public class IslandBorderCommand extends CompositeCommand {
 
-    private Border addon;
+    private BorderAddon addon;
     private Island island;
 
-    public IslandBorderCommand(Border addon, CompositeCommand parent, String label) {
+    public IslandBorderCommand(BorderAddon addon, CompositeCommand parent, String label) {
         super(addon, parent, label);
         this.addon = addon;
     }

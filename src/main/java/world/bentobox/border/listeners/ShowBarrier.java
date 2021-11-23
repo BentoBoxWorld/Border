@@ -54,7 +54,7 @@ public class ShowBarrier implements BorderShower {
      * @param island - island
      */
     @Override
-    public void showBorder(Player player, Island island) {
+    public void enable(Player player, Island island) {
 
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode())
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {

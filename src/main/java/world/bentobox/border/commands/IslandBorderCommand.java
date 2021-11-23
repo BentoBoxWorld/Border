@@ -43,7 +43,7 @@ public class IslandBorderCommand extends CompositeCommand {
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
-            addon.getPlayerBorder().getBorder().showBorder(user.getPlayer(), island);
+            addon.getPlayerBorder().getBorder().enable(user.getPlayer(), island);
         }
         return true;
     }

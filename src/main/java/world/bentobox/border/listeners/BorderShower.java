@@ -14,11 +14,11 @@ public interface BorderShower {
     public static final String BORDER_STATE_META_DATA = "Border_state";
 
     /**
-     * Show the barrier to the player on an island
+     * Enables the border to the player on an island
      * @param player - player to show
      * @param island - island
      */
-    public void showBorder(Player player, Island island);
+    public void enable(Player player, Island island);
 
     /**
      * Hide the barrier

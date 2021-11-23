@@ -49,7 +49,7 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         border.clearUser(User.getInstance(e.getPlayer()));
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        border.showBorder(e.getPlayer(), i)));
+        border.enable(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         border.clearUser(User.getInstance(e.getPlayer()));
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        border.showBorder(e.getPlayer(), i)));
+        border.enable(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -69,7 +69,7 @@ public class PlayerListener implements Listener {
         border.clearUser(User.getInstance(e.getPlayer()));
         // Check if border is on and if from is inside island and to location is outside of
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        border.showBorder(e.getPlayer(), i)));
+        border.enable(e.getPlayer(), i)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

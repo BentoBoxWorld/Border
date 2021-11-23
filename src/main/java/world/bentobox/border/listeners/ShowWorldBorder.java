@@ -39,7 +39,7 @@ public class ShowWorldBorder implements BorderShower {
     }
 
     @Override
-    public void showBorder(Player player, Island island) {
+    public void enable(Player player, Island island) {
         worldBorderApi.resetWorldBorderToGlobal(player);
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode())
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {

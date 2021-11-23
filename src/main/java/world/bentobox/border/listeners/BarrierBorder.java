@@ -24,12 +24,12 @@ import world.bentobox.border.BorderAddon;
 
 /**
  *
- * Shows a border using barrier blocks and/or particles
+ * A border of barrier blocks and/or particles
  *
  * @author tastybento
  *
  */
-public class ShowBarrier implements Border {
+public class BarrierBorder implements Border {
 
     private final BorderAddon addon;
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
@@ -44,18 +44,12 @@ public class ShowBarrier implements Border {
     /**
      * @param addon - addon
      */
-    public ShowBarrier(BorderAddon addon) {
+    public BarrierBorder(BorderAddon addon) {
         this.addon = addon;
     }
 
-    /**
-     * Show the barrier to the player on an island
-     * @param player - player to show
-     * @param island - island
-     */
     @Override
     public void enable(Player player, Island island) {
-
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode())
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
@@ -153,10 +147,6 @@ public class ShowBarrier implements Border {
         });
     }
 
-    /**
-     * Hide the barrier
-     * @param user - user
-     */
     @Override
     public void disable(User user) {
         if (barrierBlocks.containsKey(user.getUniqueId())) {
@@ -171,7 +161,7 @@ public class ShowBarrier implements Border {
     }
 
     /**
-     * Removes any cached barrier blocks
+     * Removes cached barrier blocks for the user
      * @param user - user
      */
     @Override

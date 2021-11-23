@@ -27,7 +27,7 @@ public class PlayerBorder implements Listener {
     public PlayerBorder(BorderAddon addon) {
         super();
         this.addon = addon;
-        this.border = addon.getSettings().isUseWbapi() ? new ShowWorldBorder(addon) : new ShowBarrier(addon);
+        this.border = addon.getSettings().isUseWbapi() ? new ShowWorldBorder(addon) : new BarrierBorder(addon);
     }
 
     /**

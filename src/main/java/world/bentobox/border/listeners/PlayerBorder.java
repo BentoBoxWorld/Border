@@ -19,7 +19,7 @@ import world.bentobox.border.Border;
 public class PlayerBorder implements Listener {
 
     private final Border addon;
-    private final BorderShower barrier;
+    private final BorderShower border;
 
     /**
      * @param addon
@@ -27,14 +27,14 @@ public class PlayerBorder implements Listener {
     public PlayerBorder(Border addon) {
         super();
         this.addon = addon;
-        this.barrier = addon.getSettings().isUseWbapi() ? new ShowWorldBorder(addon) : new ShowBarrier(addon);
+        this.border = addon.getSettings().isUseWbapi() ? new ShowWorldBorder(addon) : new ShowBarrier(addon);
     }
 
     /**
      * @return the barrier
      */
     public BorderShower getBorder() {
-        return barrier;
+        return border;
     }
 
 
@@ -42,7 +42,7 @@ public class PlayerBorder implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         // Remove head movement
         if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
-            addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> barrier.enable(e.getPlayer(), i));
+            addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> border.enable(e.getPlayer(), i));
         }
     }
 
@@ -51,7 +51,7 @@ public class PlayerBorder implements Listener {
         // Remove head movement
         if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p ->
-            addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> barrier.enable(p, i)));
+            addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> border.enable(p, i)));
         }
     }
 
@@ -59,8 +59,8 @@ public class PlayerBorder implements Listener {
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
         // Hide and show again
         e.getIsland().getPlayersOnIsland().forEach(player -> {
-            barrier.disable(User.getInstance(player));
-            barrier.enable(player, e.getIsland());
+            border.disable(User.getInstance(player));
+            border.enable(player, e.getIsland());
         });
     }
 

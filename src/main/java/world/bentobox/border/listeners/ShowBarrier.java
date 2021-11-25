@@ -179,6 +179,11 @@ public class ShowBarrier implements BorderShower {
         barrierBlocks.remove(user.getUniqueId());
     }
 
+    @Override
+    public void refreshView(User user, Island island) {
+        this.showBorder(user.getPlayer(), island);
+    }
+
     private class BarrierBlock {
         Location l;
         BlockData oldBlockData;

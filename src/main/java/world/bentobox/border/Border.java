@@ -1,19 +1,21 @@
 package world.bentobox.border;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.eclipse.jdt.annotation.NonNull;
-
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.commands.IslandBorderCommand;
-import world.bentobox.border.listeners.*;
+import world.bentobox.border.listeners.BorderShower;
+import world.bentobox.border.listeners.PlayerListener;
+import world.bentobox.border.listeners.ShowBarrier;
+import world.bentobox.border.listeners.ShowWorldBorder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Border extends Addon {
 
@@ -48,7 +50,6 @@ public final class Border extends Addon {
             }
         }
         gameModes.clear();
-        borderShower = getSettings().isUseWbapi() ? new ShowWorldBorder(this) : new ShowBarrier(this);
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
@@ -63,6 +64,7 @@ public final class Border extends Addon {
         });
 
         if (hooked) {
+            borderShower = createBorder();
             registerListener(new PlayerListener(this));
         }
     }
@@ -70,6 +72,14 @@ public final class Border extends Addon {
     @Override
     public void onDisable() {
         // Nothing to do here
+    }
+
+    private BorderShower createBorder() {
+        BorderShower customBorder = new ShowBarrier(this);
+        BorderShower wbapiBorder = getSettings().isUseWbapi()
+                ? new ShowWorldBorder(this)
+                : customBorder;
+        return new PerPlayerBorderProxy(customBorder, wbapiBorder);
     }
 
     public BorderShower getBorderShower() {

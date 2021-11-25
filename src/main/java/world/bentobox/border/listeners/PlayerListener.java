@@ -159,7 +159,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent e) {
         // Remove head movement
-        if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
+        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> show.showBorder(e.getPlayer(), i));
         }
     }
@@ -167,7 +167,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
-        if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
+        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p ->
                     addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> show.showBorder(p, i)));
         }

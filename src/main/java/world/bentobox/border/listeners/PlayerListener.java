@@ -20,9 +20,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -152,5 +154,31 @@ public class PlayerListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerMove(PlayerMoveEvent e) {
+        // Remove head movement
+        if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
+            addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> show.showBorder(e.getPlayer(), i));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onVehicleMove(VehicleMoveEvent e) {
+        // Remove head movement
+        if (!addon.getSettings().isUseWbapi() && !e.getFrom().toVector().equals(e.getTo().toVector())) {
+            e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p ->
+                    addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> show.showBorder(p, i)));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
+        // Hide and show again
+        e.getIsland().getPlayersOnIsland().forEach(player -> {
+            show.hideBorder(User.getInstance(player));
+            show.showBorder(player, e.getIsland());
+        });
     }
 }

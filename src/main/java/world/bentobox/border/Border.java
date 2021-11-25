@@ -13,12 +13,11 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.commands.IslandBorderCommand;
-import world.bentobox.border.listeners.PlayerBorder;
-import world.bentobox.border.listeners.PlayerListener;
+import world.bentobox.border.listeners.*;
 
 public final class Border extends Addon {
 
-    private PlayerBorder playerBorder;
+    private BorderShower borderShower;
 
     private Settings settings;
 
@@ -49,7 +48,7 @@ public final class Border extends Addon {
             }
         }
         gameModes.clear();
-        playerBorder = new PlayerBorder(this);
+        borderShower = getSettings().isUseWbapi() ? new ShowWorldBorder(this) : new ShowBarrier(this);
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
@@ -64,9 +63,7 @@ public final class Border extends Addon {
         });
 
         if (hooked) {
-            // Register listeners
             registerListener(new PlayerListener(this));
-            registerListener(playerBorder);
         }
     }
 
@@ -75,11 +72,8 @@ public final class Border extends Addon {
         // Nothing to do here
     }
 
-    /**
-     * @return the playerBorder
-     */
-    public PlayerBorder getPlayerBorder() {
-        return playerBorder;
+    public BorderShower getBorderShower() {
+        return borderShower;
     }
 
     /**

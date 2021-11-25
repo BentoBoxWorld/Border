@@ -44,7 +44,7 @@ public class PlayerListener implements Listener {
     public PlayerListener(Border addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
-        this.show = addon.getPlayerBorder().getBorder();
+        this.show = addon.getBorderShower();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

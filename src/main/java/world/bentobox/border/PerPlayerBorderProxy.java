@@ -8,9 +8,9 @@ import world.bentobox.border.listeners.BorderShower;
 
 public final class PerPlayerBorderProxy implements BorderShower {
 
-    private static final String BORDER_BORDERTYPE_META_DATA = "Border_bordertype";
-    private static final byte BORDER_ID_CUSTOM = 1;
-    private static final byte BORDER_ID_WBAPI = 2;
+    public static final String BORDER_BORDERTYPE_META_DATA = "Border_bordertype";
+    public static final byte BORDER_ID_CUSTOM = 1;
+    public static final byte BORDER_ID_WBAPI = 2;
 
     private final BorderShower customBorder;
     private final BorderShower wbapiBorder;

@@ -3,8 +3,8 @@ package world.bentobox.border;
 import java.util.Optional;
 
 public enum BorderType {
-    Barrier((byte)1, "barrier"),
-    Vanilla((byte)2, "vanilla");
+    Barrier((byte) 1, "barrier"),
+    Vanilla((byte) 2, "vanilla");
     // Virtual((byte)3, "virtual"); // not supported yet
 
     private final byte id;

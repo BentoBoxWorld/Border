@@ -6,14 +6,18 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.listeners.BorderShower;
 
+import java.util.Optional;
+
 public final class PerPlayerBorderProxy implements BorderShower {
 
     public static final String BORDER_BORDERTYPE_META_DATA = "Border_bordertype";
 
+    private final Border addon;
     private final BorderShower customBorder;
     private final BorderShower wbapiBorder;
 
-    public PerPlayerBorderProxy(BorderShower customBorder, BorderShower wbapiBorder) {
+    public PerPlayerBorderProxy(Border addon, BorderShower customBorder, BorderShower wbapiBorder) {
+        this.addon = addon;
         this.customBorder = customBorder;
         this.wbapiBorder = wbapiBorder;
     }
@@ -44,22 +48,30 @@ public final class PerPlayerBorderProxy implements BorderShower {
     }
 
     private BorderShower getBorder(User user) {
-        BorderType borderType = getBorderSettingOrDefault(user);
+        BorderType borderType = getBorderType(user);
         return switch (borderType) {
             case Barrier -> customBorder;
             case Vanilla -> wbapiBorder;
         };
     }
 
-    private BorderType getBorderSettingOrDefault(User user) {
-        Byte typeId = user.getMetaData(BORDER_BORDERTYPE_META_DATA)
-                .map(MetaDataValue::asByte)
-                .orElse(getDefaultBorderTypeId());
+    private BorderType getBorderType(User user) {
+        Optional<Byte> userTypeId = user.getMetaData(BORDER_BORDERTYPE_META_DATA)
+                .map(MetaDataValue::asByte);
 
-        return BorderType.fromId(typeId).get();
+        if (userTypeId.isEmpty()) {
+            return getDefaultBorderType();
+        }
+
+        Optional<BorderType> borderType = BorderType.fromId(userTypeId.get());
+        if (borderType.isEmpty() || !addon.getAvailableBorderTypesView().contains(borderType.get())) {
+            return getDefaultBorderType();
+        }
+
+        return borderType.get();
     }
 
-    private static byte getDefaultBorderTypeId(){
-        return BorderType.Barrier.getId();
+    private static BorderType getDefaultBorderType() {
+        return BorderType.Barrier;
     }
 }

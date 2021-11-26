@@ -53,7 +53,7 @@ public final class BorderTypeCommand extends CompositeCommand {
             return true;
         }
 
-        user.sendMessage("border.toggle.set-type.error-unavailable-type");
+        user.sendMessage("border.set-type.error-unavailable-type");
         return false;
     }
 
@@ -65,7 +65,7 @@ public final class BorderTypeCommand extends CompositeCommand {
         user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, new MetaDataValue(newType));
         addon.getBorderShower().showBorder(user.getPlayer(), island);
 
-        user.sendMessage("border.toggle.set-type.changed",
+        user.sendMessage("border.set-type.changed",
                 "[type]", newBorderType);
     }
 

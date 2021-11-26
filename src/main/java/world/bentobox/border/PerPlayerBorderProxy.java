@@ -9,8 +9,6 @@ import world.bentobox.border.listeners.BorderShower;
 public final class PerPlayerBorderProxy implements BorderShower {
 
     public static final String BORDER_BORDERTYPE_META_DATA = "Border_bordertype";
-    public static final byte BORDER_ID_CUSTOM = 1;
-    public static final byte BORDER_ID_WBAPI = 2;
 
     private final BorderShower customBorder;
     private final BorderShower wbapiBorder;
@@ -46,21 +44,22 @@ public final class PerPlayerBorderProxy implements BorderShower {
     }
 
     private BorderShower getBorder(User user) {
-        byte borderType = getBorderSettingOrDefault(user);
+        BorderType borderType = getBorderSettingOrDefault(user);
         return switch (borderType) {
-            case BORDER_ID_CUSTOM -> customBorder;
-            case BORDER_ID_WBAPI -> wbapiBorder;
-            default -> throw new IllegalStateException("Unexpected value: " + borderType);
+            case Barrier -> customBorder;
+            case Vanilla -> wbapiBorder;
         };
     }
 
-    private byte getBorderSettingOrDefault(User user) {
-        return user.getMetaData(BORDER_BORDERTYPE_META_DATA)
+    private BorderType getBorderSettingOrDefault(User user) {
+        Byte typeId = user.getMetaData(BORDER_BORDERTYPE_META_DATA)
                 .map(MetaDataValue::asByte)
                 .orElse(getDefaultBorderTypeId());
+
+        return BorderType.fromId(typeId).get();
     }
 
     private static byte getDefaultBorderTypeId(){
-        return BORDER_ID_CUSTOM;
+        return BorderType.Barrier.getId();
     }
 }

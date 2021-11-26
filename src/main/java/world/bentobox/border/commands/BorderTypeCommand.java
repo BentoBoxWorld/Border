@@ -5,6 +5,7 @@ import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.Border;
+import world.bentobox.border.BorderType;
 import world.bentobox.border.PerPlayerBorderProxy;
 
 import java.util.Arrays;
@@ -59,11 +60,8 @@ public final class BorderTypeCommand extends CompositeCommand {
     }
 
     private void changeBorderTypeTo(User user, String newBorderType) {
-        byte newType = switch (newBorderType) {
-            case WorldBorderType -> PerPlayerBorderProxy.BORDER_ID_WBAPI;
-            case CustomBorderType -> PerPlayerBorderProxy.BORDER_ID_CUSTOM;
-            default -> throw new IllegalStateException("Unexpected value: " + newBorderType);
-        };
+        BorderType borderType = BorderType.fromCommandLabel(newBorderType).get();
+        byte newType = borderType.getId();
 
         addon.getBorderShower().hideBorder(user);
         user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, new MetaDataValue(newType));

@@ -44,7 +44,7 @@ public final class PerPlayerBorderProxy implements BorderShower {
     @Override
     public void refreshView(User user, Island island) {
         var border = getBorder(user);
-        border.clearUser(user);
+        border.refreshView(user, island);
     }
 
     private BorderShower getBorder(User user) {

@@ -160,7 +160,9 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
-            addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> show.showBorder(e.getPlayer(), i));
+            addon.getIslands()
+                    .getIslandAt(e.getPlayer().getLocation())
+                    .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
         }
     }
 
@@ -168,8 +170,13 @@ public class PlayerListener implements Listener {
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
-            e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p ->
-                    addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> show.showBorder(p, i)));
+            e.getVehicle().getPassengers().stream()
+                    .filter(Player.class::isInstance)
+                    .map(Player.class::cast)
+                    .forEach(p -> addon
+                            .getIslands()
+                            .getIslandAt(p.getLocation())
+                            .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
         }
     }
 

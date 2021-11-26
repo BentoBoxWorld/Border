@@ -19,6 +19,10 @@ public enum BorderType {
         return id;
     }
 
+    public String getCommandLabel() {
+        return commandLabel;
+    }
+
     public static Optional<BorderType> fromCommandLabel(String label) {
         for (var bt : BorderType.values())
             if (bt.commandLabel.equalsIgnoreCase(label))

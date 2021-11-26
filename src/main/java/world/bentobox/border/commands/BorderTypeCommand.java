@@ -8,32 +8,31 @@ import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
 import world.bentobox.border.PerPlayerBorderProxy;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class BorderTypeCommand extends CompositeCommand {
 
     private final Border addon;
     private Island island;
-
-    private static final String WorldBorderType = "wb";
-    private static final String CustomBorderType = "custom";
-
-    private static final List<String> AvailableTypes = Arrays.asList(WorldBorderType, CustomBorderType);
-    // TODO: add wb type only if WB is enabled / only allow to have it set for that
+    private final List<String> availableTypes;
 
     public BorderTypeCommand(Border addon, CompositeCommand parent) {
         super(addon, parent, "type");
         this.addon = addon;
+        this.availableTypes = addon.getAvailableBorderTypesView()
+                .stream()
+                .map(BorderType::getCommandLabel)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void setup() {
-        this.setPermission("border.settype");
-        this.setDescription("border.settype.description");
+        this.setPermission("border.set-type");
+        this.setDescription("border.set-type.description");
         this.setOnlyPlayer(true);
-        // setConfigurableRankCommand(); // should I use this? What is this?
+        // setConfigurableRankCommand(); // What is this? Should I use this? I guess not.
     }
 
     @Override
@@ -49,13 +48,12 @@ public final class BorderTypeCommand extends CompositeCommand {
             return false;
         }
 
-        String newBorderType = args.get(0);
-        if (AvailableTypes.stream().anyMatch(newBorderType::equalsIgnoreCase)) {
-            changeBorderTypeTo(user, newBorderType);
+        if (availableTypes.stream().anyMatch(args.get(0)::equalsIgnoreCase)) {
+            changeBorderTypeTo(user, args.get(0));
             return true;
         }
 
-        // TODO: say unknown border type
+        user.sendMessage("border.toggle.set-type.error-unavailable-type");
         return false;
     }
 
@@ -66,10 +64,13 @@ public final class BorderTypeCommand extends CompositeCommand {
         addon.getBorderShower().hideBorder(user);
         user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, new MetaDataValue(newType));
         addon.getBorderShower().showBorder(user.getPlayer(), island);
+
+        user.sendMessage("border.toggle.set-type.changed",
+                "[type]", newBorderType);
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        return Optional.of(AvailableTypes);
+        return Optional.of(availableTypes);
     }
 }

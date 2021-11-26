@@ -14,8 +14,7 @@ import world.bentobox.border.listeners.PlayerListener;
 import world.bentobox.border.listeners.ShowBarrier;
 import world.bentobox.border.listeners.ShowWorldBorder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class Border extends Addon {
 
@@ -28,6 +27,8 @@ public final class Border extends Addon {
     private Config<Settings> config = new Config<>(this, Settings.class);
 
     private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
+
+    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.Barrier);
 
     @Override
     public void onLoad() {
@@ -48,6 +49,7 @@ public final class Border extends Addon {
                 this.setState(State.DISABLED);
                 return;
             }
+            availableBorderTypes.add(BorderType.Vanilla);
         }
         gameModes.clear();
         // Register commands
@@ -113,5 +115,9 @@ public final class Border extends Addon {
      */
     public boolean inGameWorld(World world) {
         return gameModes.stream().anyMatch(gm -> gm.inWorld(Util.getWorld(world)));
+    }
+
+    public Set<BorderType> getAvailableBorderTypesView() {
+        return Collections.unmodifiableSet(availableBorderTypes);
     }
 }

@@ -80,7 +80,7 @@ public final class Border extends Addon {
         BorderShower customBorder = new ShowBarrier(this);
         BorderShower wbapiBorder = getSettings().isUseWbapi()
                 ? new ShowWorldBorder(this)
-                : customBorder;
+                : null;
         return new PerPlayerBorderProxy(this, customBorder, wbapiBorder);
     }
 

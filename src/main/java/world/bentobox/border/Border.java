@@ -42,7 +42,9 @@ public final class Border extends Addon {
         if (getSettings().isUseWbapi()) {
             Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
             if (plugin == null || !plugin.isEnabled()) {
-                logError("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
+                logError("WorldBorderAPI not found.");
+                logError("Either download it or turn this integration off from configuration by: `use-wbapi: false`");
+                logError("You can download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
                 logError("Disabling addon");
                 this.setState(State.DISABLED);
                 return;

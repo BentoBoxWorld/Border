@@ -25,6 +25,8 @@ public class IslandBorderCommand extends CompositeCommand {
         this.setDescription("border.toggle.description");
         this.setOnlyPlayer(true);
         setConfigurableRankCommand();
+
+        new BorderTypeCommand(this.getAddon(), this);
     }
 
     @Override
@@ -39,11 +41,11 @@ public class IslandBorderCommand extends CompositeCommand {
         if (on) {
             user.sendMessage("border.toggle.border-off");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(false));
-            addon.getPlayerBorder().getBorder().hideBorder(user);
+            addon.getBorderShower().hideBorder(user);
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
-            addon.getPlayerBorder().getBorder().showBorder(user.getPlayer(), island);
+            addon.getBorderShower().showBorder(user.getPlayer(), island);
         }
         return true;
     }

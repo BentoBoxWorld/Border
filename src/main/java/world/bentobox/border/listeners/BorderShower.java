@@ -34,5 +34,8 @@ public interface BorderShower {
         // Do nothing
     };
 
+    public default void refreshView(User user, Island island){
+        // Do nothing
+    }
 
 }

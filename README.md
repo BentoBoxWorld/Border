@@ -79,17 +79,17 @@ show-particles: true
 
 ## Commands
 
-There is one command that turns the border on or off. Since Version 3.0.0 it requires a permission:
+### border
+**Command**: `/[player command] border`  
+**Description**: Turns the border on/off.  
+**Permission**: `[gamemode].border.toggle`. Default: `op`.  
+**Notes**: Since Version 3.0.0 it requires a permission.  
 
-/[player command] border
-
-## Permissions
-
-There is one permission to allow/disallow use of the border command:
-
-`[gamemode].border.toggle`
-
-This permission is not given by default. 
+### border type {...}
+**Command**: `/[player command] border type {barrier | vanilla}`  
+**Description**: Sets the border type.  
+**Permission**: `[gamemode].border.set-type`. Default: `true`.  
+**Example**: `/[player command] border type barrier`  
 
 ## Like this addon?
 [Sponsor tastybento](https://github.com/sponsors/tastybento) to get more addons like this and make this one better!

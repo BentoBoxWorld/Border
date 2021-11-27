@@ -22,8 +22,6 @@ public final class Border extends Addon {
 
     private Settings settings;
 
-    private boolean hooked;
-
     private Config<Settings> config = new Config<>(this, Settings.class);
 
     private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
@@ -44,7 +42,9 @@ public final class Border extends Addon {
         if (getSettings().isUseWbapi()) {
             Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
             if (plugin == null || !plugin.isEnabled()) {
-                logError("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
+                logError("WorldBorderAPI not found.");
+                logError("Either download it or turn this integration off from configuration by: `use-wbapi: false`");
+                logError("You can download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
                 logError("Disabling addon");
                 this.setState(State.DISABLED);
                 return;
@@ -57,7 +57,6 @@ public final class Border extends Addon {
 
             if (!this.settings.getDisabledGameModes().contains(gameModeAddon.getDescription().getName())) {
 
-                hooked = true;
                 gameModes.add(gameModeAddon);
 
                 log("Border hooking into " + gameModeAddon.getDescription().getName());
@@ -65,7 +64,7 @@ public final class Border extends Addon {
             }
         });
 
-        if (hooked) {
+        if (gameModes.size() > 0) {
             borderShower = createBorder();
             registerListener(new PlayerListener(this));
         }

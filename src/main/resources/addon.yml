@@ -12,6 +12,6 @@ permissions:
   '[gamemode].border.toggle':
     description: Player can use border toggle command
     default: op
-  '[gamemode].border.settype':
+  '[gamemode].border.set-type':
     description: Player can use border type setting command
     default: true

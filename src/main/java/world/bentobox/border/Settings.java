@@ -33,8 +33,8 @@ public class Settings implements ConfigObject {
     private boolean returnTeleport = true;
 
     @ConfigComment("")
+    @ConfigComment("Only applies if WBAPI isn't used.")
     @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
-    @ConfigComment("Only applicable if vanilla world border is not used")
     @ConfigEntry(path = "use-barrier-blocks")
     private boolean useBarrierBlocks = true;
 
@@ -44,12 +44,14 @@ public class Settings implements ConfigObject {
     private boolean showByDefault= true;
 
     @ConfigComment("")
+    @ConfigComment("Only applies if WBAPI isn't used.")
     @ConfigComment("Show max-protection range border. This is a visual border only and not a barrier.")
     @ConfigEntry(path = "show-max-border")
     private boolean showMaxBorder= true;
 
     @ConfigComment("")
-    @ConfigComment("Show particles. If WBAPI isn't used, then enable/disable the particles")
+    @ConfigComment("Only applies if WBAPI isn't used.")
+    @ConfigComment("Enables/disables all types of wall particles shown by the addon")
     @ConfigEntry(path = "show-particles")
     private boolean showParticles = true;
 

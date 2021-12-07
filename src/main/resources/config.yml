@@ -1,10 +1,12 @@
-# 
+# Border addon configuration file
+# See the documentation at https://docs.bentobox.world/en/latest/addons/Border/
+#
 # This list stores GameModes in which Border addon should not work.
 # To disable addon it is necessary to write its name in new line that starts with -. Example:
 # disabled-gamemodes:
 #  - BSkyBlock
 disabled-gamemodes: []
-# 
+#
 # Use vanilla world border. Requires WorldBorderAPI plugin.
 # Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases
 use-wbapi: true
@@ -12,15 +14,18 @@ use-wbapi: true
 # Teleport players back inside the border if they somehow get outside.
 # This will teleport players back inside if they toggle the border with a command.
 return-teleport: true
-# 
+#
+# Only applies if WBAPI isn't used.
 # Use barrier blocks. If false, the border is indicated by particles only.
-# Only applicable if vanilla world border is not used
-use-barrier-blocks: false
-# 
+use-barrier-blocks: true
+#
 # Default border behavior
 show-by-default: true
-# 
+#
+# Only applies if WBAPI isn't used.
 # Show max-protection range border. This is a visual border only and not a barrier.
 show-max-border: true
-# Show particles. If WABI isn't used, then enable/disable the particles
+#
+# Only applies if WBAPI isn't used.
+# Enables/disables all types of wall particles shown by the addon
 show-particles: true

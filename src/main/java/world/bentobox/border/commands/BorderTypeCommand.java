@@ -32,7 +32,6 @@ public final class BorderTypeCommand extends CompositeCommand {
         this.setPermission("border.set-type");
         this.setDescription("border.set-type.description");
         this.setOnlyPlayer(true);
-        // setConfigurableRankCommand(); // What is this? Should I use this? I guess not.
     }
 
     @Override

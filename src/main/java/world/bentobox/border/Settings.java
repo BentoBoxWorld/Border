@@ -11,7 +11,8 @@ import java.util.Set;
 @StoreAt(filename = "config.yml", path = "addons/Border")
 public class Settings implements ConfigObject {
 
-    @ConfigComment("Border Configuration file by tastybento")
+    @ConfigComment("Border addon configuration file")
+    @ConfigComment("See the documentation at https://docs.bentobox.world/en/latest/addons/Border/")
     @ConfigComment("")
     @ConfigComment("This list stores GameModes in which Border addon should not work.")
     @ConfigComment("To disable addon it is necessary to write its name in new line that starts with -. Example:")
@@ -24,7 +25,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("Use vanilla world border. Requires WorldBorderAPI plugin.")
     @ConfigComment("Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases")
     @ConfigEntry(path = "use-wbapi")
-    private boolean useWbapi = false;
+    private boolean useWbapi = true;
 
     @ConfigComment("")
     @ConfigComment("Teleport players back inside the border if they somehow get outside.")
@@ -41,13 +42,13 @@ public class Settings implements ConfigObject {
     @ConfigComment("")
     @ConfigComment("Default border behavior")
     @ConfigEntry(path = "show-by-default")
-    private boolean showByDefault= true;
+    private boolean showByDefault = true;
 
     @ConfigComment("")
     @ConfigComment("Only applies if WBAPI isn't used.")
     @ConfigComment("Show max-protection range border. This is a visual border only and not a barrier.")
     @ConfigEntry(path = "show-max-border")
-    private boolean showMaxBorder= true;
+    private boolean showMaxBorder = true;
 
     @ConfigComment("")
     @ConfigComment("Only applies if WBAPI isn't used.")
@@ -58,16 +59,14 @@ public class Settings implements ConfigObject {
     /**
      * @param disabledGameModes new disabledGameModes value.
      */
-    public void setDisabledGameModes(Set<String> disabledGameModes)
-    {
+    public void setDisabledGameModes(Set<String> disabledGameModes) {
         this.disabledGameModes = disabledGameModes;
     }
 
     /**
      * @return disabledGameModes value.
      */
-    public Set<String> getDisabledGameModes()
-    {
+    public Set<String> getDisabledGameModes() {
         return this.disabledGameModes;
     }
 

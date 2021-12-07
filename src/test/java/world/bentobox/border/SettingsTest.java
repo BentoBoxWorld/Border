@@ -102,7 +102,7 @@ public class SettingsTest {
      */
     @Test
     public void testIsUseWbapi() {
-        assertFalse(settings.isUseWbapi());
+        assertTrue(settings.isUseWbapi());
     }
 
     /**

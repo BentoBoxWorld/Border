@@ -50,8 +50,8 @@ public final class PerPlayerBorderProxy implements BorderShower {
     private BorderShower getBorder(User user) {
         BorderType borderType = getBorderType(user);
         return switch (borderType) {
-            case Barrier -> customBorder;
-            case Vanilla -> wbapiBorder;
+            case BARRIER -> customBorder;
+            case VANILLA -> wbapiBorder;
         };
     }
 
@@ -72,6 +72,6 @@ public final class PerPlayerBorderProxy implements BorderShower {
     }
 
     private static BorderType getDefaultBorderType() {
-        return BorderType.Barrier;
+        return BorderType.BARRIER;
     }
 }

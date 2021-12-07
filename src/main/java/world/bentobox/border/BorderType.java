@@ -23,6 +23,11 @@ public enum BorderType {
         return commandLabel;
     }
 
+    /**
+     * Gets the border type based on the label given
+     * @param label label to check
+     * @return BorderType or empty
+     */
     public static Optional<BorderType> fromCommandLabel(String label) {
         for (var bt : BorderType.values())
             if (bt.commandLabel.equalsIgnoreCase(label))
@@ -31,6 +36,11 @@ public enum BorderType {
         return Optional.empty();
     }
 
+    /**
+     * Gets the border type from the id byte
+     * @param id byte indicating the BorderType
+     * @return BorderType or empty if id is not recognized
+     */
     public static Optional<BorderType> fromId(byte id) {
         for (var bt : BorderType.values())
             if (bt.getId() == id)

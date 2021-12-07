@@ -1,5 +1,8 @@
 package world.bentobox.border.commands;
 
+import java.util.List;
+import java.util.Optional;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
@@ -7,10 +10,6 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
 import world.bentobox.border.PerPlayerBorderProxy;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public final class BorderTypeCommand extends CompositeCommand {
 
@@ -24,7 +23,7 @@ public final class BorderTypeCommand extends CompositeCommand {
         this.availableTypes = addon.getAvailableBorderTypesView()
                 .stream()
                 .map(BorderType::getCommandLabel)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -57,14 +56,14 @@ public final class BorderTypeCommand extends CompositeCommand {
     }
 
     private void changeBorderTypeTo(User user, String newBorderType) {
-        byte newTypeId = BorderType.fromCommandLabel(newBorderType).get().getId();
+        BorderType.fromCommandLabel(newBorderType).map(BorderType::getId).ifPresentOrElse(newTypeId -> {
+            addon.getBorderShower().hideBorder(user);
+            user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, new MetaDataValue(newTypeId));
+            addon.getBorderShower().showBorder(user.getPlayer(), island);
 
-        addon.getBorderShower().hideBorder(user);
-        user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, new MetaDataValue(newTypeId));
-        addon.getBorderShower().showBorder(user.getPlayer(), island);
-
-        user.sendMessage("border.set-type.changed",
-                "[type]", newBorderType);
+            user.sendMessage("border.set-type.changed",
+                    "[type]", newBorderType);
+        }, () -> addon.logError("Unknown newBorderType " + newBorderType));
     }
 
     @Override

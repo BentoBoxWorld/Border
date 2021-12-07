@@ -26,7 +26,7 @@ public final class Border extends Addon {
 
     private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
 
-    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.Barrier);
+    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.BARRIER);
 
     @Override
     public void onLoad() {
@@ -49,7 +49,7 @@ public final class Border extends Addon {
                 this.setState(State.DISABLED);
                 return;
             }
-            availableBorderTypes.add(BorderType.Vanilla);
+            availableBorderTypes.add(BorderType.VANILLA);
         }
         gameModes.clear();
         // Register commands
@@ -64,7 +64,7 @@ public final class Border extends Addon {
             }
         });
 
-        if (gameModes.size() > 0) {
+        if (!gameModes.isEmpty()) {
             borderShower = createBorder();
             registerListener(new PlayerListener(this));
         }
@@ -79,7 +79,7 @@ public final class Border extends Addon {
         BorderShower customBorder = new ShowBarrier(this);
         BorderShower wbapiBorder = getSettings().isUseWbapi()
                 ? new ShowWorldBorder(this)
-                : null;
+                        : null;
         return new PerPlayerBorderProxy(this, customBorder, wbapiBorder);
     }
 

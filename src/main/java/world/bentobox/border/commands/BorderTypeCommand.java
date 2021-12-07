@@ -56,13 +56,12 @@ public final class BorderTypeCommand extends CompositeCommand {
     }
 
     private void changeBorderTypeTo(User user, String newBorderType) {
-        BorderType.fromCommandLabel(newBorderType).map(BorderType::getId).ifPresentOrElse(newTypeId -> {
+        BorderType.fromCommandLabel(newBorderType).map(BorderType::getId).map(MetaDataValue::new)
+        .ifPresentOrElse(newTypeId -> {
             addon.getBorderShower().hideBorder(user);
-            user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, new MetaDataValue(newTypeId));
+            user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, newTypeId);
             addon.getBorderShower().showBorder(user.getPlayer(), island);
-
-            user.sendMessage("border.set-type.changed",
-                    "[type]", newBorderType);
+            user.sendMessage("border.set-type.changed", "[type]", newBorderType);
         }, () -> addon.logError("Unknown newBorderType " + newBorderType));
     }
 

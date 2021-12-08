@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -34,7 +36,7 @@ public class ShowBarrier implements BorderShower {
     private final Border addon;
     private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private static final Particle PARTICLE = Particle.REDSTONE;
-    private static final Particle MAX_PARTICLE = Particle.BARRIER;
+    private static final Particle MAX_PARTICLE = Enums.getIfPresent(Particle.class, "BARRIER_BLOCK").or(Enums.getIfPresent(Particle.class, "BARRIER").or(Particle.BLOCK_CRACK));
     private static final Particle.DustOptions PARTICLE_DUST_RED = new Particle.DustOptions(Color.RED, 1.0F);
     private static final Particle.DustOptions PARTICLE_DUST_BLUE = new Particle.DustOptions(Color.BLUE, 1.0F);
     private static final int BARRIER_RADIUS = 5;

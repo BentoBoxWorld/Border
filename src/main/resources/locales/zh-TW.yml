@@ -1,0 +1,7 @@
+---
+border:
+  toggle:
+    description: 開啟/關閉 顯示邊界
+    border-on: "&a開啟 顯示邊界"
+    border-off: "&a關閉 顯示邊界"
+  set-type: {}

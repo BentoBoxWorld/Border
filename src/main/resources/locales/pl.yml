@@ -4,4 +4,3 @@ border:
     description: Pokazuj border on/off
     border-on: "&aBorder jest wyswietlany"
     border-off: "&aBorder jest nie wyswietlany"
-  set-type: {}

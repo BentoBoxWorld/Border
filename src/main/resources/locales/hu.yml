@@ -1,0 +1,10 @@
+---
+border:
+  toggle:
+    description: Ki/be kapcsolja a border-t.
+    border-on: "&fBorder: &abekapcsolva"
+    border-off: "&fBorder: &ckikapcsolva"
+  set-type:
+    description: Megváltoztatja a border típusát!
+    changed: "&fA border típusa megváltozott: &b[type]"
+    error-unavailable-type: "&cHiba! Ez a típus nem létezik vagy nem elérhető."

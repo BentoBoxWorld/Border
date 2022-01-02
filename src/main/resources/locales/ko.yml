@@ -1,0 +1,6 @@
+---
+border:
+  toggle:
+    description: 월드보더를 키거나 끕니다
+    border-on: "&a 월드 보더를 활성화 했습니다"
+    border-off: "&a 월드 보더를 비활성화 했습니다"

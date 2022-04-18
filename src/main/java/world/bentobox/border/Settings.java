@@ -22,10 +22,9 @@ public class Settings implements ConfigObject {
     private Set<String> disabledGameModes = new HashSet<>();
 
     @ConfigComment("")
-    @ConfigComment("Use vanilla world border. Requires WorldBorderAPI plugin.")
-    @ConfigComment("Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases")
-    @ConfigEntry(path = "use-wbapi")
-    private boolean useWbapi = true;
+    @ConfigComment("Use vanilla world border.")
+    @ConfigEntry(path = "use-vanilla")
+    private boolean useVanilla = true;
 
     @ConfigComment("")
     @ConfigComment("Teleport players back inside the border if they somehow get outside.")
@@ -34,7 +33,7 @@ public class Settings implements ConfigObject {
     private boolean returnTeleport = true;
 
     @ConfigComment("")
-    @ConfigComment("Only applies if WBAPI isn't used.")
+    @ConfigComment("Only applies if vanilla isn't used.")
     @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
     @ConfigEntry(path = "use-barrier-blocks")
     private boolean useBarrierBlocks = true;
@@ -45,13 +44,13 @@ public class Settings implements ConfigObject {
     private boolean showByDefault = true;
 
     @ConfigComment("")
-    @ConfigComment("Only applies if WBAPI isn't used.")
+    @ConfigComment("Only applies if vanilla isn't used.")
     @ConfigComment("Show max-protection range border. This is a visual border only and not a barrier.")
     @ConfigEntry(path = "show-max-border")
     private boolean showMaxBorder = true;
 
     @ConfigComment("")
-    @ConfigComment("Only applies if WBAPI isn't used.")
+    @ConfigComment("Only applies if vanilla isn't used.")
     @ConfigComment("Enables/disables all types of wall particles shown by the addon")
     @ConfigEntry(path = "show-particles")
     private boolean showParticles = true;
@@ -113,17 +112,17 @@ public class Settings implements ConfigObject {
     }
 
     /**
-     * @return the useWbapi
+     * @return the useVanilla
      */
-    public boolean isUseWbapi() {
-        return useWbapi;
+    public boolean isUseVanilla() {
+        return useVanilla;
     }
 
     /**
-     * @param useWbapi the useWbapi to set
+     * @param useVanilla the useVanilla to set
      */
-    public void setUseWbapi(boolean useWbapi) {
-        this.useWbapi = useWbapi;
+    public void setUseVanilla(boolean useVanilla) {
+        this.useVanilla = useVanilla;
     }
 
     /**

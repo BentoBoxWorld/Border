@@ -7,25 +7,24 @@
 #  - BSkyBlock
 disabled-gamemodes: []
 #
-# Use vanilla world border. Requires WorldBorderAPI plugin.
-# Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases
-use-wbapi: true
+# Use vanilla world border.
+use-vanilla: true
 #
 # Teleport players back inside the border if they somehow get outside.
 # This will teleport players back inside if they toggle the border with a command.
 return-teleport: true
 #
-# Only applies if WBAPI isn't used.
+# Only applies if vanilla isn't used.
 # Use barrier blocks. If false, the border is indicated by particles only.
 use-barrier-blocks: true
 #
 # Default border behavior
 show-by-default: true
 #
-# Only applies if WBAPI isn't used.
+# Only applies if vanilla isn't used.
 # Show max-protection range border. This is a visual border only and not a barrier.
 show-max-border: true
 #
-# Only applies if WBAPI isn't used.
+# Only applies if vanilla isn't used.
 # Enables/disables all types of wall particles shown by the addon
 show-particles: true

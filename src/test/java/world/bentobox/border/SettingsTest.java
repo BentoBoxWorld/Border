@@ -98,20 +98,20 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.Settings#isUseWbapi()}.
+     * Test method for {@link world.bentobox.border.Settings#isUseVanilla()}.
      */
     @Test
-    public void testIsUseWbapi() {
-        assertTrue(settings.isUseWbapi());
+    public void testIsUseVanilla() {
+        assertTrue(settings.isUseVanilla());
     }
 
     /**
-     * Test method for {@link world.bentobox.border.Settings#setUseWbapi(boolean)}.
+     * Test method for {@link world.bentobox.border.Settings#setUseVanilla(boolean)}.
      */
     @Test
-    public void testSetUseWbapi() {
-        settings.setUseWbapi(true);
-        assertTrue(settings.isUseWbapi());
+    public void testSetUseVanilla() {
+        settings.setUseVanilla(true);
+        assertTrue(settings.isUseVanilla());
     }
 
     /**

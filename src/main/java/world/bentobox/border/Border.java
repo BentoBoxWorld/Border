@@ -1,9 +1,14 @@
 package world.bentobox.border;
 
-import org.bukkit.Bukkit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
@@ -12,9 +17,7 @@ import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.BorderShower;
 import world.bentobox.border.listeners.PlayerListener;
 import world.bentobox.border.listeners.ShowBarrier;
-import world.bentobox.border.listeners.ShowWorldBorder;
-
-import java.util.*;
+import world.bentobox.border.listeners.ShowPaperWorldBorder;
 
 public final class Border extends Addon {
 
@@ -26,7 +29,7 @@ public final class Border extends Addon {
 
     private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
 
-    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.BARRIER);
+    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.VANILLA, BorderType.BARRIER);
 
     @Override
     public void onLoad() {
@@ -38,19 +41,6 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
-        // Check for WorldBorderAPI
-        if (getSettings().isUseWbapi()) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
-            if (plugin == null || !plugin.isEnabled()) {
-                logError("WorldBorderAPI not found.");
-                logError("Either download it or turn this integration off from configuration by: `use-wbapi: false`");
-                logError("You can download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
-                logError("Disabling addon");
-                this.setState(State.DISABLED);
-                return;
-            }
-            availableBorderTypes.add(BorderType.VANILLA);
-        }
         gameModes.clear();
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
@@ -77,9 +67,7 @@ public final class Border extends Addon {
 
     private BorderShower createBorder() {
         BorderShower customBorder = new ShowBarrier(this);
-        BorderShower wbapiBorder = getSettings().isUseWbapi()
-                ? new ShowWorldBorder(this)
-                        : null;
+        BorderShower wbapiBorder = new ShowPaperWorldBorder(this);
         return new PerPlayerBorderProxy(this, customBorder, wbapiBorder);
     }
 

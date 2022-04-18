@@ -31,11 +31,8 @@ public class ShowVirtualWorldBorder implements BorderShower {
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
-
-        
         Location l = island.getProtectionCenter();
         WorldBorder wb = Bukkit.createWorldBorder();
-        addon.getPlugin().logDebug(l);
         wb.setCenter(l);
         wb.setSize(island.getProtectionRange() * 2D);
         wb.setWarningDistance(0);

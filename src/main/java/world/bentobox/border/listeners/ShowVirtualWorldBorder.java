@@ -17,11 +17,11 @@ import world.bentobox.border.Border;
  * @author tastybento
  *
  */
-public class ShowPaperWorldBorder implements BorderShower {
+public class ShowVirtualWorldBorder implements BorderShower {
 
     private final Border addon;
 
-    public ShowPaperWorldBorder(Border addon) {
+    public ShowVirtualWorldBorder(Border addon) {
         this.addon = addon;
     }
 
@@ -32,8 +32,9 @@ public class ShowPaperWorldBorder implements BorderShower {
             return;
         }
 
-        WorldBorder wb = Bukkit.createWorldBorder();
+        
         Location l = island.getProtectionCenter();
+        WorldBorder wb = Bukkit.createWorldBorder();
         addon.getPlugin().logDebug(l);
         wb.setCenter(l);
         wb.setSize(island.getProtectionRange() * 2D);

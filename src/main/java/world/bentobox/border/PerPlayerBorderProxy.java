@@ -14,12 +14,12 @@ public final class PerPlayerBorderProxy implements BorderShower {
 
     private final Border addon;
     private final BorderShower customBorder;
-    private final BorderShower wbapiBorder;
+    private final BorderShower vanillaBorder;
 
-    public PerPlayerBorderProxy(Border addon, BorderShower customBorder, BorderShower wbapiBorder) {
+    public PerPlayerBorderProxy(Border addon, BorderShower customBorder, BorderShower vanillaBorder) {
         this.addon = addon;
         this.customBorder = customBorder;
-        this.wbapiBorder = wbapiBorder;
+        this.vanillaBorder = vanillaBorder;
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class PerPlayerBorderProxy implements BorderShower {
         BorderType borderType = getBorderType(user);
         return switch (borderType) {
             case BARRIER -> customBorder;
-            case VANILLA -> wbapiBorder;
+            case VANILLA -> vanillaBorder;
         };
     }
 
@@ -72,6 +72,6 @@ public final class PerPlayerBorderProxy implements BorderShower {
     }
 
     private static BorderType getDefaultBorderType() {
-        return BorderType.BARRIER;
+        return BorderType.VANILLA;
     }
 }

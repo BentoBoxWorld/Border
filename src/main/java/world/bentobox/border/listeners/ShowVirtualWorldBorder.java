@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.WorldBorder;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -32,6 +33,9 @@ public class ShowVirtualWorldBorder implements BorderShower {
             return;
         }
         Location l = island.getProtectionCenter();
+        if (player.getWorld().getEnvironment() == Environment.NETHER) {
+            l.multiply(8);
+        }
         WorldBorder wb = Bukkit.createWorldBorder();
         wb.setCenter(l);
         wb.setSize(island.getProtectionRange() * 2D);

@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.RayTraceResult;
@@ -30,6 +31,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
+import world.bentobox.bentobox.api.flags.Flag;
 
 /**
  * @author tastybento
@@ -68,10 +70,41 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        show.clearUser(User.getInstance(e.getPlayer()));
-        // Check if border is on and if from is inside island and to location is outside of
-        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        show.showBorder(e.getPlayer(), i)));
+			Player player = e.getPlayer();
+
+			show.clearUser(User.getInstance(player));
+
+			if (!addon.inGameWorld(player.getWorld())) {
+				return;
+			}
+
+			Location to = e.getTo();
+
+			TeleportCause cause = e.getCause();
+			boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CHORUS_FRUIT;
+
+			addon.getIslands().getIslandAt(to).ifPresentOrElse(i -> {
+				Optional<Flag> boxedEnderPearlFlag = i.getPlugin().getFlagsManager().getFlag("ALLOW_MOVE_BOX");
+
+				if (isBlacklistedCause
+					&& (!i.getProtectionBoundingBox().contains(to.toVector())
+						|| !i.onIsland(player.getLocation()))) {
+					e.setCancelled(true);
+				}
+
+				if (boxedEnderPearlFlag.isPresent()
+					&& boxedEnderPearlFlag.get().isSetForWorld(to.getWorld())
+					&& cause == TeleportCause.ENDER_PEARL) {
+					e.setCancelled(false);
+				}
+
+				show.showBorder(player, i);
+			}, () -> {
+				if (isBlacklistedCause) {
+					e.setCancelled(true);
+					return;
+				}
+			});
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -127,7 +160,7 @@ public class PlayerListener implements Listener {
         if ((from.getWorld() != null && from.getWorld().equals(to.getWorld())
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ)))
                 || !addon.inGameWorld(player.getWorld())
-                || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getCenter())).isPresent()
+                || !addon.getIslands().getIslandAt(to).filter(i -> addon.getIslands().locationIsOnIsland(player, i.getProtectionCenter())).isPresent()
                 || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return false;
         }

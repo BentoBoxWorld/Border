@@ -71,14 +71,13 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
 			Player player = e.getPlayer();
+			Location to = e.getTo();
 
 			show.clearUser(User.getInstance(player));
 
-			if (!addon.inGameWorld(player.getWorld())) {
+			if (!addon.inGameWorld(to.getWorld())) {
 				return;
 			}
-
-			Location to = e.getTo();
 
 			TeleportCause cause = e.getCause();
 			boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CHORUS_FRUIT;

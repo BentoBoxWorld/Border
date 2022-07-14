@@ -1,5 +1,6 @@
 package world.bentobox.border.commands;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,11 @@ public final class BorderTypeCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        if (args.size() == 0) {
+            this.toggleBorderType(user);
+            return false;
+        }
+
         if (args.size() != 1) {
             this.showHelp(this, user);
             return false;
@@ -53,6 +59,30 @@ public final class BorderTypeCommand extends CompositeCommand {
 
         user.sendMessage("border.set-type.error-unavailable-type");
         return false;
+    }
+
+
+    /**
+     * This method toggles from one island border type to another border type.
+     * @param user User whos border must be changed.
+     */
+    private void toggleBorderType(User user)
+    {
+        MetaDataValue metaDataValue = user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
+            orElse(new MetaDataValue(BorderType.VANILLA.getId()));
+        BorderType borderType = BorderType.fromId(metaDataValue.asByte()).orElse(BorderType.VANILLA);
+
+        List<BorderType> borderTypes = Arrays.stream(BorderType.values()).toList();
+        int index = borderTypes.indexOf(borderType);
+
+        if (index + 1 >= borderTypes.size())
+        {
+            this.changeBorderTypeTo(user, borderTypes.get(0).getCommandLabel());
+        }
+        else
+        {
+            this.changeBorderTypeTo(user, borderTypes.get(index + 1).getCommandLabel());
+        }
     }
 
     private void changeBorderTypeTo(User user, String newBorderType) {

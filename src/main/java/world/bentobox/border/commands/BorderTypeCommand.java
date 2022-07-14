@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
 import world.bentobox.border.PerPlayerBorderProxy;
@@ -36,6 +37,12 @@ public final class BorderTypeCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (!this.getWorld().equals(Util.getWorld(user.getWorld())))
+        {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
+
         island = getIslands().getIsland(getWorld(), user);
         return island != null;
     }

@@ -4,3 +4,9 @@ border:
     description: Schaltet die Grenze ein / aus
     border-on: "&a Grenze aktiviert."
     border-off: "&a Grenze deaktiviert."
+  set-type:
+    description: 'Ändert die Art der Grenze
+
+'
+    changed: "&a Grenzen Typ geändert zu &b[type]&a."
+    error-unavailable-type: "&c Dieser Typ ist nicht verfügbar oder existiert nicht"

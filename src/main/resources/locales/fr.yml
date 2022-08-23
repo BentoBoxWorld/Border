@@ -4,4 +4,7 @@ border:
     description: Activer / Désactiver la bordure
     border-on: "&a La bordure est désactivée."
     border-off: "&a La bordure est activée."
-  set-type: {}
+  set-type:
+    description: change le type de bordure
+    changed: "&a Le type de bordure a été remplacé par &b[type]&a."
+    error-unavailable-type: "&c Ce type n'est pas disponible ou n'existe pas."

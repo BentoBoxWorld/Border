@@ -1,0 +1,7 @@
+---
+border:
+  toggle:
+    description: Activer / Désactiver la bordure
+    border-on: "&a La bordure est désactivée."
+    border-off: "&a La bordure est activée."
+  set-type: {}

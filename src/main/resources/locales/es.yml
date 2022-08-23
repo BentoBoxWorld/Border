@@ -1,0 +1,9 @@
+---
+border:
+  toggle:
+    description: "&7 Apaga o enciende la barrera"
+    border-off: "&c Barrera desactivada."
+  set-type:
+    description: "&7 Cambia el tipo de borde"
+    changed: "&7 Tipo de borde cambiado a &b[type]&7."
+    error-unavailable-type: "&7 Este tipo no está disponible o no existe."

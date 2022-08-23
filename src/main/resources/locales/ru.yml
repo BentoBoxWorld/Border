@@ -4,3 +4,7 @@ border:
     description: переключает границу вкл/выкл
     border-on: "&a Барьер включен."
     border-off: "&a Бареьер выключен."
+  set-type:
+    description: меняет тип границы
+    changed: "&a Тип границы изменен на &b[type]&a."
+    error-unavailable-type: "&c Этот тип недоступен или не существует."

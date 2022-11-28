@@ -30,7 +30,7 @@ public final class BorderTypeCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission("border.set-type");
+        this.setPermission("border.type");
         this.setDescription("border.set-type.description");
         this.setOnlyPlayer(true);
     }
@@ -76,7 +76,7 @@ public final class BorderTypeCommand extends CompositeCommand {
     private void toggleBorderType(User user)
     {
         MetaDataValue metaDataValue = user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
-            orElse(new MetaDataValue(BorderType.VANILLA.getId()));
+                orElse(new MetaDataValue(BorderType.VANILLA.getId()));
         BorderType borderType = BorderType.fromId(metaDataValue.asByte()).orElse(BorderType.VANILLA);
 
         List<BorderType> borderTypes = Arrays.stream(BorderType.values()).toList();

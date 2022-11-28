@@ -20,7 +20,7 @@ import world.bentobox.border.listeners.PlayerListener;
 import world.bentobox.border.listeners.ShowBarrier;
 import world.bentobox.border.listeners.ShowVirtualWorldBorder;
 
-public final class Border extends Addon {
+public class Border extends Addon {
 
     private BorderShower borderShower;
 
@@ -123,9 +123,9 @@ public final class Border extends Addon {
 
         // Border is per player, not per gamemode.
         this.getPlugin().getPlaceholdersManager().registerPlaceholder(this,
-            "type",
-            user -> BorderType.fromId(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
-                    orElse(new MetaDataValue(BorderType.VANILLA.getId())).asByte()).
+                "type",
+                user -> BorderType.fromId(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
+                        orElse(new MetaDataValue(BorderType.VANILLA.getId())).asByte()).
                 orElse(BorderType.VANILLA).
                 getCommandLabel());
     }

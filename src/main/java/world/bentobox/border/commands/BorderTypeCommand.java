@@ -13,6 +13,10 @@ import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
 import world.bentobox.border.PerPlayerBorderProxy;
 
+/**
+ * Command to enable players to change the type of border
+ *
+ */
 public final class BorderTypeCommand extends CompositeCommand {
 
     private final Border addon;
@@ -42,7 +46,7 @@ public final class BorderTypeCommand extends CompositeCommand {
             user.sendMessage("general.errors.wrong-world");
             return false;
         }
-
+        // Check if user has island
         island = getIslands().getIsland(getWorld(), user);
         return island != null;
     }
@@ -51,7 +55,7 @@ public final class BorderTypeCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.size() == 0) {
             this.toggleBorderType(user);
-            return false;
+            return true;
         }
 
         if (args.size() != 1) {

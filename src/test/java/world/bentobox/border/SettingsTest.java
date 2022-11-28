@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.border;
 
 import static org.junit.Assert.assertEquals;

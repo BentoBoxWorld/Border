@@ -32,7 +32,7 @@ public interface BorderShower {
      */
     public default void clearUser(User user) {
         // Do nothing
-    };
+    }
 
     public default void refreshView(User user, Island island){
         // Do nothing

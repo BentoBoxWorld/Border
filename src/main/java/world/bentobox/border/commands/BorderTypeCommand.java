@@ -53,7 +53,7 @@ public final class BorderTypeCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             this.toggleBorderType(user);
             return true;
         }

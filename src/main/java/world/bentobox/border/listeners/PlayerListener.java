@@ -176,8 +176,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onDismount(VehicleExitEvent event) {
-        if (event.getExited() instanceof Player) {
-            Player p = (Player) event.getExited();
+        if (event.getExited() instanceof Player p) {
             if (p.hasPermission(addon.getPermissionPrefix() + "border.on")) {
                 Optional<Island> is = addon.getIslands().getProtectedIslandAt(p.getLocation());
                 if (is.isPresent()) {

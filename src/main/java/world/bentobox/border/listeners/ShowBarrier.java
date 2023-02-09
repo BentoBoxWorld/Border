@@ -164,9 +164,7 @@ public class ShowBarrier implements BorderShower {
         if (barrierBlocks.containsKey(user.getUniqueId())) {
             barrierBlocks.get(user.getUniqueId()).stream()
             .filter(v -> v.l.getWorld().equals(user.getWorld()))
-            .forEach(v -> {
-                user.getPlayer().sendBlockChange(v.l, v.oldBlockData);
-            });
+            .forEach(v -> user.getPlayer().sendBlockChange(v.l, v.oldBlockData));
             // Clean up
             clearUser(user);
         }

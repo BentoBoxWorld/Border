@@ -134,7 +134,7 @@ public class IslandBorderCommandTest {
 
         // Settings
         Settings settings = new Settings();
-        when(addon.getSettings()).thenReturn(settings );
+        when(addon.getSettings()).thenReturn(settings);
 
         ic = new IslandBorderCommand(addon, ac, "");
     }

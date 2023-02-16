@@ -19,6 +19,7 @@ import world.bentobox.border.PerPlayerBorderProxy;
  */
 public final class BorderTypeCommand extends CompositeCommand {
 
+    public static final String BORDER_TYPE_COMMAND_PERM = "border.type";
     private final Border addon;
     private Island island;
     private final List<String> availableTypes;
@@ -34,7 +35,7 @@ public final class BorderTypeCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission("border.type");
+        this.setPermission(BORDER_TYPE_COMMAND_PERM);
         this.setDescription("border.set-type.description");
         this.setOnlyPlayer(true);
     }
@@ -80,8 +81,8 @@ public final class BorderTypeCommand extends CompositeCommand {
     private void toggleBorderType(User user)
     {
         MetaDataValue metaDataValue = user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
-                orElse(new MetaDataValue(BorderType.VANILLA.getId()));
-        BorderType borderType = BorderType.fromId(metaDataValue.asByte()).orElse(BorderType.VANILLA);
+                orElse(new MetaDataValue(addon.getSettings().getType().getId()));
+        BorderType borderType = BorderType.fromId(metaDataValue.asByte()).orElse(addon.getSettings().getType());
 
         List<BorderType> borderTypes = Arrays.stream(BorderType.values()).toList();
         int index = borderTypes.indexOf(borderType);

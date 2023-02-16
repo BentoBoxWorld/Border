@@ -95,20 +95,21 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.Settings#isUseVanilla()}.
+     * Test method for {@link world.bentobox.border.Settings#getType()}.
      */
     @Test
-    public void testIsUseVanilla() {
-        assertTrue(settings.isUseVanilla());
+    public void testGetType() {
+        assertEquals(BorderType.VANILLA, settings.getType());
     }
 
     /**
-     * Test method for {@link world.bentobox.border.Settings#setUseVanilla(boolean)}.
+     * Test method for {@link world.bentobox.border.Settings#setType(BorderType)}.
      */
     @Test
-    public void testSetUseVanilla() {
-        settings.setUseVanilla(true);
-        assertTrue(settings.isUseVanilla());
+    public void testSetType() {
+        assertEquals(BorderType.VANILLA, settings.getType());
+        settings.setType(BorderType.BARRIER);
+        assertEquals(BorderType.BARRIER, settings.getType());
     }
 
     /**

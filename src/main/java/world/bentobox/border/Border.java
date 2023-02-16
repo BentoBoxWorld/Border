@@ -125,8 +125,8 @@ public class Border extends Addon {
         this.getPlugin().getPlaceholdersManager().registerPlaceholder(this,
                 "type",
                 user -> BorderType.fromId(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
-                        orElse(new MetaDataValue(BorderType.VANILLA.getId())).asByte()).
-                orElse(BorderType.VANILLA).
+                        orElse(new MetaDataValue(getSettings().getType().getId())).asByte()).
+                orElse(getSettings().getType()).
                 getCommandLabel());
     }
 }

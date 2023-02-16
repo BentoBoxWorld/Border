@@ -34,6 +34,11 @@ public interface BorderShower {
         // Do nothing
     }
 
+    /**
+     * Refreshes the barrier view, if required
+     * @param user user 
+     * @param island island
+     */
     public default void refreshView(User user, Island island){
         // Do nothing
     }

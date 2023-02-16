@@ -71,7 +71,7 @@ public final class PerPlayerBorderProxy implements BorderShower {
         return borderType.get();
     }
 
-    private static BorderType getDefaultBorderType() {
-        return BorderType.VANILLA;
+    private BorderType getDefaultBorderType() {
+        return addon.getSettings().getType();
     }
 }

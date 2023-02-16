@@ -12,6 +12,7 @@ import world.bentobox.border.listeners.BorderShower;
 
 public class IslandBorderCommand extends CompositeCommand {
 
+    public static final String BORDER_COMMAND_PERM = "border.toggle";
     private Border addon;
     private Island island;
 
@@ -22,7 +23,7 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission("border.toggle");
+        this.setPermission(BORDER_COMMAND_PERM);
         this.setDescription("border.toggle.description");
         this.setOnlyPlayer(true);
         setConfigurableRankCommand();

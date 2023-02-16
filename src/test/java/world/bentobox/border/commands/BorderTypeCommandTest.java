@@ -1,6 +1,8 @@
 package world.bentobox.border.commands;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -9,7 +11,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.awt.color.ICC_ColorSpace;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -45,7 +45,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
-import world.bentobox.border.PerPlayerBorderProxy;
+import world.bentobox.border.Settings;
 import world.bentobox.border.listeners.BorderShower;
 
 /**
@@ -132,6 +132,11 @@ public class BorderTypeCommandTest {
 
         // Shower
         when(addon.getBorderShower()).thenReturn(bs);
+        
+        
+        // Settings
+        Settings settings = new Settings();
+        when(addon.getSettings()).thenReturn(settings);
 
 
         ic = new BorderTypeCommand(addon, ac);

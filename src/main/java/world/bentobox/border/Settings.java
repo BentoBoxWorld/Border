@@ -59,6 +59,14 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "show-particles")
     private boolean showParticles = true;
 
+    @ConfigComment("")
+    @ConfigComment("Barrier offset.")
+    @ConfigComment("The barrier normally occurs at the protection range limit but this value extends it outwards.")
+    @ConfigComment("This does not extend the protection range, but will enable players to go outside their protected area.")
+    @ConfigComment("The barrier will not go further than the island distance. Minimum and default value is 0.")
+    @ConfigEntry(path = "barrier-offset")
+    private int barrierOffset = 0;
+    
     /**
      * @param disabledGameModes new disabledGameModes value.
      */
@@ -152,5 +160,17 @@ public class Settings implements ConfigObject {
 
     public void setType(BorderType type) {
         this.type = type;
+    }
+
+    public int getBarrierOffset() {
+        if (barrierOffset < 0) {
+            barrierOffset = 0;
+        }
+        return barrierOffset;
+    }
+
+    public void setBarrierOffset(int barrierOffset) {
+        this.barrierOffset = barrierOffset;
+        getBarrierOffset();
     }
 }

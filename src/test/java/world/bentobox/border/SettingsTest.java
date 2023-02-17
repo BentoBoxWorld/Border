@@ -128,5 +128,25 @@ public class SettingsTest {
         settings.setReturnTeleport(false);
         assertFalse(settings.isReturnTeleport());
     }
+    
+    /**
+     * Test method for {@link world.bentobox.border.Settings#getBarrierOffset()}.
+     */
+    @Test
+    public void testGetBarrierOffset() {
+        assertEquals(0, settings.getBarrierOffset());
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.border.Settings#setBarrierOffset(int)}.
+     */
+    @Test
+    public void testsetBarrierOffset() {
+        assertEquals(0, settings.getBarrierOffset());
+        settings.setBarrierOffset(-234);
+        assertEquals(0, settings.getBarrierOffset());
+        settings.setBarrierOffset(123);
+        assertEquals(123, settings.getBarrierOffset());
+    }
 
 }

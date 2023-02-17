@@ -38,7 +38,8 @@ public class ShowVirtualWorldBorder implements BorderShower {
         }
         WorldBorder wb = Bukkit.createWorldBorder();
         wb.setCenter(l);
-        wb.setSize(island.getProtectionRange() * 2D);
+        double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings().getBarrierOffset()) * 2D);
+        wb.setSize(size);
         wb.setWarningDistance(0);
         player.setWorldBorder(wb);
     }

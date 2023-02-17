@@ -31,7 +31,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

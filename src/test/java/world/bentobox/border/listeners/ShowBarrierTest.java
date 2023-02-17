@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -25,7 +24,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -37,7 +35,7 @@ import world.bentobox.border.Settings;
  * @author tastybento
  *
  */
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
+@PrepareForTest({User.class, Util.class})
 @RunWith(PowerMockRunner.class)
 public class ShowBarrierTest {
     @Mock

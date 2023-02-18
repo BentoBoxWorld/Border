@@ -148,17 +148,19 @@ public class PlayerListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#processEvent(PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinNoPerms() {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
-        pl.onPlayerJoin(event);
+        pl.processEvent(event);
         verify(user).putMetaData(eq(BorderShower.BORDER_STATE_META_DATA), any());
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA), any());
         PowerMockito.verifyStatic(Bukkit.class);
         Bukkit.getScheduler();
-        verify(show).clearUser(user);
+        verify(show).hideBorder(user);
+        verify(player).setWorldBorder(null);
+        
     }
 
     /**

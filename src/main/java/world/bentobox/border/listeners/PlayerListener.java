@@ -53,21 +53,31 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
+        // Run one-tick after joining because meta data cannot be set otherwise
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processEvent(e));
+    }
+
+    protected void processEvent(PlayerJoinEvent e) {
         User user = User.getInstance(e.getPlayer());
+
+        show.hideBorder(user);
+        // Just for sure, disable world Border 
+        user.getPlayer().setWorldBorder(null);
+
         // Check player perms and return to defaults if players don't have them
         if (!e.getPlayer().hasPermission(addon.getPermissionPrefix() + IslandBorderCommand.BORDER_COMMAND_PERM)) {
-            
             // Restore barrier on/off to default
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(addon.getSettings().isShowByDefault()));
+
             if (!e.getPlayer().hasPermission(addon.getPermissionPrefix() + BorderTypeCommand.BORDER_TYPE_COMMAND_PERM)) {
                 // Restore default barrier type to player
                 MetaDataValue metaDataValue = new MetaDataValue(addon.getSettings().getType().getId());
-                user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);
+                user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);                
             }
         }
-        // Show the border if required
-        show.clearUser(user);
-        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
+
+        // Show the border if required one tick after   
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> 
         show.showBorder(e.getPlayer(), i)));
     }
 

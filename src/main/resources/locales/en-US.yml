@@ -3,3 +3,7 @@ border:
     description: "toggles the border on/off"
     border-on: "&a Border enabled."
     border-off: "&a Border disabled."
+  set-type:
+    description: "changes the type of the border"
+    changed: "&a Border type changed to &b[type]&a."
+    error-unavailable-type: "&c This type is unavailable or does not exist."

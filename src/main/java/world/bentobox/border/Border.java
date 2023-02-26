@@ -1,32 +1,36 @@
 package world.bentobox.border;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.commands.IslandBorderCommand;
-import world.bentobox.border.listeners.PlayerBorder;
+import world.bentobox.border.listeners.BorderShower;
 import world.bentobox.border.listeners.PlayerListener;
+import world.bentobox.border.listeners.ShowBarrier;
+import world.bentobox.border.listeners.ShowVirtualWorldBorder;
 
-public final class Border extends Addon {
+public class Border extends Addon {
 
-    private PlayerBorder playerBorder;
+    private BorderShower borderShower;
 
     private Settings settings;
-
-    private boolean hooked;
 
     private Config<Settings> config = new Config<>(this, Settings.class);
 
     private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
+
+    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.VANILLA, BorderType.BARRIER);
 
     @Override
     public void onLoad() {
@@ -38,24 +42,12 @@ public final class Border extends Addon {
 
     @Override
     public void onEnable() {
-        // Check for WorldBorderAPI
-        if (getSettings().isUseWbapi()) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorderAPI");
-            if (plugin == null || !plugin.isEnabled()) {
-                logError("WorldBorderAPI not found. Download from https://github.com/yannicklamprecht/WorldBorderAPI/releases");
-                logError("Disabling addon");
-                this.setState(State.DISABLED);
-                return;
-            }
-        }
         gameModes.clear();
-        playerBorder = new PlayerBorder(this);
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
             if (!this.settings.getDisabledGameModes().contains(gameModeAddon.getDescription().getName())) {
 
-                hooked = true;
                 gameModes.add(gameModeAddon);
 
                 log("Border hooking into " + gameModeAddon.getDescription().getName());
@@ -63,10 +55,10 @@ public final class Border extends Addon {
             }
         });
 
-        if (hooked) {
-            // Register listeners
-            registerListener(new PlayerListener(this));
-            registerListener(playerBorder);
+        if (!gameModes.isEmpty()) {
+            borderShower = this.createBorder();
+            this.registerListener(new PlayerListener(this));
+            this.registerPlaceholders();
         }
     }
 
@@ -75,11 +67,14 @@ public final class Border extends Addon {
         // Nothing to do here
     }
 
-    /**
-     * @return the playerBorder
-     */
-    public PlayerBorder getPlayerBorder() {
-        return playerBorder;
+    private BorderShower createBorder() {
+        BorderShower customBorder = new ShowBarrier(this);
+        BorderShower wbapiBorder = new ShowVirtualWorldBorder(this);
+        return new PerPlayerBorderProxy(this, customBorder, wbapiBorder);
+    }
+
+    public BorderShower getBorderShower() {
+        return borderShower;
     }
 
     /**
@@ -109,5 +104,29 @@ public final class Border extends Addon {
      */
     public boolean inGameWorld(World world) {
         return gameModes.stream().anyMatch(gm -> gm.inWorld(Util.getWorld(world)));
+    }
+
+    public Set<BorderType> getAvailableBorderTypesView() {
+        return Collections.unmodifiableSet(availableBorderTypes);
+    }
+
+
+    /**
+     * Placeholder registration.
+     */
+    private void registerPlaceholders()
+    {
+        if (this.getPlugin().getPlaceholdersManager() == null)
+        {
+            return;
+        }
+
+        // Border is per player, not per gamemode.
+        this.getPlugin().getPlaceholdersManager().registerPlaceholder(this,
+                "type",
+                user -> BorderType.fromId(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
+                        orElse(new MetaDataValue(getSettings().getType().getId())).asByte()).
+                orElse(getSettings().getType()).
+                getCommandLabel());
     }
 }

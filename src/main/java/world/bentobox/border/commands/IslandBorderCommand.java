@@ -6,11 +6,13 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.listeners.BorderShower;
 
 public class IslandBorderCommand extends CompositeCommand {
 
+    public static final String BORDER_COMMAND_PERM = "border.toggle";
     private Border addon;
     private Island island;
 
@@ -21,14 +23,22 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission("border.toggle");
+        this.setPermission(BORDER_COMMAND_PERM);
         this.setDescription("border.toggle.description");
         this.setOnlyPlayer(true);
         setConfigurableRankCommand();
+
+        new BorderTypeCommand(this.getAddon(), this);
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (!this.getWorld().equals(Util.getWorld(user.getWorld())))
+        {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
+
         island = getIslands().getIsland(getWorld(), user);
         return island != null;
     }
@@ -39,11 +49,11 @@ public class IslandBorderCommand extends CompositeCommand {
         if (on) {
             user.sendMessage("border.toggle.border-off");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(false));
-            addon.getPlayerBorder().getBorder().hideBorder(user);
+            addon.getBorderShower().hideBorder(user);
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
-            addon.getPlayerBorder().getBorder().showBorder(user.getPlayer(), island);
+            addon.getBorderShower().showBorder(user.getPlayer(), island);
         }
         return true;
     }

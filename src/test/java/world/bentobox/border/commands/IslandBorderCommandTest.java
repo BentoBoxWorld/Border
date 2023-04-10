@@ -123,7 +123,9 @@ public class IslandBorderCommandTest {
 
         // Islands
         when(plugin.getIslands()).thenReturn(im);
+        when(addon.getIslands()).thenReturn(im);
         when(im.getIsland(world, user)).thenReturn(island);
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -174,7 +176,7 @@ public class IslandBorderCommandTest {
      */
     @Test
     public void testCanExecuteNoIsland() {
-        when(im.getIsland(world, user)).thenReturn(null);
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
     }

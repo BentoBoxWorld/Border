@@ -38,8 +38,7 @@ public class IslandBorderCommand extends CompositeCommand {
             user.sendMessage("general.errors.wrong-world");
             return false;
         }
-
-        island = getIslands().getIsland(getWorld(), user);
+        island = addon.getIslands().getIslandAt(user.getLocation()).orElse(null);
         return island != null;
     }
 
@@ -53,7 +52,9 @@ public class IslandBorderCommand extends CompositeCommand {
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
-            addon.getBorderShower().showBorder(user.getPlayer(), island);
+            if (island != null) {
+                addon.getBorderShower().showBorder(user.getPlayer(), island);
+            }
         }
         return true;
     }

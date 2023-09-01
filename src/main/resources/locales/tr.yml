@@ -1,0 +1,10 @@
+---
+border:
+  toggle:
+    description: kenarlığı açar/kapatır
+    border-on: "&a Sınır etkin."
+    border-off: "&a Kenarlık devre dışı."
+  set-type:
+    description: kenarlığın türünü değiştirir
+    changed: "&a Kenarlık türü &b[type]&a olarak değiştirildi."
+    error-unavailable-type: "&c Bu tür kullanılamıyor veya mevcut değil."

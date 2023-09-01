@@ -1,0 +1,10 @@
+---
+border:
+  toggle:
+    description: schakelt de rand in/uit
+    border-on: "&a Rand ingeschakeld."
+    border-off: "&a Grens uitgeschakeld."
+  set-type:
+    description: verandert het type rand
+    changed: "&a Randtype gewijzigd in &b[type]&a."
+    error-unavailable-type: "&c Dit type is niet beschikbaar of bestaat niet."

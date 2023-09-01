@@ -6,4 +6,5 @@ border:
     border-off: "&a Hranice vypnuta."
   set-type:
     description: změní typ ohraničení
+    changed: "&a Typ ohraničení změněn na &b[type]&a."
     error-unavailable-type: "&c Tento typ je nedostupný nebo neexistuje."

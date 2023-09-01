@@ -6,4 +6,5 @@ border:
     border-off: "&a Border onemogućen."
   set-type:
     description: mijenja vrstu obruba
+    changed: "&a Vrsta obruba promijenjena je u &b[type]&a."
     error-unavailable-type: "&c Ova vrsta je nedostupna ili ne postoji."

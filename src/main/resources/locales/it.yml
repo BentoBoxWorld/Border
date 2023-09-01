@@ -4,3 +4,6 @@ border:
     description: attiva o disattiva il bordo
     border-on: "&a Bordo attivato."
     border-off: "&c Bordo disattivato."
+  set-type:
+    description: cambia il tipo di bordo
+    error-unavailable-type: "&c Questo tipo non è disponibile o non esiste."

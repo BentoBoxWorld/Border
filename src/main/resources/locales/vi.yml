@@ -1,5 +1,10 @@
+---
 border:
   toggle:
     description: bật/tắt hiệu ứng rìa đảo
-    border-on: '&aĐã bật rìa đảo.'
-    border-off: '&aĐã tắt rìa đảo.'
+    border-on: "&aĐã bật rìa đảo."
+    border-off: "&aĐã tắt rìa đảo."
+  set-type:
+    description: thay đổi loại đường viền đảo
+    changed: "&a Loại đường viền đảo đã thay đổi thành &b[type]&a."
+    error-unavailable-type: "&c Loại này không có sẵn hoặc không tồn tại."

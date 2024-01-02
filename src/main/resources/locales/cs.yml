@@ -1,7 +1,10 @@
-# Translation by: CZghost
-
+---
 border:
   toggle:
-    description: "přepíná hranice ostrova zapnuto/vypnuto"
+    description: přepíná hranice ostrova zapnuto/vypnuto
     border-on: "&a Hranice zapnuta."
     border-off: "&a Hranice vypnuta."
+  set-type:
+    description: změní typ ohraničení
+    changed: "&a Typ ohraničení změněn na &b[type]&a."
+    error-unavailable-type: "&c Tento typ je nedostupný nebo neexistuje."

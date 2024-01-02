@@ -1,0 +1,10 @@
+---
+border:
+  toggle:
+    description: вмикає/вимикає рамку
+    border-on: "& Межа ввімкнена."
+    border-off: "& Межа вимкнена."
+  set-type:
+    description: змінює тип рамки
+    changed: Тип рамки &a змінено на &b[type]&a.
+    error-unavailable-type: "&c Цей тип недоступний або не існує."

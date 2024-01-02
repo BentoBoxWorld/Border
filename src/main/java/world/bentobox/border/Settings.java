@@ -36,6 +36,11 @@ public class Settings implements ConfigObject {
     private boolean returnTeleport = true;
 
     @ConfigComment("")
+    @ConfigComment("Place a safety block under the player if they get teleported back into a non-safe spot.")
+    @ConfigEntry(path = "return-teleport-safety-block")
+    private boolean returnTeleportBlock = true;
+
+    @ConfigComment("")
     @ConfigComment("Barrier blocks on/off. Only applies if the border type is BARRIER.")
     @ConfigComment("If false, the border is indicated by particles only.")
     @ConfigEntry(path = "use-barrier-blocks")
@@ -172,5 +177,19 @@ public class Settings implements ConfigObject {
     public void setBarrierOffset(int barrierOffset) {
         this.barrierOffset = barrierOffset;
         getBarrierOffset();
+    }
+
+    /**
+     * @return the returnTeleportBlock
+     */
+    public boolean isReturnTeleportBlock() {
+        return returnTeleportBlock;
+    }
+
+    /**
+     * @param returnTeleportBlock the returnTeleportBlock to set
+     */
+    public void setReturnTeleportBlock(boolean returnTeleportBlock) {
+        this.returnTeleportBlock = returnTeleportBlock;
     }
 }

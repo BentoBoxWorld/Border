@@ -1,0 +1,10 @@
+---
+border:
+  toggle:
+    description: activează/dezactivează chenarul
+    border-on: "&a Chenar activat."
+    border-off: "&a Chenar este dezactivată."
+  set-type:
+    description: modifică tipul de chenar
+    changed: "&a Tipul de chenar s-a schimbat în &b[type]&a."
+    error-unavailable-type: "&c Acest tip este indisponibil sau nu există."

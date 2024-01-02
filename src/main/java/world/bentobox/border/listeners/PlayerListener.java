@@ -155,7 +155,7 @@ public class PlayerListener implements Listener {
             if (r != null) {
                 inTeleport.add(p.getUniqueId());
                 Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
-                if (!addon.getIslands().isSafeLocation(targetPos)) {
+                if (addon.getSettings().isReturnTeleportBlock() && !addon.getIslands().isSafeLocation(targetPos)) {
                     switch (targetPos.getWorld().getEnvironment()) {
                     case NETHER:
                         targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);

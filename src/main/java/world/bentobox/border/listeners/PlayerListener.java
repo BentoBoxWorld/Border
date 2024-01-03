@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -151,10 +152,15 @@ public class PlayerListener implements Listener {
         addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
             Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
                     .multiply(new Vector(1,0,1));
+            if (unitVector.lengthSquared() <= 0D) {
+                // Direction is zero, so nothing to do; cannot move.
+                return;
+            }
             RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
-            if (r != null) {
+            if (r != null && checkFinite(r.getHitPosition())) {
                 inTeleport.add(p.getUniqueId());
                 Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+
                 if (!e.getPlayer().isFlying() && addon.getSettings().isReturnTeleportBlock()
                         && !addon.getIslands().isSafeLocation(targetPos)) {
                     switch (targetPos.getWorld().getEnvironment()) {
@@ -172,6 +178,11 @@ public class PlayerListener implements Listener {
                 Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
         });
+    }
+
+    public boolean checkFinite(Vector toCheck) {
+        return NumberConversions.isFinite(toCheck.getX()) && NumberConversions.isFinite(toCheck.getY())
+                && NumberConversions.isFinite(toCheck.getZ());
     }
 
     /**

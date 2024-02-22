@@ -65,17 +65,19 @@ public class PlayerListener implements Listener {
         // Just for sure, disable world Border 
         user.getPlayer().setWorldBorder(null);
 
-        // Check player perms and return to defaults if players don't have them
-        if (!e.getPlayer().hasPermission(addon.getPermissionPrefix() + IslandBorderCommand.BORDER_COMMAND_PERM)) {
-            // Restore barrier on/off to default
-            user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(addon.getSettings().isShowByDefault()));
-
-            if (!e.getPlayer().hasPermission(addon.getPermissionPrefix() + BorderTypeCommand.BORDER_TYPE_COMMAND_PERM)) {
+        // Get the game mode that this player is in
+        addon.getPlugin().getIWM().getAddon(e.getPlayer().getWorld()).map(gma -> gma.getPermissionPrefix()).filter(
+                permPrefix -> !e.getPlayer().hasPermission(permPrefix + IslandBorderCommand.BORDER_COMMAND_PERM))
+                .ifPresent(permPrefix -> {
+                    // Restore barrier on/off to default
+                    user.putMetaData(BorderShower.BORDER_STATE_META_DATA,
+                            new MetaDataValue(addon.getSettings().isShowByDefault()));
+                    if (!e.getPlayer().hasPermission(permPrefix + BorderTypeCommand.BORDER_TYPE_COMMAND_PERM)) {
                 // Restore default barrier type to player
                 MetaDataValue metaDataValue = new MetaDataValue(addon.getSettings().getType().getId());
                 user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);                
             }
-        }
+                });
 
         // Show the border if required one tick after   
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> 

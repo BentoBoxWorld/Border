@@ -34,7 +34,6 @@ import world.bentobox.border.Border;
 public class ShowBarrier implements BorderShower {
 
     private final Border addon;
-    private static final BlockData BLOCK = Material.BARRIER.createBlockData();
     private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle MAX_PARTICLE = Enums.getIfPresent(Particle.class, "BARRIER_BLOCK").or(Enums.getIfPresent(Particle.class, "BARRIER").or(Particle.BLOCK_CRACK));
     private static final Particle.DustOptions PARTICLE_DUST_RED = new Particle.DustOptions(Color.RED, 1.0F);
@@ -62,16 +61,17 @@ public class ShowBarrier implements BorderShower {
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
-
+        int offset = addon.getSettings().getBarrierOffset();
         // Get the locations to show
         Location loc = player.getLocation();
         showWalls(player, loc,
-                island.getMinProtectedX(),
-                island.getMaxProtectedX(),
-                island.getMinProtectedZ(),
-                island.getMaxProtectedZ(), false);
+                Math.max(island.getMinX(), island.getMinProtectedX() - offset),
+                Math.min(island.getMaxX(), island.getMaxProtectedX() + offset),
+                Math.max(island.getMinZ(),island.getMinProtectedZ() - offset),
+                Math.min(island.getMaxZ(), island.getMaxProtectedZ() + offset), false);
         // If the max border needs to be shown, show it as well
         if (addon.getSettings().isShowMaxBorder()) {
+
             showWalls(player, loc,
                     island.getMinX(),
                     island.getMaxX(),
@@ -83,6 +83,7 @@ public class ShowBarrier implements BorderShower {
 
     private void showWalls(Player player, Location loc, int xMin, int xMax, int zMin, int zMax, boolean max) {
         if (loc.getBlockX() - xMin < BARRIER_RADIUS) {
+            
             // Close to min x
             for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
                 for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
@@ -91,6 +92,7 @@ public class ShowBarrier implements BorderShower {
             }
         }
         if (loc.getBlockZ() - zMin < BARRIER_RADIUS) {
+
             // Close to min z
             for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
                 for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
@@ -99,6 +101,7 @@ public class ShowBarrier implements BorderShower {
             }
         }
         if (xMax - loc.getBlockX() < BARRIER_RADIUS) {
+
             // Close to max x
             for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
                 for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
@@ -107,6 +110,7 @@ public class ShowBarrier implements BorderShower {
             }
         }
         if (zMax - loc.getBlockZ() < BARRIER_RADIUS) {
+
             // Close to max z
             for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
                 for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
@@ -125,17 +129,18 @@ public class ShowBarrier implements BorderShower {
             teleportPlayer(player);
             return;
         }
+        
         Location l = new Location(player.getWorld(), i, j, k);
         Util.getChunkAtAsync(l).thenAccept(c -> {
             if (addon.getSettings().isShowParticles()) {
-                if (j < 0 || j > player.getWorld().getMaxHeight()) {
+                if (j < player.getWorld().getMinHeight() || j > player.getWorld().getMaxHeight()) {
                     User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
                 } else {
                     User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
                 }
             }
             if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
-                player.sendBlockChange(l, BLOCK);
+                player.sendBlockChange(l, Material.BARRIER.createBlockData());
                 barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
             }
         });
@@ -164,9 +169,7 @@ public class ShowBarrier implements BorderShower {
         if (barrierBlocks.containsKey(user.getUniqueId())) {
             barrierBlocks.get(user.getUniqueId()).stream()
             .filter(v -> v.l.getWorld().equals(user.getWorld()))
-            .forEach(v -> {
-                user.getPlayer().sendBlockChange(v.l, v.oldBlockData);
-            });
+            .forEach(v -> user.getPlayer().sendBlockChange(v.l, v.oldBlockData));
             // Clean up
             clearUser(user);
         }

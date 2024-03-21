@@ -6,11 +6,13 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.listeners.BorderShower;
 
 public class IslandBorderCommand extends CompositeCommand {
 
+    public static final String BORDER_COMMAND_PERM = "border.toggle";
     private Border addon;
     private Island island;
 
@@ -21,7 +23,7 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission("border.toggle");
+        this.setPermission(BORDER_COMMAND_PERM);
         this.setDescription("border.toggle.description");
         this.setOnlyPlayer(true);
         setConfigurableRankCommand();
@@ -31,7 +33,12 @@ public class IslandBorderCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        island = getIslands().getIsland(getWorld(), user);
+        if (!this.getWorld().equals(Util.getWorld(user.getWorld())))
+        {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
+        island = addon.getIslands().getIslandAt(user.getLocation()).orElse(null);
         return island != null;
     }
 
@@ -45,7 +52,9 @@ public class IslandBorderCommand extends CompositeCommand {
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
-            addon.getBorderShower().showBorder(user.getPlayer(), island);
+            if (island != null) {
+                addon.getBorderShower().showBorder(user.getPlayer(), island);
+            }
         }
         return true;
     }

@@ -4,3 +4,7 @@ border:
     description: 월드보더를 키거나 끕니다
     border-on: "&a 월드 보더를 활성화 했습니다"
     border-off: "&a 월드 보더를 비활성화 했습니다"
+  set-type:
+    description: 테두리 유형을 변경합니다.
+    changed: "&a 테두리 유형이 &b[type]&a로 변경되었습니다."
+    error-unavailable-type: "&c 이 유형은 사용할 수 없거나 존재하지 않습니다."

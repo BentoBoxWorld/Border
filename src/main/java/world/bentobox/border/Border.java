@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.BorderShower;
@@ -19,7 +20,7 @@ import world.bentobox.border.listeners.PlayerListener;
 import world.bentobox.border.listeners.ShowBarrier;
 import world.bentobox.border.listeners.ShowVirtualWorldBorder;
 
-public final class Border extends Addon {
+public class Border extends Addon {
 
     private BorderShower borderShower;
 
@@ -55,8 +56,9 @@ public final class Border extends Addon {
         });
 
         if (!gameModes.isEmpty()) {
-            borderShower = createBorder();
-            registerListener(new PlayerListener(this));
+            borderShower = this.createBorder();
+            this.registerListener(new PlayerListener(this));
+            this.registerPlaceholders();
         }
     }
 
@@ -106,5 +108,25 @@ public final class Border extends Addon {
 
     public Set<BorderType> getAvailableBorderTypesView() {
         return Collections.unmodifiableSet(availableBorderTypes);
+    }
+
+
+    /**
+     * Placeholder registration.
+     */
+    private void registerPlaceholders()
+    {
+        if (this.getPlugin().getPlaceholdersManager() == null)
+        {
+            return;
+        }
+
+        // Border is per player, not per gamemode.
+        this.getPlugin().getPlaceholdersManager().registerPlaceholder(this,
+                "type",
+                user -> BorderType.fromId(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA).
+                        orElse(new MetaDataValue(getSettings().getType().getId())).asByte()).
+                orElse(getSettings().getType()).
+                getCommandLabel());
     }
 }

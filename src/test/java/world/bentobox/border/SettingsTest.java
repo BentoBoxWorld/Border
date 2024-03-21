@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.border;
 
 import static org.junit.Assert.assertEquals;
@@ -98,20 +95,21 @@ public class SettingsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.Settings#isUseVanilla()}.
+     * Test method for {@link world.bentobox.border.Settings#getType()}.
      */
     @Test
-    public void testIsUseVanilla() {
-        assertTrue(settings.isUseVanilla());
+    public void testGetType() {
+        assertEquals(BorderType.VANILLA, settings.getType());
     }
 
     /**
-     * Test method for {@link world.bentobox.border.Settings#setUseVanilla(boolean)}.
+     * Test method for {@link world.bentobox.border.Settings#setType(BorderType)}.
      */
     @Test
-    public void testSetUseVanilla() {
-        settings.setUseVanilla(true);
-        assertTrue(settings.isUseVanilla());
+    public void testSetType() {
+        assertEquals(BorderType.VANILLA, settings.getType());
+        settings.setType(BorderType.BARRIER);
+        assertEquals(BorderType.BARRIER, settings.getType());
     }
 
     /**
@@ -129,6 +127,26 @@ public class SettingsTest {
     public void testSetReturnTeleport() {
         settings.setReturnTeleport(false);
         assertFalse(settings.isReturnTeleport());
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.border.Settings#getBarrierOffset()}.
+     */
+    @Test
+    public void testGetBarrierOffset() {
+        assertEquals(0, settings.getBarrierOffset());
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.border.Settings#setBarrierOffset(int)}.
+     */
+    @Test
+    public void testsetBarrierOffset() {
+        assertEquals(0, settings.getBarrierOffset());
+        settings.setBarrierOffset(-234);
+        assertEquals(0, settings.getBarrierOffset());
+        settings.setBarrierOffset(123);
+        assertEquals(123, settings.getBarrierOffset());
     }
 
 }

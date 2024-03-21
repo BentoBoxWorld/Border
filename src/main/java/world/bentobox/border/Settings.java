@@ -1,12 +1,12 @@
 package world.bentobox.border;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.configuration.StoreAt;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @StoreAt(filename = "config.yml", path = "addons/Border")
 public class Settings implements ConfigObject {
@@ -22,9 +22,12 @@ public class Settings implements ConfigObject {
     private Set<String> disabledGameModes = new HashSet<>();
 
     @ConfigComment("")
-    @ConfigComment("Use vanilla world border.")
-    @ConfigEntry(path = "use-vanilla")
-    private boolean useVanilla = true;
+    @ConfigComment("Border type. Options are VANILLA, which uses the vanillia-style board or BARRIER,")
+    @ConfigComment("which uses particles and barrier blocks. If players have permission to use the barrier type")
+    @ConfigComment("they may override this option. If they do not have permission or lose the permission")
+    @ConfigComment("then this setting will be used.")
+    @ConfigEntry(path = "type")
+    private BorderType type = BorderType.VANILLA;
 
     @ConfigComment("")
     @ConfigComment("Teleport players back inside the border if they somehow get outside.")
@@ -33,28 +36,42 @@ public class Settings implements ConfigObject {
     private boolean returnTeleport = true;
 
     @ConfigComment("")
-    @ConfigComment("Only applies if vanilla isn't used.")
-    @ConfigComment("Use barrier blocks. If false, the border is indicated by particles only.")
+    @ConfigComment("Place a safety block under the player if they get teleported back into a non-safe spot.")
+    @ConfigEntry(path = "return-teleport-safety-block")
+    private boolean returnTeleportBlock = true;
+
+    @ConfigComment("")
+    @ConfigComment("Barrier blocks on/off. Only applies if the border type is BARRIER.")
+    @ConfigComment("If false, the border is indicated by particles only.")
     @ConfigEntry(path = "use-barrier-blocks")
     private boolean useBarrierBlocks = true;
 
     @ConfigComment("")
-    @ConfigComment("Default border behavior")
+    @ConfigComment("Turn on barrier by default.")
     @ConfigEntry(path = "show-by-default")
     private boolean showByDefault = true;
 
     @ConfigComment("")
-    @ConfigComment("Only applies if vanilla isn't used.")
+    @ConfigComment("Only applies if VANILLA type isn't used.")
     @ConfigComment("Show max-protection range border. This is a visual border only and not a barrier.")
+    @ConfigComment("This setting is useful for game modes where the protection range can move around, like Boxed")
     @ConfigEntry(path = "show-max-border")
     private boolean showMaxBorder = true;
 
     @ConfigComment("")
-    @ConfigComment("Only applies if vanilla isn't used.")
+    @ConfigComment("Only applies if VANILLA type isn't used.")
     @ConfigComment("Enables/disables all types of wall particles shown by the addon")
     @ConfigEntry(path = "show-particles")
     private boolean showParticles = true;
 
+    @ConfigComment("")
+    @ConfigComment("Barrier offset.")
+    @ConfigComment("The barrier normally occurs at the protection range limit but this value extends it outwards.")
+    @ConfigComment("This does not extend the protection range, but will enable players to go outside their protected area.")
+    @ConfigComment("The barrier will not go further than the island distance. Minimum and default value is 0.")
+    @ConfigEntry(path = "barrier-offset")
+    private int barrierOffset = 0;
+    
     /**
      * @param disabledGameModes new disabledGameModes value.
      */
@@ -112,20 +129,6 @@ public class Settings implements ConfigObject {
     }
 
     /**
-     * @return the useVanilla
-     */
-    public boolean isUseVanilla() {
-        return useVanilla;
-    }
-
-    /**
-     * @param useVanilla the useVanilla to set
-     */
-    public void setUseVanilla(boolean useVanilla) {
-        this.useVanilla = useVanilla;
-    }
-
-    /**
      * @return the returnTeleport
      */
     public boolean isReturnTeleport() {
@@ -151,5 +154,42 @@ public class Settings implements ConfigObject {
      */
     public void setShowParticles(boolean showParticles) {
         this.showParticles = showParticles;
+    }
+
+    public BorderType getType() {
+        if (type == null) {
+            type = BorderType.VANILLA;
+        }
+        return type;
+    }
+
+    public void setType(BorderType type) {
+        this.type = type;
+    }
+
+    public int getBarrierOffset() {
+        if (barrierOffset < 0) {
+            barrierOffset = 0;
+        }
+        return barrierOffset;
+    }
+
+    public void setBarrierOffset(int barrierOffset) {
+        this.barrierOffset = barrierOffset;
+        getBarrierOffset();
+    }
+
+    /**
+     * @return the returnTeleportBlock
+     */
+    public boolean isReturnTeleportBlock() {
+        return returnTeleportBlock;
+    }
+
+    /**
+     * @param returnTeleportBlock the returnTeleportBlock to set
+     */
+    public void setReturnTeleportBlock(boolean returnTeleportBlock) {
+        this.returnTeleportBlock = returnTeleportBlock;
     }
 }

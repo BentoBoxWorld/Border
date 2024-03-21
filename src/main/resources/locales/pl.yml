@@ -4,3 +4,7 @@ border:
     description: Pokazuj border on/off
     border-on: "&aBorder jest wyswietlany"
     border-off: "&aBorder jest nie wyswietlany"
+  set-type:
+    description: zmienia rodzaj obramowania
+    changed: "&a Typ obramowania został zmieniony na &b[typ]&a."
+    error-unavailable-type: "&c Ten typ jest niedostępny lub nie istnieje."

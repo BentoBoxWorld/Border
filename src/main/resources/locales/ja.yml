@@ -1,0 +1,10 @@
+---
+border:
+  toggle:
+    description: 境界線のオン/オフを切り替えます
+    border-on: "&a 境界線が有効です。"
+    border-off: "&a 境界線が無効になっています。"
+  set-type:
+    description: 境界線の種類を変更します
+    changed: "&a 枠線のタイプが &b[type]&a に変更されました。"
+    error-unavailable-type: "&c このタイプは使用できないか、存在しません。"

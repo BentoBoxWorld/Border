@@ -1,30 +1,43 @@
-# Border addon configuration file
+# Border addon configuration file {$version}
 # See the documentation at https://docs.bentobox.world/en/latest/addons/Border/
-#
+# 
 # This list stores GameModes in which Border addon should not work.
 # To disable addon it is necessary to write its name in new line that starts with -. Example:
 # disabled-gamemodes:
 #  - BSkyBlock
 disabled-gamemodes: []
-#
-# Use vanilla world border.
-use-vanilla: true
-#
+# 
+# Border type. Options are VANILLA, which uses the vanillia-style board or BARRIER,
+# which uses particles and barrier blocks. If players have permission to use the barrier type
+# they may override this option. If they do not have permission or lose the permission
+# then this setting will be used.
+type: VANILLA
+# 
 # Teleport players back inside the border if they somehow get outside.
 # This will teleport players back inside if they toggle the border with a command.
 return-teleport: true
-#
-# Only applies if vanilla isn't used.
-# Use barrier blocks. If false, the border is indicated by particles only.
+# 
+# Place a safety block under the player if they get teleported back into a non-safe spot.
+return-teleport-safety-block: true
+# 
+# Barrier blocks on/off. Only applies if the border type is BARRIER.
+# If false, the border is indicated by particles only.
 use-barrier-blocks: true
-#
-# Default border behavior
+# 
+# Turn on barrier by default.
 show-by-default: true
-#
-# Only applies if vanilla isn't used.
+# 
+# Only applies if VANILLA type isn't used.
 # Show max-protection range border. This is a visual border only and not a barrier.
+# This setting is useful for game modes where the protection range can move around, like Boxed
 show-max-border: true
-#
-# Only applies if vanilla isn't used.
+# 
+# Only applies if VANILLA type isn't used.
 # Enables/disables all types of wall particles shown by the addon
 show-particles: true
+# 
+# Barrier offset.
+# The barrier normally occurs at the protection range limit but this value extends it outwards.
+# This does not extend the protection range, but will enable players to go outside their protected area.
+# The barrier will not go further than the island distance. Minimum and default value is 0.
+barrier-offset: 0

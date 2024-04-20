@@ -4,7 +4,7 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=BentoBoxWorld_Border&metric=security_rating)](https://sonarcloud.io/dashboard?id=BentoBoxWorld_Border)
 
-**Border** can create and show a border around islands which players cannot pass.
+**Border** creates and shows a world border around islands which players cannot pass.
 
 **See the full documentation [here](https://docs.bentobox.world/en/latest/addons/Border/).**
 

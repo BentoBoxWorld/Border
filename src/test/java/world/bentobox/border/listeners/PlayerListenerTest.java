@@ -40,9 +40,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
@@ -82,6 +84,10 @@ public class PlayerListenerTest {
     private Island island;
     @Mock
     private Vehicle vehicle;
+    @Mock
+    private IslandWorldManager iwm;
+    @Mock
+    private GameModeAddon gma;
 
 
     /**
@@ -135,6 +141,15 @@ public class PlayerListenerTest {
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         
+        // Plugin
+        when(addon.getPlugin()).thenReturn(plugin);
+
+        // IWM
+        when(gma.getPermissionPrefix()).thenReturn("bskyblock.");
+        when(iwm.getAddon(world)).thenReturn(Optional.of(gma));
+        when(plugin.getIWM()).thenReturn(iwm);
+
+
         pl = new PlayerListener(addon);
         
     }
@@ -178,7 +193,7 @@ public class PlayerListenerTest {
      */
     @Test
     public void testOnPlayerRespawn() {
-        PlayerRespawnEvent event = new PlayerRespawnEvent(player, null, false, false);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(player, from, false, false, null);
         pl.onPlayerRespawn(event);
         PowerMockito.verifyStatic(Bukkit.class);
         Bukkit.getScheduler();

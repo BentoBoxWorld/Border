@@ -1,6 +1,8 @@
 package world.bentobox.border.listeners;
 
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -11,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,9 +25,13 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -44,6 +51,7 @@ public class PlayerListener implements Listener {
     private final Border addon;
     private Set<UUID> inTeleport;
     private final BorderShower show;
+    private Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
 
     public PlayerListener(Border addon) {
         this.addon = addon;
@@ -64,17 +72,19 @@ public class PlayerListener implements Listener {
         // Just for sure, disable world Border 
         user.getPlayer().setWorldBorder(null);
 
-        // Check player perms and return to defaults if players don't have them
-        if (!e.getPlayer().hasPermission(addon.getPermissionPrefix() + IslandBorderCommand.BORDER_COMMAND_PERM)) {
-            // Restore barrier on/off to default
-            user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(addon.getSettings().isShowByDefault()));
-
-            if (!e.getPlayer().hasPermission(addon.getPermissionPrefix() + BorderTypeCommand.BORDER_TYPE_COMMAND_PERM)) {
+        // Get the game mode that this player is in
+        addon.getPlugin().getIWM().getAddon(e.getPlayer().getWorld()).map(gma -> gma.getPermissionPrefix()).filter(
+                permPrefix -> !e.getPlayer().hasPermission(permPrefix + IslandBorderCommand.BORDER_COMMAND_PERM))
+                .ifPresent(permPrefix -> {
+                    // Restore barrier on/off to default
+                    user.putMetaData(BorderShower.BORDER_STATE_META_DATA,
+                            new MetaDataValue(addon.getSettings().isShowByDefault()));
+                    if (!e.getPlayer().hasPermission(permPrefix + BorderTypeCommand.BORDER_TYPE_COMMAND_PERM)) {
                 // Restore default barrier type to player
                 MetaDataValue metaDataValue = new MetaDataValue(addon.getSettings().getType().getId());
                 user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);                
             }
-        }
+                });
 
         // Show the border if required one tick after   
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> 
@@ -151,10 +161,15 @@ public class PlayerListener implements Listener {
         addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
             Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
                     .multiply(new Vector(1,0,1));
+            if (unitVector.lengthSquared() <= 0D) {
+                // Direction is zero, so nothing to do; cannot move.
+                return;
+            }
             RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
-            if (r != null) {
+            if (r != null && checkFinite(r.getHitPosition())) {
                 inTeleport.add(p.getUniqueId());
                 Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+
                 if (!e.getPlayer().isFlying() && addon.getSettings().isReturnTeleportBlock()
                         && !addon.getIslands().isSafeLocation(targetPos)) {
                     switch (targetPos.getWorld().getEnvironment()) {
@@ -172,6 +187,11 @@ public class PlayerListener implements Listener {
                 Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
         });
+    }
+
+    public boolean checkFinite(Vector toCheck) {
+        return NumberConversions.isFinite(toCheck.getX()) && NumberConversions.isFinite(toCheck.getY())
+                && NumberConversions.isFinite(toCheck.getZ());
     }
 
     /**
@@ -194,6 +214,56 @@ public class PlayerListener implements Listener {
         }
         return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();
     }
+
+        /**
+     * Runs a task while the player is mounting an entity and eject
+     * if the entity went outside the protection range
+     * @param event - event
+     */
+    @EventHandler
+    public void onEntityMount(EntityMountEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+
+        mountedPlayers.put(player, Bukkit.getScheduler().runTaskTimer(addon.getPlugin(), () -> {
+            Location loc = player.getLocation();
+
+            if (!addon.inGameWorld(loc.getWorld())) {
+                return;
+            }
+            // Eject from mount if outside the protection range
+            if (addon.getIslands().getProtectedIslandAt(loc).isEmpty()) {
+                // Force the dismount event for custom entities
+                if (!event.getMount().eject()) {
+                    var dismountEvent = new EntityDismountEvent(player, event.getMount());
+                    Bukkit.getPluginManager().callEvent(dismountEvent);
+                }
+            }
+        }, 1, 20));
+    }
+
+    /**
+     * Cancel the running task if the player was mounting an entity
+     * @param event - event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDismount(EntityDismountEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+
+        BukkitTask task = mountedPlayers.get(player);
+        if (task == null) {
+            return;
+        }
+
+        task.cancel();
+        mountedPlayers.remove(player);
+    }
+
 
     /**
      * Refreshes the barrier view when the player moves (more than just moving their head)

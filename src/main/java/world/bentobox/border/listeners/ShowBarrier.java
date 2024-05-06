@@ -34,8 +34,10 @@ import world.bentobox.border.Border;
 public class ShowBarrier implements BorderShower {
 
     private final Border addon;
-    private static final Particle PARTICLE = Particle.REDSTONE;
-    private static final Particle MAX_PARTICLE = Enums.getIfPresent(Particle.class, "BARRIER_BLOCK").or(Enums.getIfPresent(Particle.class, "BARRIER").or(Particle.BLOCK_CRACK));
+    private static final Particle PARTICLE = Enums.getIfPresent(Particle.class, "DUST")
+            .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME));
+    private static final Particle MAX_PARTICLE = Enums.getIfPresent(Particle.class, "BARRIER_BLOCK")
+            .or(Enums.getIfPresent(Particle.class, "BARRIER").or(Particle.FLAME));
     private static final Particle.DustOptions PARTICLE_DUST_RED = new Particle.DustOptions(Color.RED, 1.0F);
     private static final Particle.DustOptions PARTICLE_DUST_BLUE = new Particle.DustOptions(Color.BLUE, 1.0F);
     private static final int BARRIER_RADIUS = 5;

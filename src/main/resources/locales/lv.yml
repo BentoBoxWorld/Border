@@ -4,3 +4,6 @@ border:
     description: pārslēdz iespēju redzēt robežu
     border-on: "&a Robeža ieslēgta."
     border-off: "&a Robeža izslēgta."
+  set-type:
+    description: maina apmales veidu
+    error-unavailable-type: "&c Šis veids nav pieejams vai neeksistē."

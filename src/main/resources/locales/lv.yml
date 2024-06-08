@@ -6,4 +6,5 @@ border:
     border-off: "&a Robeža izslēgta."
   set-type:
     description: maina apmales veidu
+    changed: "&a Apmales veids mainīts uz &b[type]&a."
     error-unavailable-type: "&c Šis veids nav pieejams vai neeksistē."

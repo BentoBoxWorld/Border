@@ -23,7 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -139,14 +138,7 @@ public class BorderTypeCommandTest {
         when(addon.getSettings()).thenReturn(settings);
 
 
-        ic = new BorderTypeCommand(addon, ac);
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
+        ic = new BorderTypeCommand(addon, ac, "type");
     }
 
     /**

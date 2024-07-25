@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.border.commands.BorderTypeCommand;
 import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.BorderShower;
 import world.bentobox.border.listeners.PlayerListener;
@@ -52,6 +53,7 @@ public class Border extends Addon {
 
                 log("Border hooking into " + gameModeAddon.getDescription().getName());
                 gameModeAddon.getPlayerCommand().ifPresent(c -> new IslandBorderCommand(this, c, "border"));
+                gameModeAddon.getPlayerCommand().ifPresent(c -> new BorderTypeCommand(this, c, "bordertype"));
             }
         });
 

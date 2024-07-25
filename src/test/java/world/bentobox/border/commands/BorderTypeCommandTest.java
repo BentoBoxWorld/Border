@@ -139,7 +139,7 @@ public class BorderTypeCommandTest {
         when(addon.getSettings()).thenReturn(settings);
 
 
-        ic = new BorderTypeCommand(addon, ac);
+        ic = new BorderTypeCommand(addon, ac, "type");
     }
 
     /**

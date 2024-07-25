@@ -19,13 +19,12 @@ import world.bentobox.border.PerPlayerBorderProxy;
  */
 public final class BorderTypeCommand extends CompositeCommand {
 
-    public static final String BORDER_TYPE_COMMAND_PERM = "border.type";
     private final Border addon;
     private Island island;
     private final List<String> availableTypes;
 
-    public BorderTypeCommand(Border addon, CompositeCommand parent) {
-        super(addon, parent, "type");
+    public BorderTypeCommand(Border addon, CompositeCommand parent, String commandLabel) {
+        super(addon, parent, commandLabel);
         this.addon = addon;
         this.availableTypes = addon.getAvailableBorderTypesView()
                 .stream()
@@ -35,7 +34,7 @@ public final class BorderTypeCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(BORDER_TYPE_COMMAND_PERM);
+        this.setPermission("border." + this.getLabel());
         this.setDescription("border.set-type.description");
         this.setOnlyPlayer(true);
     }

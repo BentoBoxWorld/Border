@@ -39,7 +39,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.PerPlayerBorderProxy;
-import world.bentobox.border.commands.BorderTypeCommand;
 import world.bentobox.border.commands.IslandBorderCommand;
 
 /**
@@ -75,16 +74,16 @@ public class PlayerListener implements Listener {
         // Get the game mode that this player is in
         addon.getPlugin().getIWM().getAddon(e.getPlayer().getWorld()).map(gma -> gma.getPermissionPrefix()).filter(
                 permPrefix -> !e.getPlayer().hasPermission(permPrefix + IslandBorderCommand.BORDER_COMMAND_PERM))
-                .ifPresent(permPrefix -> {
-                    // Restore barrier on/off to default
-                    user.putMetaData(BorderShower.BORDER_STATE_META_DATA,
-                            new MetaDataValue(addon.getSettings().isShowByDefault()));
-                    if (!e.getPlayer().hasPermission(permPrefix + BorderTypeCommand.BORDER_TYPE_COMMAND_PERM)) {
+        .ifPresent(permPrefix -> {
+            // Restore barrier on/off to default
+            user.putMetaData(BorderShower.BORDER_STATE_META_DATA,
+                    new MetaDataValue(addon.getSettings().isShowByDefault()));
+            if (!e.getPlayer().hasPermission(permPrefix + "border.type") && !e.getPlayer().hasPermission(permPrefix + "border.bordertype")) {
                 // Restore default barrier type to player
                 MetaDataValue metaDataValue = new MetaDataValue(addon.getSettings().getType().getId());
                 user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);                
             }
-                });
+        });
 
         // Show the border if required one tick after   
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> 
@@ -215,7 +214,7 @@ public class PlayerListener implements Listener {
         return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();
     }
 
-        /**
+    /**
      * Runs a task while the player is mounting an entity and eject
      * if the entity went outside the protection range
      * @param event - event

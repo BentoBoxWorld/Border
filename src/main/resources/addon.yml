@@ -15,3 +15,6 @@ permissions:
   '[gamemode].border.type':
     description: Player can use border type setting command
     default: true
+  '[gamemode].bordertype':
+    description: Player can use bordertype command to change the border type
+    default: false

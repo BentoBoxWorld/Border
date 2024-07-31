@@ -110,7 +110,7 @@ public class PlayerListener implements Listener {
 
         show.clearUser(User.getInstance(player));
 
-        if (!addon.inGameWorld(to.getWorld())) {
+        if (to == null || !addon.inGameWorld(to.getWorld())) {
             return;
         }
 

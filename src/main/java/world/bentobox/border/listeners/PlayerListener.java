@@ -102,9 +102,20 @@ public class PlayerListener implements Listener {
         show.showBorder(e.getPlayer(), i)));
     }
 
+    private boolean isOn(Player player) {
+        // Check if border is off
+        User user = User.getInstance(player);
+        return user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean)
+                .orElse(addon.getSettings().isShowByDefault());
+
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player player = e.getPlayer();
+        if (!isOn(player)) {
+            return;
+        }
         Location to = e.getTo();
 
         show.clearUser(User.getInstance(player));
@@ -145,6 +156,9 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
         Player p = e.getPlayer();
+        if (!isOn(p)) {
+            return;
+        }
         Location from = e.getFrom();
         if (!addon.getSettings().isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
             return;

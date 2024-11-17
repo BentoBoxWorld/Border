@@ -44,7 +44,7 @@ import world.bentobox.border.commands.IslandBorderCommand;
 /**
  * @author tastybento
  */
-public class PlayerListener implements Listener {
+public class BlockListener implements Listener {
 
     private static final Vector XZ = new Vector(1,0,1);
     private final Border addon;
@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
     private final BorderShower show;
     private Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
 
-    public PlayerListener(Border addon) {
+    public BlockListener(Border addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
         this.show = addon.getBorderShower();

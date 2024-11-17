@@ -28,7 +28,7 @@ public class IslandBorderCommand extends CompositeCommand {
         this.setOnlyPlayer(true);
         setConfigurableRankCommand();
 
-        new BorderTypeCommand(this.getAddon(), this);
+        new BorderTypeCommand(this.getAddon(), this, "type");
     }
 
     @Override

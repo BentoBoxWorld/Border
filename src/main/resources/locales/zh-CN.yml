@@ -1,10 +1,9 @@
----
 border:
   toggle:
-    description: 打开/关闭边框
-    border-on: "&a 启用边框。"
-    border-off: "&a 边框已禁用。"
+    description: 启用/禁用边界屏障
+    border-on: '&a边界屏障已启用.'
+    border-off: '&a边界屏障已禁用.'
   set-type:
-    description: 更改边框的类型
-    changed: "&a 边框类型更改为 &b[type]&a。"
-    error-unavailable-type: "&c 此类型不可用或不存在。"
+    description: 更改边界屏障类型
+    changed: '&a边界屏障已更改为: &b[type]&a.'
+    error-unavailable-type: '&c该屏障类型不可用或不存在.'

@@ -43,6 +43,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
@@ -82,6 +83,8 @@ public class IslandBorderCommandTest {
     private IslandWorldManager iwm;
     @Mock
     private BorderShower bs;
+    @Mock
+    private PlayersManager pm;
 
     /**
      * @throws java.lang.Exception
@@ -137,6 +140,9 @@ public class IslandBorderCommandTest {
         // Settings
         Settings settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
+
+        // Players Manager
+        when(addon.getPlayers()).thenReturn(pm);
 
         ic = new IslandBorderCommand(addon, ac, "");
     }

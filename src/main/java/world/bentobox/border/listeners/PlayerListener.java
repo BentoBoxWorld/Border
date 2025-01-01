@@ -126,14 +126,6 @@ public class PlayerListener implements Listener {
 
     }
 
-    private boolean isOn(Player player) {
-        // Check if border is off
-        User user = User.getInstance(player);
-        return user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean)
-                .orElse(addon.getSettings().isShowByDefault());
-
-    }
-
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player player = e.getPlayer();

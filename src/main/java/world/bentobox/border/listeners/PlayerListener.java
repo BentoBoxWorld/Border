@@ -32,7 +32,6 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -122,8 +121,6 @@ public class PlayerListener implements Listener {
     private boolean isOn(Player player) {
         // Check if border is off
         User user = User.getInstance(player);
-        BentoBox.getInstance().logDebug("Border state meta data = "
-                + user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(mtv -> mtv.asBoolean()).orElse(null));
         return user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean)
                 .orElse(addon.getSettings().isShowByDefault());
 

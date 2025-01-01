@@ -44,7 +44,7 @@ import world.bentobox.border.commands.IslandBorderCommand;
 /**
  * @author tastybento
  */
-public class PlayerListener implements Listener {
+public class BlockListener implements Listener {
 
     private static final Vector XZ = new Vector(1,0,1);
     private final Border addon;
@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
     private final BorderShower show;
     private Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
 
-    public PlayerListener(Border addon) {
+    public BlockListener(Border addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
         this.show = addon.getBorderShower();
@@ -60,19 +60,11 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        if (isOn(player)) {
-            // Run one-tick after joining because meta data cannot be set otherwise
-            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processEvent(e));
-        }
+        // Run one-tick after joining because meta data cannot be set otherwise
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processEvent(e));
     }
 
     protected void processEvent(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        if (!isOn(player)) {
-            return;
-        }
-
         User user = User.getInstance(e.getPlayer());
 
         show.hideBorder(user);
@@ -105,25 +97,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        Player player = e.getPlayer();
-        if (isOn(player)) {
-            show.clearUser(User.getInstance(e.getPlayer()));
-            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands()
-                    .getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> show.showBorder(e.getPlayer(), i)));
-        }
-    }
-
-    /**
-     * Check if the border is on or off
-     * @param player player
-     * @return true if the border is on, false if not
-     */
-    private boolean isOn(Player player) {
-        // Check if border is off
-        User user = User.getInstance(player);
-        return user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean)
-                .orElse(addon.getSettings().isShowByDefault());
-
+        show.clearUser(User.getInstance(e.getPlayer()));
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
+        show.showBorder(e.getPlayer(), i)));
     }
 
     private boolean isOn(Player player) {
@@ -260,7 +236,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player player) || !isOn(player)) {
+        if (!(entity instanceof Player player)) {
             return;
         }
 
@@ -292,15 +268,13 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (isOn(player)) {
-            BukkitTask task = mountedPlayers.get(player);
-            if (task == null) {
-                return;
-            }
-
-            task.cancel();
-            mountedPlayers.remove(player);
+        BukkitTask task = mountedPlayers.get(player);
+        if (task == null) {
+            return;
         }
+
+        task.cancel();
+        mountedPlayers.remove(player);
     }
 
 
@@ -310,9 +284,8 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent e) {
-        Player player = e.getPlayer();
         // Remove head movement
-        if (isOn(player) && !e.getFrom().toVector().equals(e.getTo().toVector())) {
+        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands()
             .getIslandAt(e.getPlayer().getLocation())
             .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
@@ -327,9 +300,13 @@ public class PlayerListener implements Listener {
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
-            e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast)
-                    .filter(this::isOn).forEach(p -> addon.getIslands().getIslandAt(p.getLocation())
-                            .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
+            e.getVehicle().getPassengers().stream()
+            .filter(Player.class::isInstance)
+            .map(Player.class::cast)
+            .forEach(p -> addon
+                    .getIslands()
+                    .getIslandAt(p.getLocation())
+                    .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
         }
     }
 
@@ -339,14 +316,10 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
-        // Get default game mode
-        GameMode gm = this.addon.getPlugin().getIWM().getDefaultGameMode(e.getIsland().getWorld());
         // Hide and show again
         e.getIsland().getPlayersOnIsland().forEach(player -> {
-            if (isOn(player)) {
-                show.hideBorder(User.getInstance(player));
-                show.showBorder(player, e.getIsland());
-            }
+            show.hideBorder(User.getInstance(player));
+            show.showBorder(player, e.getIsland());
         });
     }
 }

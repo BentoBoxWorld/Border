@@ -60,11 +60,19 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
-        // Run one-tick after joining because meta data cannot be set otherwise
-        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processEvent(e));
+        Player player = e.getPlayer();
+        if (isOn(player)) {
+            // Run one-tick after joining because meta data cannot be set otherwise
+            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> processEvent(e));
+        }
     }
 
     protected void processEvent(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        if (!isOn(player)) {
+            return;
+        }
+
         User user = User.getInstance(e.getPlayer());
 
         show.hideBorder(user);
@@ -97,11 +105,19 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        show.clearUser(User.getInstance(e.getPlayer()));
-        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
-        show.showBorder(e.getPlayer(), i)));
+        Player player = e.getPlayer();
+        if (isOn(player)) {
+            show.clearUser(User.getInstance(e.getPlayer()));
+            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands()
+                    .getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> show.showBorder(e.getPlayer(), i)));
+        }
     }
 
+    /**
+     * Check if the border is on or off
+     * @param player player
+     * @return true if the border is on, false if not
+     */
     private boolean isOn(Player player) {
         // Check if border is off
         User user = User.getInstance(player);
@@ -236,7 +252,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player player)) {
+        if (!(entity instanceof Player player) || !isOn(player)) {
             return;
         }
 
@@ -268,13 +284,15 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        BukkitTask task = mountedPlayers.get(player);
-        if (task == null) {
-            return;
-        }
+        if (isOn(player)) {
+            BukkitTask task = mountedPlayers.get(player);
+            if (task == null) {
+                return;
+            }
 
-        task.cancel();
-        mountedPlayers.remove(player);
+            task.cancel();
+            mountedPlayers.remove(player);
+        }
     }
 
 
@@ -284,8 +302,9 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent e) {
+        Player player = e.getPlayer();
         // Remove head movement
-        if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
+        if (isOn(player) && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands()
             .getIslandAt(e.getPlayer().getLocation())
             .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
@@ -300,13 +319,9 @@ public class PlayerListener implements Listener {
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
-            e.getVehicle().getPassengers().stream()
-            .filter(Player.class::isInstance)
-            .map(Player.class::cast)
-            .forEach(p -> addon
-                    .getIslands()
-                    .getIslandAt(p.getLocation())
-                    .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
+            e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast)
+                    .filter(this::isOn).forEach(p -> addon.getIslands().getIslandAt(p.getLocation())
+                            .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
         }
     }
 
@@ -316,10 +331,14 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
+        // Get default game mode
+        GameMode gm = this.addon.getPlugin().getIWM().getDefaultGameMode(e.getIsland().getWorld());
         // Hide and show again
         e.getIsland().getPlayersOnIsland().forEach(player -> {
-            show.hideBorder(User.getInstance(player));
-            show.showBorder(player, e.getIsland());
+            if (isOn(player)) {
+                show.hideBorder(User.getInstance(player));
+                show.showBorder(player, e.getIsland());
+            }
         });
     }
 }

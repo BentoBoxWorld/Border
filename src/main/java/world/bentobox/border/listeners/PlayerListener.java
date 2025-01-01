@@ -122,8 +122,6 @@ public class PlayerListener implements Listener {
     private boolean isOn(Player player) {
         // Check if border is off
         User user = User.getInstance(player);
-        BentoBox.getInstance().logDebug("Border state meta data = "
-                + user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(mtv -> mtv.asBoolean()).orElse(null));
         return user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean)
                 .orElse(addon.getSettings().isShowByDefault());
 

@@ -48,10 +48,12 @@ public class IslandBorderCommand extends CompositeCommand {
         if (on) {
             user.sendMessage("border.toggle.border-off");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(false));
+            addon.getPlayers().savePlayer(user.getUniqueId());
             addon.getBorderShower().hideBorder(user);
         } else {
             user.sendMessage("border.toggle.border-on");
             user.putMetaData(BorderShower.BORDER_STATE_META_DATA, new MetaDataValue(true));
+            addon.getPlayers().savePlayer(user.getUniqueId());
             if (island != null) {
                 addon.getBorderShower().showBorder(user.getPlayer(), island);
             }

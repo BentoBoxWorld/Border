@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -32,12 +34,14 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
+import world.bentobox.border.BorderType;
 import world.bentobox.border.PerPlayerBorderProxy;
 import world.bentobox.border.commands.IslandBorderCommand;
 
@@ -96,6 +100,20 @@ public class PlayerListener implements Listener {
         // Show the border if required one tick after   
         Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> 
         show.showBorder(e.getPlayer(), i)));
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerDamage(EntityDamageEvent e) {
+        // Only deal with fall damage in the right world if the barrier is on
+        if (e.getCause() != DamageCause.FALL || addon.getSettings().getType() != BorderType.BARRIER
+                || !(e.getEntity() instanceof Player p) || !isOn(p) || !addon.inGameWorld(e.getEntity().getWorld())) {
+            return;
+        }
+        Material type = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
+        if (type == Material.AIR) {
+            ((BorderShower) show).teleportPlayer(p);
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -331,8 +349,6 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
-        // Get default game mode
-        GameMode gm = this.addon.getPlugin().getIWM().getDefaultGameMode(e.getIsland().getWorld());
         // Hide and show again
         e.getIsland().getPlayersOnIsland().forEach(player -> {
             if (isOn(player)) {

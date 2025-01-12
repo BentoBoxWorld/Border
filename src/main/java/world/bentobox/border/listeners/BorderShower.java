@@ -43,4 +43,10 @@ public interface BorderShower {
         // Do nothing
     }
 
+    /**
+     * Teleports player back within the island space they are in
+     * @param player player
+     */
+    public void teleportPlayer(Player player);
+
 }

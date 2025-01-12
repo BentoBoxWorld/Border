@@ -74,4 +74,14 @@ public final class PerPlayerBorderProxy implements BorderShower {
     private BorderType getDefaultBorderType() {
         return addon.getSettings().getType();
     }
+
+    @Override
+    public void teleportPlayer(Player player) {
+        if (getBorderType(User.getInstance(player)) == BorderType.BARRIER) {
+            customBorder.teleportPlayer(player);
+        } else {
+            vanillaBorder.teleportPlayer(player);
+        }
+
+    }
 }

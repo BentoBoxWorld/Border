@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Enums;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -123,13 +124,19 @@ public class ShowBarrier implements BorderShower {
 
     }
 
+    /**
+     * @param player player
+     * @param i 
+     * @param j
+     * @param k
+     * @param max
+     */
     private void showPlayer(Player player, int i, int j, int k, boolean max) {
         // Get if on or in border
         if (addon.getSettings().isUseBarrierBlocks()
                 && player.getLocation().getBlockX() == i
                 && player.getLocation().getBlockZ() == k) {
             teleportPlayer(player);
-            return;
         }
         
         Location l = new Location(player.getWorld(), i, j, k);
@@ -148,13 +155,15 @@ public class ShowBarrier implements BorderShower {
         });
     }
 
-    private void teleportPlayer(Player p) {
+    /**
+     * Teleport player back within the island space they are in
+     * @param p player
+     */
+    public void teleportPlayer(Player p) {
         addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
             Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
-                    .multiply(new Vector(1,0,1));
-            p.setVelocity(new Vector (0,0,0));
+                    .multiply(new Vector(1, 0, 1));
             // Get distance from border
-
             Location to = p.getLocation().toVector().add(unitVector).toLocation(p.getWorld());
             to.setPitch(p.getLocation().getPitch());
             to.setYaw(p.getLocation().getYaw());

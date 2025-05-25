@@ -62,7 +62,7 @@ public class PlayerListener implements Listener {
         this.show = addon.getBorderShower();
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         if (isOn(player)) {
@@ -102,7 +102,7 @@ public class PlayerListener implements Listener {
         show.showBorder(e.getPlayer(), i)));
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent e) {
         // Only deal with fall damage in the right world if the barrier is on
         if (e.getCause() != DamageCause.FALL || addon.getSettings().getType() != BorderType.BARRIER
@@ -116,12 +116,12 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent e) {
         show.clearUser(User.getInstance(e.getPlayer()));
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
         if (isOn(player)) {
@@ -187,7 +187,7 @@ public class PlayerListener implements Listener {
                 );
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         if (!isOn(p)) {
@@ -267,10 +267,10 @@ public class PlayerListener implements Listener {
      * if the entity went outside the protection range
      * @param event - event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player player) || !isOn(player)) {
+        if (!(entity instanceof Player player) || !isOn(player) || !addon.getSettings().isReturnTeleport()) {
             return;
         }
 
@@ -318,7 +318,7 @@ public class PlayerListener implements Listener {
      * Refreshes the barrier view when the player moves (more than just moving their head)
      * @param e event
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         // Remove head movement
@@ -333,7 +333,7 @@ public class PlayerListener implements Listener {
      * Refresh the view when riding in a vehicle
      * @param e event
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent e) {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
@@ -347,7 +347,7 @@ public class PlayerListener implements Listener {
      * Hide and then show the border to react to the change in protection area
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {
         // Hide and show again
         e.getIsland().getPlayersOnIsland().forEach(player -> {

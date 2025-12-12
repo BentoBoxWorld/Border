@@ -1,8 +1,8 @@
 package world.bentobox.border.listeners;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -14,40 +14,36 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
+import world.bentobox.border.CommonTestSetup;
 import world.bentobox.border.PerPlayerBorderProxy;
 import world.bentobox.border.Settings;
 
@@ -55,12 +51,8 @@ import world.bentobox.border.Settings;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
-public class PlayerListenerTest {
+public class PlayerListenerTest extends CommonTestSetup {
     
-    @Mock
-    private BentoBox plugin;
     @Mock
     private Border addon;
     @Mock
@@ -77,15 +69,7 @@ public class PlayerListenerTest {
     private Location to;
     private Settings settings;
     @Mock
-    private World world;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    @Mock
     private Vehicle vehicle;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private GameModeAddon gma;
 
@@ -93,13 +77,12 @@ public class PlayerListenerTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        
-        PowerMockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
-        when(User.getInstance(any(Player.class))).thenReturn(user);
+        super.setUp();
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
         
         // Border Shower
         when(addon.getBorderShower()).thenReturn(show);
@@ -111,6 +94,8 @@ public class PlayerListenerTest {
         // Locations
         when(to.getWorld()).thenReturn(world);
         when(from.getWorld()).thenReturn(world);
+        when(from.clone()).thenReturn(from);
+        when(to.clone()).thenReturn(to);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         when(to.toVector()).thenReturn(new Vector(6,7,8));
         
@@ -137,10 +122,7 @@ public class PlayerListenerTest {
         
         // Vehicle
         when(vehicle.getPassengers()).thenReturn(List.of(player));
-        
-        // Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        
+               
         // Plugin
         when(addon.getPlugin()).thenReturn(plugin);
 
@@ -149,9 +131,18 @@ public class PlayerListenerTest {
         when(iwm.getAddon(world)).thenReturn(Optional.of(gma));
         when(plugin.getIWM()).thenReturn(iwm);
 
+        // Util
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        mockedUtil.when(() -> Util.teleportAsync(any(), any())).thenReturn(future);
 
         pl = new PlayerListener(addon);
         
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -171,8 +162,7 @@ public class PlayerListenerTest {
         pl.processEvent(event);
         verify(user).putMetaData(eq(BorderShower.BORDER_STATE_META_DATA), any());
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA), any());
-        PowerMockito.verifyStatic(Bukkit.class);
-        Bukkit.getScheduler();
+        mockedBukkit.verify(() -> Bukkit.getScheduler());
         verify(show).hideBorder(user);
         verify(player).setWorldBorder(null);
         
@@ -193,10 +183,9 @@ public class PlayerListenerTest {
      */
     @Test
     public void testOnPlayerRespawn() {
-        PlayerRespawnEvent event = new PlayerRespawnEvent(player, from, false, false, null);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(player, from, false, false, false, RespawnReason.DEATH);
         pl.onPlayerRespawn(event);
-        PowerMockito.verifyStatic(Bukkit.class);
-        Bukkit.getScheduler();
+        mockedBukkit.verify(() -> Bukkit.getScheduler());
         verify(show).clearUser(user);
     }
 
@@ -209,8 +198,7 @@ public class PlayerListenerTest {
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
         verify(show).clearUser(user);
-        PowerMockito.verifyStatic(Bukkit.class, never());
-        Bukkit.getScheduler();
+        mockedBukkit.verify(() -> Bukkit.getScheduler(), never());
     }
     
     /**
@@ -222,8 +210,7 @@ public class PlayerListenerTest {
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
         verify(show).clearUser(user);
-        PowerMockito.verifyStatic(Bukkit.class);
-        Bukkit.getScheduler();
+        mockedBukkit.verify(() -> Bukkit.getScheduler());
     }
 
     /**
@@ -324,8 +311,7 @@ public class PlayerListenerTest {
         pl.onPlayerLeaveIsland(event);
         verify(addon, times(4)).getIslands();
         assertFalse(event.isCancelled());
-        PowerMockito.verifyStatic(Util.class);
-        Util.teleportAsync(any(), any());
+        mockedUtil.verify(() -> Util.teleportAsync(any(), any()), times(2));
     }
 
     /**

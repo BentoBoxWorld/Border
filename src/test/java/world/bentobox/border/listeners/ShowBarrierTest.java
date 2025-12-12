@@ -1,70 +1,59 @@
 package world.bentobox.border.listeners;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
+import world.bentobox.border.CommonTestSetup;
 import world.bentobox.border.Settings;
 
 /**
  * @author tastybento
  *
  */
-@PrepareForTest({User.class, Util.class})
-@RunWith(PowerMockRunner.class)
-public class ShowBarrierTest {
+public class ShowBarrierTest extends CommonTestSetup {
     @Mock
     private Border addon;
     @Mock
     private Player player;
-    @Mock
-    private Island island;
-    @Mock
-    private IslandsManager im;
     
     private ShowBarrier sb;
     private Settings settings;
     @Mock
     private @NonNull User user;
     @Mock
-    private Location location;
-    @Mock
     private @NonNull Location center;
-    @Mock
-    private World world;
-
-    
     
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         settings = new Settings();
         settings.setShowMaxBorder(false);
         when(addon.getSettings()).thenReturn(settings);
@@ -80,6 +69,7 @@ public class ShowBarrierTest {
         when(island.getMaxProtectedX()).thenReturn(100);
         when(island.getMaxProtectedZ()).thenReturn(100);
         when(center.toVector()).thenReturn(new Vector(0,0,0));
+        when(center.clone()).thenReturn(center);
         when(island.getCenter()).thenReturn(center);
         
         // Island Manager
@@ -87,8 +77,8 @@ public class ShowBarrierTest {
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.of(island));
         
         // User
-        PowerMockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
-        when(User.getInstance(any(Player.class))).thenReturn(user);
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
         when(user.getMetaData(anyString())).thenReturn(Optional.empty());
         when(user.getPlayer()).thenReturn(player);
         when(location.getBlockX()).thenReturn(99);
@@ -98,10 +88,17 @@ public class ShowBarrierTest {
         when(player.getWorld()).thenReturn(world);
         
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-       
-        
+        Chunk chunk = mock(Chunk.class);
+        CompletableFuture<Chunk> future = new CompletableFuture<>();
+        future.complete(chunk);
+        mockedUtil.when(() -> Util.getChunkAtAsync(any())).thenReturn(future);
         sb = new ShowBarrier(addon);
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -119,9 +116,7 @@ public class ShowBarrierTest {
     public void testShowBorderNearBorder() {
         sb.showBorder(player, island);
         verify(player, times(131)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(120));
-        Util.getChunkAtAsync(any(Location.class));
-        
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(120));
     }
         
     /**
@@ -132,8 +127,7 @@ public class ShowBarrierTest {
         settings.setUseBarrierBlocks(false);
         sb.showBorder(player, island);
         verify(player).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(120));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(120));
         
     }
     
@@ -146,8 +140,7 @@ public class ShowBarrierTest {
         settings.setBarrierOffset(50);
         sb.showBorder(player, island);
         verify(player).getLocation();        
-        PowerMockito.verifyStatic(Util.class, never());
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), never());
         
     }
     
@@ -160,8 +153,7 @@ public class ShowBarrierTest {
         settings.setBarrierOffset(2);
         sb.showBorder(player, island);
         verify(player, times(171)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(160));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(160));
         
     }
     /**
@@ -173,8 +165,7 @@ public class ShowBarrierTest {
         // Not close to the max border, so the times will be the same as above
         sb.showBorder(player, island);
         verify(player, times(131)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(120));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(120));
         
     }
     
@@ -192,8 +183,7 @@ public class ShowBarrierTest {
         sb.showBorder(player, island);
         // Number of times should be double
         verify(player, times(261)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(240));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(240));
         
     }
     
@@ -207,8 +197,7 @@ public class ShowBarrierTest {
         when(location.toVector()).thenReturn(new Vector(0,0,99));
         sb.showBorder(player, island);
         verify(player, times(111)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(100));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(100));
         
     }
     
@@ -222,8 +211,7 @@ public class ShowBarrierTest {
         when(location.toVector()).thenReturn(new Vector(99,0,0));
         sb.showBorder(player, island);
         verify(player, times(101)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(100));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(100));
         
     }
     
@@ -237,8 +225,7 @@ public class ShowBarrierTest {
         when(location.toVector()).thenReturn(new Vector(0,0,-99));
         sb.showBorder(player, island);
         verify(player, times(111)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(100));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(100));
         
     }
     
@@ -252,8 +239,7 @@ public class ShowBarrierTest {
         when(location.toVector()).thenReturn(new Vector(-99,0,0));
         sb.showBorder(player, island);
         verify(player, times(101)).getLocation();        
-        PowerMockito.verifyStatic(Util.class, times(100));
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(100));
         
     }
     
@@ -267,8 +253,7 @@ public class ShowBarrierTest {
         when(location.toVector()).thenReturn(new Vector(0,0,0));
         sb.showBorder(player, island);
         verify(player).getLocation();        
-        PowerMockito.verifyStatic(Util.class, never());
-        Util.getChunkAtAsync(any(Location.class));
+        mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), never());
         
     }
 

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,11 +51,13 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
         // Island
         when(island.getRange()).thenReturn(400);
         when(island.getProtectionRange()).thenReturn(100);
+        when(island.getProtectionCenter()).thenReturn(location);
                 
         // User
         MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
         when(user.getPlayer()).thenReturn(mockPlayer);
+        when(location.toVector()).thenReturn(new Vector(0,0,0));
         when(mockPlayer.getLocation()).thenReturn(location);
         when(mockPlayer.getWorld()).thenReturn(world);
                 

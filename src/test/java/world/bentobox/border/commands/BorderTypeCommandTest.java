@@ -1,8 +1,8 @@
 package world.bentobox.border.commands;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -19,31 +19,20 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
+import world.bentobox.border.CommonTestSetup;
 import world.bentobox.border.Settings;
 import world.bentobox.border.listeners.BorderShower;
 
@@ -51,17 +40,11 @@ import world.bentobox.border.listeners.BorderShower;
  * @author tastybento
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
-public class BorderTypeCommandTest {
-    @Mock
-    private BentoBox plugin;
+public class BorderTypeCommandTest extends CommonTestSetup {
     @Mock
     private CompositeCommand ac;
     @Mock
     private User user;
-    @Mock
-    private LocalesManager lm;
     @Mock
     private Border addon;
 
@@ -70,15 +53,6 @@ public class BorderTypeCommandTest {
 
 
     private BorderTypeCommand ic;
-    private UUID uuid;
-    @Mock
-    private World world;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private @Nullable Island island;
-    @Mock
-    private IslandWorldManager iwm;
     @Mock
     private BorderShower bs;
 
@@ -86,11 +60,10 @@ public class BorderTypeCommandTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -117,16 +90,13 @@ public class BorderTypeCommandTest {
         when(addon.getAvailableBorderTypesView()).thenReturn(availableBorderTypes);
 
         // Util
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         // Return what was put into the method
-        when(Util.getWorld(any())).thenAnswer(invocation -> invocation.getArgument(0, World.class));
+        mockedUtil.when(() -> Util.getWorld(any())).thenAnswer(invocation -> invocation.getArgument(0, World.class));
 
         // Islands
-        when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(world, user)).thenReturn(island);
 
         // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Shower
@@ -139,6 +109,12 @@ public class BorderTypeCommandTest {
 
 
         ic = new BorderTypeCommand(addon, ac, "type");
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -186,7 +162,7 @@ public class BorderTypeCommandTest {
     @Test
     public void testExecuteUserStringListOfStringShowHelp() {
         assertFalse(ic.execute(user, "", List.of("arg", "two")));
-        verify(user).sendMessage("commands.help.header","[label]",null);
+        verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
     }
 
     /**

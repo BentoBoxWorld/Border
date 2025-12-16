@@ -35,10 +35,11 @@ public class ShowVirtualWorldBorder implements BorderShower {
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
-        Location l = island.getProtectionCenter();
-        if (player.getWorld().getEnvironment() == Environment.NETHER) {
-            l.multiply(8);
+        
+        if (player.getWorld().getEnvironment() == Environment.NETHER && !addon.getPlugin().getIWM().isIslandNether(player.getWorld())) {
+            return;
         }
+        Location l = island.getProtectionCenter().toVector().toLocation(player.getWorld());
         WorldBorder wb = Bukkit.createWorldBorder();
         wb.setCenter(l);
         double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings().getBarrierOffset()) * 2D);

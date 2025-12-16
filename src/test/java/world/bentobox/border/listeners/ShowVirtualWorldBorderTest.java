@@ -1,51 +1,38 @@
 package world.bentobox.border.listeners;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.Border;
+import world.bentobox.border.CommonTestSetup;
 import world.bentobox.border.Settings;
 
 /**
  * @author tastybento
  *
  */
-@PrepareForTest({Bukkit.class, User.class})
-@RunWith(PowerMockRunner.class)
-public class ShowVirtualWorldBorderTest {
+public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     @Mock
     private Border addon;
     private Settings settings;
     private ShowVirtualWorldBorder svwb;
     @Mock
-    private Player player;
-    @Mock
-    private Island island;
-    @Mock
     private @NonNull User user;
-    @Mock
-    private Location location;
-    @Mock
-    private World world;
     @Mock
     private WorldBorder wb;
 
@@ -54,27 +41,36 @@ public class ShowVirtualWorldBorderTest {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
+        super.setUp();
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
         
         // Island
         when(island.getRange()).thenReturn(400);
         when(island.getProtectionRange()).thenReturn(100);
+        when(island.getProtectionCenter()).thenReturn(location);
                 
         // User
-        PowerMockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
-        when(User.getInstance(any(Player.class))).thenReturn(user);
-        when(user.getPlayer()).thenReturn(player);
-        when(player.getLocation()).thenReturn(location);
-        when(player.getWorld()).thenReturn(world);
+        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
+        when(user.getPlayer()).thenReturn(mockPlayer);
+        when(location.toVector()).thenReturn(new Vector(0,0,0));
+        when(mockPlayer.getLocation()).thenReturn(location);
+        when(mockPlayer.getWorld()).thenReturn(world);
                 
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        when(Bukkit.createWorldBorder()).thenReturn(wb);
+        mockedBukkit.when(() -> Bukkit.createWorldBorder()).thenReturn(wb);
         
         svwb = new ShowVirtualWorldBorder(addon);
+    }
+    
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -90,7 +86,7 @@ public class ShowVirtualWorldBorderTest {
      */
     @Test
     public void testShowBorder() {
-        svwb.showBorder(player, island);
+        svwb.showBorder(mockPlayer, island);
         verify(wb).setSize(200.0D);
         
     }
@@ -101,7 +97,7 @@ public class ShowVirtualWorldBorderTest {
     @Test
     public void testShowBorderWithOffset() {
         settings.setBarrierOffset(10);
-        svwb.showBorder(player, island);
+        svwb.showBorder(mockPlayer, island);
         verify(wb).setSize(220.0D);
         
     }
@@ -112,7 +108,7 @@ public class ShowVirtualWorldBorderTest {
     @Test
     public void testShowBorderWithLargeOffset() {
         settings.setBarrierOffset(10000);
-        svwb.showBorder(player, island);
+        svwb.showBorder(mockPlayer, island);
         verify(wb).setSize(800.0D); // Max size
         
     }
@@ -124,7 +120,7 @@ public class ShowVirtualWorldBorderTest {
     public void testHideBorder() {
         // Nothing to hide
         svwb.hideBorder(user);
-        verify(player).setWorldBorder(null);
+        verify(mockPlayer).setWorldBorder(null);
     }
     
 }

@@ -260,7 +260,7 @@ public abstract class CommonTestSetup {
 
     /**
      * Check that spigot sent the message
-     * @param message - message to check
+     * @param expectedMessage - message to check
      */
     public void checkSpigotMessage(String expectedMessage) {
         checkSpigotMessage(expectedMessage, 1);

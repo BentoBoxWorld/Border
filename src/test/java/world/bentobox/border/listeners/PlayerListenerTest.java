@@ -72,6 +72,8 @@ public class PlayerListenerTest extends CommonTestSetup {
     private Vehicle vehicle;
     @Mock
     private GameModeAddon gma;
+    
+    private MockedStatic<User> mockedUser;
 
 
     /**
@@ -81,7 +83,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
         
         // Border Shower
@@ -142,6 +144,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
+        mockedUser.closeOnDemand();
         super.tearDown();
     }
 

@@ -47,6 +47,8 @@ public class ShowBarrierTest extends CommonTestSetup {
     @Mock
     private @NonNull Location center;
     
+    private MockedStatic<User> mockedUser;
+    
     /**
      * @throws java.lang.Exception
      */
@@ -77,7 +79,7 @@ public class ShowBarrierTest extends CommonTestSetup {
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.of(island));
         
         // User
-        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
         when(user.getMetaData(anyString())).thenReturn(Optional.empty());
         when(user.getPlayer()).thenReturn(player);
@@ -98,6 +100,9 @@ public class ShowBarrierTest extends CommonTestSetup {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
+        if (mockedUser != null) {
+            mockedUser.close();
+        }
         super.tearDown();
     }
 

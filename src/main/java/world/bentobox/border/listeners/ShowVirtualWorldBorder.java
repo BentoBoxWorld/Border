@@ -40,9 +40,6 @@ public class ShowVirtualWorldBorder implements BorderShower {
             return;
         }
         Location l = island.getProtectionCenter().toVector().toLocation(player.getWorld());
-        if (player.getWorld().getEnvironment() == Environment.NETHER) {
-            l.multiply(8);
-        }
         WorldBorder wb = Bukkit.createWorldBorder();
         wb.setCenter(l);
         double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings().getBarrierOffset()) * 2D);

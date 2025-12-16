@@ -2,10 +2,12 @@ package world.bentobox.border.listeners;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -121,6 +123,41 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
         // Nothing to hide
         svwb.hideBorder(user);
         verify(mockPlayer).setWorldBorder(null);
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Tests that border is shown when player is in an island nether world.
+     */
+    @Test
+    public void testShowBorderInIslandNetherWorld() {
+        // Setup: Player is in a nether environment that IS an island nether world
+        when(world.getEnvironment()).thenReturn(Environment.NETHER);
+        when(iwm.isIslandNether(world)).thenReturn(true);
+        when(addon.getPlugin()).thenReturn(plugin);
+        
+        svwb.showBorder(mockPlayer, island);
+        
+        // Verify that the border was set (border should show in island nether worlds)
+        verify(mockPlayer).setWorldBorder(wb);
+        verify(wb).setSize(200.0D);
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Tests that border is NOT shown when player is in a non-island nether world.
+     */
+    @Test
+    public void testShowBorderInNonIslandNetherWorld() {
+        // Setup: Player is in a nether environment that is NOT an island nether world
+        when(world.getEnvironment()).thenReturn(Environment.NETHER);
+        when(iwm.isIslandNether(world)).thenReturn(false);
+        when(addon.getPlugin()).thenReturn(plugin);
+        
+        svwb.showBorder(mockPlayer, island);
+        
+        // Verify that the border was NOT set (border should not show in non-island nether worlds)
+        verify(mockPlayer, never()).setWorldBorder(any());
     }
     
 }

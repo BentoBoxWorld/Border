@@ -295,7 +295,6 @@ public abstract class CommonTestSetup {
      * @return
      */
     public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
-        //return new EntityExplodeEvent(entity, l, list, 0, null);
         return new EntityExplodeEvent(entity, l, list, 0, null);
     }
 

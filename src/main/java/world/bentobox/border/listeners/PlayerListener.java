@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,6 +23,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -29,16 +31,17 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
 import world.bentobox.border.BorderType;
@@ -111,7 +114,7 @@ public class PlayerListener implements Listener {
         }
         Material type = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
         if (type == Material.AIR) {
-            ((BorderShower) show).teleportPlayer(p);
+            ((BorderShower) show).teleportEntity(addon, p);
             e.setCancelled(true);
         }
     }
@@ -338,8 +341,8 @@ public class PlayerListener implements Listener {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast)
-                    .filter(this::isOn).forEach(p -> addon.getIslands().getIslandAt(p.getLocation())
-                            .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
+            .filter(this::isOn).forEach(p -> addon.getIslands().getIslandAt(p.getLocation())
+                    .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
         }
     }
 
@@ -357,4 +360,44 @@ public class PlayerListener implements Listener {
             }
         });
     }
+
+    /**
+     * Bounces items back to inside the barrier if thrown by a player
+     * @param event event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onItemDrop(PlayerDropItemEvent event) {
+        if (addon.getSettings().isBounceBack()
+                && addon.inGameWorld(event.getPlayer().getWorld()) 
+                && isOn(event.getPlayer())
+                ) {
+            // Get this island
+            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is ->  trackItem(event.getItemDrop(), is));
+        }
+    }
+
+    private void trackItem(Item item, Island island) {
+        new BukkitRunnable() {
+            int ticksActive = 0;
+
+            @Override
+            public void run() {
+                // Stop tracking if the item is picked up, despawned, or 20 seconds have passed
+                if (!item.isValid() || ticksActive > 400) {
+                    this.cancel();
+                    return;
+                }
+
+                Location loc = item.getLocation();
+                // Check if the item is going outside the border
+                if (!island.onIsland(loc)) {
+                    // Reverse the direction
+                    item.setVelocity(item.getVelocity().multiply(-0.5)); 
+                    this.cancel();
+                }
+                ticksActive++;
+            }
+        }.runTaskTimer(addon.getPlugin(), 1L, 2L); // Check every 2 ticks (0.1 seconds)
+    }
+
 }

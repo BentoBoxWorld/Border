@@ -30,6 +30,12 @@ public class Settings implements ConfigObject {
     private BorderType type = BorderType.VANILLA;
 
     @ConfigComment("")
+    @ConfigComment("Bounce items back inside the border if they are thrown by a player.")
+    @ConfigComment("Without this, items can be thrown outside the border.")
+    @ConfigEntry(path = "bounce-back")
+    private boolean bounceBack = true;
+    
+    @ConfigComment("")
     @ConfigComment("Teleport players back inside the border if they somehow get outside.")
     @ConfigComment("This will teleport players back inside if they toggle the border with a command.")
     @ConfigEntry(path = "return-teleport")
@@ -191,5 +197,19 @@ public class Settings implements ConfigObject {
      */
     public void setReturnTeleportBlock(boolean returnTeleportBlock) {
         this.returnTeleportBlock = returnTeleportBlock;
+    }
+
+    /**
+     * @return the bounceBack
+     */
+    public boolean isBounceBack() {
+        return bounceBack;
+    }
+
+    /**
+     * @param bounceBack the bounceBack to set
+     */
+    public void setBounceBack(boolean bounceBack) {
+        this.bounceBack = bounceBack;
     }
 }

@@ -1,12 +1,14 @@
 package world.bentobox.border;
 
+import java.util.Optional;
+
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.listeners.BorderShower;
-
-import java.util.Optional;
 
 public final class PerPlayerBorderProxy implements BorderShower {
 
@@ -76,11 +78,11 @@ public final class PerPlayerBorderProxy implements BorderShower {
     }
 
     @Override
-    public void teleportPlayer(Player player) {
+    public void teleportEntity(Border addon, Entity player) {
         if (getBorderType(User.getInstance(player)) == BorderType.BARRIER) {
-            customBorder.teleportPlayer(player);
+            customBorder.teleportEntity(addon, player);
         } else {
-            vanillaBorder.teleportPlayer(player);
+            vanillaBorder.teleportEntity(addon, player);
         }
 
     }

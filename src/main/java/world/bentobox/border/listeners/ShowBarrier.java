@@ -12,13 +12,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Enums;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -136,7 +136,7 @@ public class ShowBarrier implements BorderShower {
         if (addon.getSettings().isUseBarrierBlocks()
                 && player.getLocation().getBlockX() == i
                 && player.getLocation().getBlockZ() == k) {
-            teleportPlayer(player);
+            teleportEntity(player);
         }
         
         Location l = new Location(player.getWorld(), i, j, k);
@@ -157,17 +157,17 @@ public class ShowBarrier implements BorderShower {
 
     /**
      * Teleport player back within the island space they are in
-     * @param p player
+     * @param entity player or entity
      */
-    public void teleportPlayer(Player p) {
-        addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
-            Vector unitVector = i.getCenter().toVector().subtract(p.getLocation().toVector()).normalize()
+    public void teleportEntity(Entity entity) {
+        addon.getIslands().getIslandAt(entity.getLocation()).ifPresent(i -> {
+            Vector unitVector = i.getCenter().toVector().subtract(entity.getLocation().toVector()).normalize()
                     .multiply(new Vector(1, 0, 1));
             // Get distance from border
-            Location to = p.getLocation().toVector().add(unitVector).toLocation(p.getWorld());
-            to.setPitch(p.getLocation().getPitch());
-            to.setYaw(p.getLocation().getYaw());
-            Util.teleportAsync(p, to, TeleportCause.PLUGIN);
+            Location to = entity.getLocation().toVector().add(unitVector).toLocation(entity.getWorld());
+            to.setPitch(entity.getLocation().getPitch());
+            to.setYaw(entity.getLocation().getYaw());
+            Util.teleportAsync(entity, to, TeleportCause.PLUGIN);
         });
     }
 

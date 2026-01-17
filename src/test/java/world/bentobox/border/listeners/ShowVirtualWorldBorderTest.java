@@ -32,7 +32,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     @Mock
     private Border addon;
     private Settings settings;
-    private ShowVirtualWorldBorder svwb;
+    private ShowWorldBorder svwb;
     @Mock
     private @NonNull User user;
     @Mock
@@ -66,7 +66,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
         // Bukkit
         mockedBukkit.when(() -> Bukkit.createWorldBorder()).thenReturn(wb);
         
-        svwb = new ShowVirtualWorldBorder(addon);
+        svwb = new ShowWorldBorder(addon);
     }
     
     @Override
@@ -76,7 +76,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#ShowVirtualWorldBorder(world.bentobox.border.Border)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#ShowVirtualWorldBorder(world.bentobox.border.Border)}.
      */
     @Test
     public void testShowVirtualWorldBorder() {
@@ -84,7 +84,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
     public void testShowBorder() {
@@ -94,7 +94,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
     
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
     public void testShowBorderWithOffset() {
@@ -105,7 +105,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
     
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
     public void testShowBorderWithLargeOffset() {
@@ -116,7 +116,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#hideBorder(world.bentobox.bentobox.api.user.User)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#hideBorder(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testHideBorder() {
@@ -126,7 +126,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
     
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      * Tests that border is shown when player is in an island nether world.
      */
     @Test
@@ -144,7 +144,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
     }
     
     /**
-     * Test method for {@link world.bentobox.border.listeners.ShowVirtualWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      * Tests that border is NOT shown when player is in a non-island nether world.
      */
     @Test

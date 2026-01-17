@@ -19,7 +19,7 @@ import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.BorderShower;
 import world.bentobox.border.listeners.PlayerListener;
 import world.bentobox.border.listeners.ShowBarrier;
-import world.bentobox.border.listeners.ShowVirtualWorldBorder;
+import world.bentobox.border.listeners.ShowWorldBorder;
 
 public class Border extends Addon {
 
@@ -71,7 +71,7 @@ public class Border extends Addon {
 
     private BorderShower createBorder() {
         BorderShower customBorder = new ShowBarrier(this);
-        BorderShower wbapiBorder = new ShowVirtualWorldBorder(this);
+        BorderShower wbapiBorder = new ShowWorldBorder(this);
         return new PerPlayerBorderProxy(this, customBorder, wbapiBorder);
     }
 
@@ -131,4 +131,5 @@ public class Border extends Addon {
                 orElse(getSettings().getType()).
                 getCommandLabel());
     }
+
 }

@@ -1,4 +1,4 @@
-# Border addon configuration file {$version}
+# Border addon configuration file
 # See the documentation at https://docs.bentobox.world/en/latest/addons/Border/
 # 
 # This list stores GameModes in which Border addon should not work.
@@ -12,6 +12,10 @@ disabled-gamemodes: []
 # they may override this option. If they do not have permission or lose the permission
 # then this setting will be used.
 type: VANILLA
+# 
+# Bounce items back inside the border if they are thrown by a player.
+# Without this, items can be thrown outside the border.
+bounce-back: true
 # 
 # Teleport players back inside the border if they somehow get outside.
 # This will teleport players back inside if they toggle the border with a command.

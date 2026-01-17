@@ -46,12 +46,12 @@
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.11.0</mockito.version>
         <!-- More visible way how to change dependency versions -->
-        <paper.version>1.21.10-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         <bentobox.version>3.10.0</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>4.6.0</build.version>
+        <build.version>4.7.0</build.version>
         <build.number>-LOCAL</build.number>
         <!-- Sonar Cloud -->
         <sonar.projectKey>BentoBoxWorld_Border</sonar.projectKey>

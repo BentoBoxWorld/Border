@@ -18,8 +18,6 @@ import world.bentobox.border.commands.BorderTypeCommand;
 import world.bentobox.border.commands.IslandBorderCommand;
 import world.bentobox.border.listeners.BorderShower;
 import world.bentobox.border.listeners.PlayerListener;
-import world.bentobox.border.listeners.ShowBarrier;
-import world.bentobox.border.listeners.ShowVirtualWorldBorder;
 
 public class Border extends Addon {
 
@@ -31,7 +29,7 @@ public class Border extends Addon {
 
     private @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
 
-    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.VANILLA, BorderType.BARRIER);
+    private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.VANILLA, BorderType.BARRIER, BorderType.BOTH);
 
     @Override
     public void onLoad() {
@@ -58,7 +56,7 @@ public class Border extends Addon {
         });
 
         if (!gameModes.isEmpty()) {
-            borderShower = this.createBorder();
+            borderShower = new PerPlayerBorderProxy(this);
             this.registerListener(new PlayerListener(this));
             this.registerPlaceholders();
         }
@@ -67,12 +65,6 @@ public class Border extends Addon {
     @Override
     public void onDisable() {
         // Nothing to do here
-    }
-
-    private BorderShower createBorder() {
-        BorderShower customBorder = new ShowBarrier(this);
-        BorderShower wbapiBorder = new ShowVirtualWorldBorder(this);
-        return new PerPlayerBorderProxy(this, customBorder, wbapiBorder);
     }
 
     public BorderShower getBorderShower() {

@@ -5,6 +5,9 @@ import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.border.listeners.BorderShower;
+import world.bentobox.border.listeners.BothShower;
+import world.bentobox.border.listeners.ShowBarrier;
+import world.bentobox.border.listeners.ShowVirtualWorldBorder;
 
 import java.util.Optional;
 
@@ -15,11 +18,13 @@ public final class PerPlayerBorderProxy implements BorderShower {
     private final Border addon;
     private final BorderShower customBorder;
     private final BorderShower vanillaBorder;
+    private BothShower bothBorder;
 
-    public PerPlayerBorderProxy(Border addon, BorderShower customBorder, BorderShower vanillaBorder) {
+    public PerPlayerBorderProxy(Border addon) {
         this.addon = addon;
-        this.customBorder = customBorder;
-        this.vanillaBorder = vanillaBorder;
+        this.customBorder = new ShowBarrier(addon);
+        this.vanillaBorder = new ShowVirtualWorldBorder(addon);
+        this.bothBorder = new BothShower(customBorder, vanillaBorder);
     }
 
     @Override
@@ -52,6 +57,7 @@ public final class PerPlayerBorderProxy implements BorderShower {
         return switch (borderType) {
             case BARRIER -> customBorder;
             case VANILLA -> vanillaBorder;
+            case BOTH -> bothBorder;
         };
     }
 

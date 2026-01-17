@@ -23,8 +23,9 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("")
     @ConfigComment("Border type. Options are VANILLA, which uses the vanillia-style board or BARRIER,")
-    @ConfigComment("which uses particles and barrier blocks. If players have permission to use the barrier type")
-    @ConfigComment("they may override this option. If they do not have permission or lose the permission")
+    @ConfigComment("which uses particles and barrier blocks, or BOTH, which show both types.")
+    @ConfigComment("If players have permission to use the barrier type they may override this option. ")
+    @ConfigComment("If they do not have permission or lose the permission")
     @ConfigComment("then this setting will be used.")
     @ConfigEntry(path = "type")
     private BorderType type = BorderType.VANILLA;
@@ -71,7 +72,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("The barrier will not go further than the island distance. Minimum and default value is 0.")
     @ConfigEntry(path = "barrier-offset")
     private int barrierOffset = 0;
-    
+
     /**
      * @param disabledGameModes new disabledGameModes value.
      */

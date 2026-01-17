@@ -8,8 +8,9 @@
 disabled-gamemodes: []
 # 
 # Border type. Options are VANILLA, which uses the vanillia-style board or BARRIER,
-# which uses particles and barrier blocks. If players have permission to use the barrier type
-# they may override this option. If they do not have permission or lose the permission
+# which uses particles and barrier blocks, or BOTH, which show both types.
+# If players have permission to use the barrier type they may override this option. 
+# If they do not have permission or lose the permission
 # then this setting will be used.
 type: VANILLA
 # 

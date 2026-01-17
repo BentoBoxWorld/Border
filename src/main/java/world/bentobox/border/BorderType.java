@@ -4,8 +4,8 @@ import java.util.Optional;
 
 public enum BorderType {
     BARRIER((byte) 1, "barrier"),
-    VANILLA((byte) 2, "vanilla");
-    // Virtual((byte)3, "virtual"); // not supported yet
+    VANILLA((byte) 2, "vanilla"),
+    BOTH((byte)3, "both"); // Vanilla and barrier at the same time
 
     private final byte id;
     private final String commandLabel;

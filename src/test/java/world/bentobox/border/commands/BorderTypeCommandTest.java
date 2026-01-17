@@ -180,7 +180,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
     @Test
     public void testExecuteUserStringListOfStringToggle() {
         assertTrue(ic.execute(user, "", Collections.emptyList()));
-        verify(user).sendMessage("border.set-type.changed","[type]","barrier");
+        verify(user).sendMessage("border.set-type.changed","[type]","both");
     }
 
     /**

@@ -23,6 +23,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -373,6 +374,23 @@ public class PlayerListener implements Listener {
                 ) {
             // Get this island
             addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is ->  trackItem(event.getItemDrop(), is));
+        }
+    }
+
+    /**
+     * Bounces items back to inside the barrier if dropped when a player dies
+     * @param event event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (addon.getSettings().isBounceBack()
+                && addon.inGameWorld(event.getPlayer().getWorld()) 
+                && isOn(event.getPlayer())) {
+            // Get this island
+            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is ->  {
+                event.getDrops().forEach(item -> trackItem(event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), item), is));
+                event.getDrops().clear(); // We handled them
+            });
         }
     }
 

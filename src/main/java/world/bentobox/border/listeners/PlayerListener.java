@@ -208,8 +208,13 @@ public class PlayerListener implements Listener {
             Util.teleportAsync(p, from).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             return;
         }
-        // Backtrack
-        addon.getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
+        // Backtrack - try to find island at current location, or fall back to the player's own island
+        Optional<Island> optionalIsland = addon.getIslands().getIslandAt(p.getLocation());
+        if (optionalIsland.isEmpty()) {
+            optionalIsland = Optional
+                    .ofNullable(addon.getIslands().getIsland(p.getWorld(), User.getInstance(p)));
+        }
+        optionalIsland.ifPresent(i -> {
             Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
                     .multiply(new Vector(1,0,1));
             if (unitVector.lengthSquared() <= 0D) {
@@ -263,7 +268,10 @@ public class PlayerListener implements Listener {
                 || !user.getMetaData(BorderShower.BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return false;
         }
-        return addon.getIslands().getIslandAt(to).filter(i -> !i.onIsland(to)).isPresent();
+        Optional<Island> islandAt = addon.getIslands().getIslandAt(to);
+        // Player is outside if they are on an island but not within its protection zone,
+        // or if they are not on any island at all (e.g., pushed out by piston)
+        return islandAt.isEmpty() || islandAt.filter(i -> !i.onIsland(to)).isPresent();
     }
 
     /**

@@ -323,7 +323,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * and getIslandAt returns empty. The plugin should fall back to the player's own island.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportCompletelyOutsideAnyIsland() {
+    public void testOnPlayerLeaveIslandTeleportsWhenCompletelyOutsideIsland() {
         // Player is completely outside any island - getIslandAt returns empty
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());

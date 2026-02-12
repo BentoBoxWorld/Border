@@ -318,6 +318,27 @@ public class PlayerListenerTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests the scenario where a player is pushed completely outside any island (e.g., by a piston)
+     * and getIslandAt returns empty. The plugin should fall back to the player's own island.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandTeleportsWhenCompletelyOutsideIsland() {
+        // Player is completely outside any island - getIslandAt returns empty
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        // But the player has their own island
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+        // Verify teleportAsync was called to teleport the player back
+        mockedUtil.verify(() -> Util.teleportAsync(any(), any()), times(2));
+    }
+
+    /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test

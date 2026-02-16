@@ -72,6 +72,8 @@ public class PlayerListenerTest extends CommonTestSetup {
     private Vehicle vehicle;
     @Mock
     private GameModeAddon gma;
+    
+    private MockedStatic<User> mockedUser;
 
 
     /**
@@ -81,7 +83,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        MockedStatic<User> mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
+        mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
         
         // Border Shower
@@ -142,6 +144,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
+        mockedUser.closeOnDemand();
         super.tearDown();
     }
 
@@ -311,6 +314,27 @@ public class PlayerListenerTest extends CommonTestSetup {
         pl.onPlayerLeaveIsland(event);
         verify(addon, times(4)).getIslands();
         assertFalse(event.isCancelled());
+        mockedUtil.verify(() -> Util.teleportAsync(any(), any()), times(2));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests the scenario where a player is pushed completely outside any island (e.g., by a piston)
+     * and getIslandAt returns empty. The plugin should fall back to the player's own island.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandTeleportsWhenCompletelyOutsideIsland() {
+        // Player is completely outside any island - getIslandAt returns empty
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        // But the player has their own island
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+        // Verify teleportAsync was called to teleport the player back
         mockedUtil.verify(() -> Util.teleportAsync(any(), any()), times(2));
     }
 

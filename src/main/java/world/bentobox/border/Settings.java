@@ -22,12 +22,21 @@ public class Settings implements ConfigObject {
     private Set<String> disabledGameModes = new HashSet<>();
 
     @ConfigComment("")
-    @ConfigComment("Border type. Options are VANILLA, which uses the vanillia-style board or BARRIER,")
+    @ConfigComment("Border type. Options are VANILLA, which uses the vanilla-style boarder or BARRIER,")
     @ConfigComment("which uses particles and barrier blocks. If players have permission to use the barrier type")
     @ConfigComment("they may override this option. If they do not have permission or lose the permission")
     @ConfigComment("then this setting will be used.")
     @ConfigEntry(path = "type")
     private BorderType type = BorderType.VANILLA;
+
+    public enum BorderColor {
+        RED, GREEN, BLUE
+    }
+    @ConfigComment("")
+    @ConfigComment("Vanilla border color. Only applies if the border type is VANILLA.")
+    @ConfigComment("Selection is RED, GREEN, BLUE.")
+    @ConfigEntry(path = "color")
+    private BorderColor color = BorderColor.BLUE;
 
     @ConfigComment("")
     @ConfigComment("Bounce items back inside the border if they are thrown by a player.")
@@ -211,5 +220,19 @@ public class Settings implements ConfigObject {
      */
     public void setBounceBack(boolean bounceBack) {
         this.bounceBack = bounceBack;
+    }
+
+    /**
+     * @return the color
+     */
+    public BorderColor getColor() {
+        return color;
+    }
+
+    /* *
+     * @param color the color to set
+     */
+    public void setColor(BorderColor color) {
+        this.color = color;
     }
 }

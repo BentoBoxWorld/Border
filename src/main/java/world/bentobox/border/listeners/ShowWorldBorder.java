@@ -24,6 +24,7 @@ import world.bentobox.border.Border;
  */
 public class ShowWorldBorder implements BorderShower {
 
+    private static final long MAX_TICKS = 107374182;
     private final Border addon;
 
     public ShowWorldBorder(Border addon) {
@@ -46,6 +47,16 @@ public class ShowWorldBorder implements BorderShower {
         double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings().getBarrierOffset()) * 2D);
         wb.setSize(size);
         wb.setWarningDistance(0);
+        switch(addon.getSettings().getColor()) {
+            case RED:
+                wb.changeSize(wb.getSize() - 0.1, MAX_TICKS);
+                break;
+            case GREEN:
+                wb.changeSize(wb.getSize() + 0.1, MAX_TICKS);
+                break;
+            case BLUE:
+                break;
+        }
         player.setWorldBorder(wb);
     }
 

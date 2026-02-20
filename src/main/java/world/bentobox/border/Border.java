@@ -151,6 +151,10 @@ public class Border extends Addon {
                         orElse(new MetaDataValue(getSettings().getType().getId())).asByte()).
                 orElse(getSettings().getType()).
                 getCommandLabel());
+        this.getPlugin().getPlaceholdersManager().registerPlaceholder(this,
+                "color",
+                user -> user.getMetaData(PerPlayerBorderProxy.BORDER_COLOR_META_DATA)
+                        .map(MetaDataValue::asString)
+                        .orElse(getSettings().getColor().name().toLowerCase()));
     }
-
 }

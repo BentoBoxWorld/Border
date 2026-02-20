@@ -7,3 +7,7 @@ border:
     description: "changes the type of the border"
     changed: "&a Border type changed to &b[type]&a."
     error-unavailable-type: "&c This type is unavailable or does not exist."
+  set-color:
+    description: "changes the color of the border"
+    changed: "&a Border color changed to &b[color]&a."
+    error-invalid-color: "&c That color is invalid. Valid colors are: red, green, blue."

@@ -133,8 +133,8 @@ public class IslandBorderCommandTest extends CommonTestSetup {
         assertEquals("border.toggle.description", ic.getDescription());
         assertTrue(ic.isOnlyPlayer());
         assertTrue(ic.isConfigurableRankCommand());
-        // Help and the type command
-        assertEquals(2,ic.getSubCommands().size());
+        // Help, type and color commands
+        assertEquals(3,ic.getSubCommands().size());
     }
 
     /**

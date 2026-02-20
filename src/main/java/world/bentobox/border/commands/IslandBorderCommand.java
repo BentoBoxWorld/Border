@@ -29,6 +29,7 @@ public class IslandBorderCommand extends CompositeCommand {
         setConfigurableRankCommand();
 
         new BorderTypeCommand(this.getAddon(), this, "type");
+        new BorderColorCommand(this.getAddon(), this, "color");
     }
 
     @Override

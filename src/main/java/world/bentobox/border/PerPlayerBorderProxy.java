@@ -13,6 +13,7 @@ import world.bentobox.border.listeners.BorderShower;
 public final class PerPlayerBorderProxy implements BorderShower {
 
     public static final String BORDER_BORDERTYPE_META_DATA = "Border_bordertype";
+    public static final String BORDER_COLOR_META_DATA = "Border_color";
 
     private final Border addon;
     private final BorderShower customBorder;

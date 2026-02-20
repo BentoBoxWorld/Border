@@ -58,7 +58,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
 
 
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Override
     @BeforeEach

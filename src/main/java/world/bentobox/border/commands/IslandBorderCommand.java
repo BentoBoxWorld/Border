@@ -13,7 +13,7 @@ import world.bentobox.border.listeners.BorderShower;
 public class IslandBorderCommand extends CompositeCommand {
 
     public static final String BORDER_COMMAND_PERM = "border.toggle";
-    private Border addon;
+    private final Border addon;
     private Island island;
 
     public IslandBorderCommand(Border addon, CompositeCommand parent, String label) {

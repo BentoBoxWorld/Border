@@ -126,10 +126,10 @@ public class ShowBarrier implements BorderShower {
 
     /**
      * @param player player
-     * @param i 
-     * @param j
-     * @param k
-     * @param max
+     * @param i - x
+     * @param j - y
+     * @param k - z
+     * @param max - whether this is the max border or not
      */
     private void showPlayer(Player player, int i, int j, int k, boolean max) {
         // Get if on or in border
@@ -200,7 +200,7 @@ public class ShowBarrier implements BorderShower {
         this.showBorder(user.getPlayer(), island);
     }
 
-    private class BarrierBlock {
+    private static class BarrierBlock {
         Location l;
         BlockData oldBlockData;
         public BarrierBlock(Location l, BlockData oldBlockData) {

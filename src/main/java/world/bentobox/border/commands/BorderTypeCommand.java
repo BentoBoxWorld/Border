@@ -63,8 +63,8 @@ public final class BorderTypeCommand extends CompositeCommand {
             return false;
         }
 
-        if (availableTypes.stream().anyMatch(args.get(0)::equalsIgnoreCase)) {
-            changeBorderTypeTo(user, args.get(0));
+        if (availableTypes.stream().anyMatch(args.getFirst()::equalsIgnoreCase)) {
+            changeBorderTypeTo(user, args.getFirst());
             return true;
         }
 
@@ -88,7 +88,7 @@ public final class BorderTypeCommand extends CompositeCommand {
 
         if (index + 1 >= borderTypes.size())
         {
-            this.changeBorderTypeTo(user, borderTypes.get(0).getCommandLabel());
+            this.changeBorderTypeTo(user, borderTypes.getFirst().getCommandLabel());
         }
         else
         {

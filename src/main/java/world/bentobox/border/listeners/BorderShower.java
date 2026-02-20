@@ -17,26 +17,26 @@ import world.bentobox.border.Border;
  *
  */
 public interface BorderShower {
-    public static final String BORDER_STATE_META_DATA = "Border_state";
+    String BORDER_STATE_META_DATA = "Border_state";
 
     /**
      * Show the barrier to the player on an island
      * @param player - player to show
      * @param island - island
      */
-    public void showBorder(Player player, Island island);
+    void showBorder(Player player, Island island);
 
     /**
      * Hide the barrier
      * @param user - user
      */
-    public void hideBorder(User user);
+    void hideBorder(User user);
 
     /**
      * Removes any cache
      * @param user - user
      */
-    public default void clearUser(User user) {
+    default void clearUser(User user) {
         // Do nothing
     }
 
@@ -45,7 +45,7 @@ public interface BorderShower {
      * @param user user 
      * @param island island
      */
-    public default void refreshView(User user, Island island){
+    default void refreshView(User user, Island island){
         // Do nothing
     }
 
@@ -53,7 +53,7 @@ public interface BorderShower {
      * Teleports an entity, typically a player back within the island space they are in
      * @param entity entity
      */
-    public default void teleportEntity(Border addon, Entity entity) {
+    default void teleportEntity(Border addon, Entity entity) {
         addon.getIslands().getIslandAt(entity.getLocation()).ifPresent(i -> {
             Vector unitVector = i.getCenter().toVector().subtract(entity.getLocation().toVector()).normalize()
                     .multiply(new Vector(1, 0, 1));

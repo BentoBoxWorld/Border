@@ -289,10 +289,10 @@ public abstract class CommonTestSetup {
 
     /**
      * Get the exploded event
-     * @param entity
-     * @param l
-     * @param list
-     * @return
+     * @param entity - entity that exploded
+     * @param l - location of explosion
+     * @param list - list of blocks that exploded
+     * @return the event
      */
     public EntityExplodeEvent getExplodeEvent(Entity entity, Location l, List<Block> list) {
         return new EntityExplodeEvent(entity, l, list, 0, null);

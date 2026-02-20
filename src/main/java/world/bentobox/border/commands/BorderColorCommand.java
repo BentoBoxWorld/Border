@@ -55,7 +55,7 @@ public final class BorderColorCommand extends CompositeCommand {
             return false;
         }
 
-        String colorArg = args.get(0).toLowerCase();
+        String colorArg = args.getFirst().toLowerCase();
 
         if (!COLOR_NAMES.contains(colorArg)) {
             user.sendMessage("border.set-color.error-invalid-color");

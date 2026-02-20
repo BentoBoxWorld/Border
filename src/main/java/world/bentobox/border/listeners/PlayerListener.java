@@ -38,7 +38,7 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -72,9 +72,9 @@ public class PlayerListener implements Listener {
 
     private static final Vector XZ = new Vector(1, 0, 1);
     private final Border addon;
-    private Set<UUID> inTeleport;
+    private final Set<UUID> inTeleport;
     private final BorderShower show;
-    private Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
+    private final Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
 
     /**
      * Constructs a new PlayerListener.
@@ -128,7 +128,7 @@ public class PlayerListener implements Listener {
         user.getPlayer().setWorldBorder(null);
 
         // Get the game mode that this player is in
-        addon.getPlugin().getIWM().getAddon(e.getPlayer().getWorld()).map(gma -> gma.getPermissionPrefix()).filter(
+        addon.getPlugin().getIWM().getAddon(e.getPlayer().getWorld()).map(Addon::getPermissionPrefix).filter(
                         permPrefix -> !e.getPlayer().hasPermission(permPrefix + IslandBorderCommand.BORDER_COMMAND_PERM))
                 .ifPresent(permPrefix -> {
                     // Restore barrier on/off to default
@@ -167,7 +167,7 @@ public class PlayerListener implements Listener {
         }
         Material type = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
         if (type == Material.AIR) {
-            ((BorderShower) show).teleportEntity(addon, p);
+            show.teleportEntity(addon, p);
             e.setCancelled(true);
         }
     }
@@ -241,12 +241,12 @@ public class PlayerListener implements Listener {
 
         show.clearUser(User.getInstance(player));
 
-        if (to == null || !addon.inGameWorld(to.getWorld())) {
+        if (!addon.inGameWorld(to.getWorld())) {
             return;
         }
 
         TeleportCause cause = e.getCause();
-        boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CHORUS_FRUIT;
+        boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CONSUMABLE_EFFECT;
 
         Bukkit.getScheduler().runTask(addon.getPlugin(), () ->
                 addon.getIslands().getIslandAt(to).ifPresentOrElse(i -> {
@@ -268,7 +268,6 @@ public class PlayerListener implements Listener {
                 }, () -> {
                     if (isBlacklistedCause) {
                         e.setCancelled(true);
-                        return;
                     }
                 })
         );
@@ -471,7 +470,7 @@ public class PlayerListener implements Listener {
     /**
      * Hide and then show the border to react to the change in protection area
      *
-     * @param e
+     * @param e event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onProtectionRangeChange(IslandProtectionRangeChangeEvent e) {

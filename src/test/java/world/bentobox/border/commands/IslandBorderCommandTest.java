@@ -60,7 +60,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
     private PlayersManager pm;
 
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Override
     @BeforeEach
@@ -116,7 +116,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
     }
 
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Override
     @AfterEach

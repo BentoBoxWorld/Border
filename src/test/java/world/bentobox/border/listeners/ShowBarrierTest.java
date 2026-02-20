@@ -50,7 +50,7 @@ public class ShowBarrierTest extends CommonTestSetup {
     private MockedStatic<User> mockedUser;
     
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Override
     @BeforeEach

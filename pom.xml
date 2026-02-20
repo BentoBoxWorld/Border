@@ -24,7 +24,7 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.codemc.org/job/BentoBoxWorld/job/Border</url>
+        <url>https://ci.codemc.org/job/BentoBoxWorld/job/Border</url>
     </ciManagement>
 
     <issueManagement>
@@ -224,6 +224,7 @@
                 <configuration>
                     <argLine>
                         ${argLine}
+                        -XX:+EnableDynamicAgentLoading
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.math=ALL-UNNAMED
                         --add-opens java.base/java.io=ALL-UNNAMED

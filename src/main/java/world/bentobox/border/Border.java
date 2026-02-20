@@ -1,10 +1,6 @@
 package world.bentobox.border;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
@@ -153,8 +149,14 @@ public class Border extends Addon {
                 getCommandLabel());
         this.getPlugin().getPlaceholdersManager().registerPlaceholder(this,
                 "color",
-                user -> user.getMetaData(PerPlayerBorderProxy.BORDER_COLOR_META_DATA)
-                        .map(MetaDataValue::asString)
-                        .orElse(getSettings().getColor().name().toLowerCase()));
+                user -> {
+            if (user == null) {
+                return "";
+            }
+            return user.getMetaData(PerPlayerBorderProxy.BORDER_COLOR_META_DATA)
+                        .map(m -> m.asString().toLowerCase(Locale.ENGLISH))
+                        .orElse(getSettings().getColor().name().toLowerCase());
+        }
+        );
     }
 }

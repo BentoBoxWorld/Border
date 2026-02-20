@@ -16,6 +16,8 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.Border;
+import world.bentobox.border.PerPlayerBorderProxy;
+import world.bentobox.border.Settings.BorderColor;
 
 /**
  * Show a border using Paper's WorldBorder API
@@ -33,11 +35,12 @@ public class ShowWorldBorder implements BorderShower {
 
     @Override
     public void showBorder(Player player, Island island) {
+        User user = Objects.requireNonNull(User.getInstance(player));
         if (addon.getSettings().getDisabledGameModes().contains(island.getGameMode())
-                || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
+                || !user.getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
-        
+
         if (player.getWorld().getEnvironment() == Environment.NETHER && !addon.getPlugin().getIWM().isIslandNether(player.getWorld())) {
             return;
         }
@@ -47,7 +50,17 @@ public class ShowWorldBorder implements BorderShower {
         double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings().getBarrierOffset()) * 2D);
         wb.setSize(size);
         wb.setWarningDistance(0);
-        switch(addon.getSettings().getColor()) {
+        BorderColor borderColor = user.getMetaData(PerPlayerBorderProxy.BORDER_COLOR_META_DATA)
+                .map(MetaDataValue::asString)
+                .map(name -> {
+                    try {
+                        return BorderColor.valueOf(name);
+                    } catch (IllegalArgumentException e) {
+                        return addon.getSettings().getColor();
+                    }
+                })
+                .orElseGet(() -> addon.getSettings().getColor());
+        switch(borderColor) {
             case RED:
                 wb.changeSize(wb.getSize() - 0.1, MAX_TICKS);
                 break;

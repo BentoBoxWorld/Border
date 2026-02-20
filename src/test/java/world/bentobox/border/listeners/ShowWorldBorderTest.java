@@ -28,7 +28,7 @@ import world.bentobox.border.Settings;
  * @author tastybento
  *
  */
-public class ShowVirtualWorldBorderTest extends CommonTestSetup {
+public class ShowWorldBorderTest extends CommonTestSetup {
     @Mock
     private Border addon;
     private Settings settings;
@@ -41,7 +41,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
 
 
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Override
     @BeforeEach
@@ -64,7 +64,7 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
         when(mockPlayer.getWorld()).thenReturn(world);
                 
         // Bukkit
-        mockedBukkit.when(() -> Bukkit.createWorldBorder()).thenReturn(wb);
+        mockedBukkit.when(Bukkit::createWorldBorder).thenReturn(wb);
         
         svwb = new ShowWorldBorder(addon);
     }
@@ -75,9 +75,6 @@ public class ShowVirtualWorldBorderTest extends CommonTestSetup {
         super.tearDown();
     }
 
-    /**
-     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#ShowVirtualWorldBorder(world.bentobox.border.Border)}.
-     */
     @Test
     public void testShowVirtualWorldBorder() {
         assertNotNull(svwb);

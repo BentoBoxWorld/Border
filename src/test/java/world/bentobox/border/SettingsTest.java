@@ -18,10 +18,9 @@ public class SettingsTest {
     private Settings settings;
 
     /**
-     * @throws java.lang.Exception
      */
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         settings = new Settings();
     }
 

@@ -77,7 +77,7 @@ public class PlayerListenerTest extends CommonTestSetup {
 
 
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Override
     @BeforeEach
@@ -165,7 +165,7 @@ public class PlayerListenerTest extends CommonTestSetup {
         pl.processEvent(event);
         verify(user).putMetaData(eq(BorderShower.BORDER_STATE_META_DATA), any());
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA), any());
-        mockedBukkit.verify(() -> Bukkit.getScheduler());
+        mockedBukkit.verify(Bukkit::getScheduler);
         verify(show).hideBorder(user);
         verify(player).setWorldBorder(null);
         
@@ -188,7 +188,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     public void testOnPlayerRespawn() {
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, from, false, false, false, RespawnReason.DEATH);
         pl.onPlayerRespawn(event);
-        mockedBukkit.verify(() -> Bukkit.getScheduler());
+        mockedBukkit.verify(Bukkit::getScheduler);
         verify(show).clearUser(user);
     }
 
@@ -201,7 +201,7 @@ public class PlayerListenerTest extends CommonTestSetup {
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
         verify(show).clearUser(user);
-        mockedBukkit.verify(() -> Bukkit.getScheduler(), never());
+        mockedBukkit.verify(Bukkit::getScheduler, never());
     }
     
     /**
@@ -213,7 +213,7 @@ public class PlayerListenerTest extends CommonTestSetup {
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
         verify(show).clearUser(user);
-        mockedBukkit.verify(() -> Bukkit.getScheduler());
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
     /**

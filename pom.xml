@@ -24,7 +24,7 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.codemc.org/job/BentoBoxWorld/job/Border</url>
+        <url>https://ci.codemc.org/job/BentoBoxWorld/job/Border</url>
     </ciManagement>
 
     <issueManagement>
@@ -51,7 +51,7 @@
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>4.7.0</build.version>
+        <build.version>4.8.0</build.version>
         <build.number>-LOCAL</build.number>
         <!-- Sonar Cloud -->
         <sonar.projectKey>BentoBoxWorld_Border</sonar.projectKey>
@@ -224,6 +224,7 @@
                 <configuration>
                     <argLine>
                         ${argLine}
+                        -XX:+EnableDynamicAgentLoading
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.math=ALL-UNNAMED
                         --add-opens java.base/java.io=ALL-UNNAMED

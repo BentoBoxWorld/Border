@@ -38,6 +38,7 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -50,22 +51,50 @@ import world.bentobox.border.PerPlayerBorderProxy;
 import world.bentobox.border.commands.IslandBorderCommand;
 
 /**
+ * Listener for player-related events in the Border addon.
+ *
+ * This listener handles various player events including joining, teleporting, moving, mounting,
+ * dropping items, and dying. It manages the display of island borders for players and handles
+ * teleportation logic to keep players within island protection zones.
+ *
+ * Key responsibilities:
+ * - Display/hide island borders based on player settings and permissions
+ * - Manage border visibility state using player metadata
+ * - Handle barrier-based protection with fall damage detection
+ * - Prevent players from leaving island protection zones
+ * - Track mounted players and manage vehicle movement
+ * - Handle item bouncing at island barriers
+ * - React to protection range changes
+ *
  * @author tastybento
  */
 public class PlayerListener implements Listener {
 
-    private static final Vector XZ = new Vector(1,0,1);
+    private static final Vector XZ = new Vector(1, 0, 1);
     private final Border addon;
     private Set<UUID> inTeleport;
     private final BorderShower show;
     private Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
 
+    /**
+     * Constructs a new PlayerListener.
+     *
+     * @param addon the Border addon instance
+     */
     public PlayerListener(Border addon) {
         this.addon = addon;
         inTeleport = new HashSet<>();
         this.show = addon.getBorderShower();
     }
 
+    /**
+     * Handles player join events.
+     *
+     * When a player joins the game, if the border is enabled for them, this method
+     * schedules processing on the next tick to initialize their border settings.
+     *
+     * @param e the player join event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
@@ -75,6 +104,17 @@ public class PlayerListener implements Listener {
         }
     }
 
+    /**
+     * Processes the player join event on the next game tick.
+     *
+     * This method initializes border settings for the joining player:
+     * - Hides any existing borders and clears the world border
+     * - Resets border visibility state to default if player lacks border command permissions
+     * - Resets border type to default if player lacks border type permissions
+     * - Shows the border for the player's current island
+     *
+     * @param e the player join event
+     */
     protected void processEvent(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         if (!isOn(player)) {
@@ -89,23 +129,35 @@ public class PlayerListener implements Listener {
 
         // Get the game mode that this player is in
         addon.getPlugin().getIWM().getAddon(e.getPlayer().getWorld()).map(gma -> gma.getPermissionPrefix()).filter(
-                permPrefix -> !e.getPlayer().hasPermission(permPrefix + IslandBorderCommand.BORDER_COMMAND_PERM))
-        .ifPresent(permPrefix -> {
-            // Restore barrier on/off to default
-            user.putMetaData(BorderShower.BORDER_STATE_META_DATA,
-                    new MetaDataValue(addon.getSettings().isShowByDefault()));
-            if (!e.getPlayer().hasPermission(permPrefix + "border.type") && !e.getPlayer().hasPermission(permPrefix + "border.bordertype")) {
-                // Restore default barrier type to player
-                MetaDataValue metaDataValue = new MetaDataValue(addon.getSettings().getType().getId());
-                user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);                
-            }
-        });
+                        permPrefix -> !e.getPlayer().hasPermission(permPrefix + IslandBorderCommand.BORDER_COMMAND_PERM))
+                .ifPresent(permPrefix -> {
+                    // Restore barrier on/off to default
+                    user.putMetaData(BorderShower.BORDER_STATE_META_DATA,
+                            new MetaDataValue(addon.getSettings().isShowByDefault()));
+                    if (!e.getPlayer().hasPermission(permPrefix + "border.type") && !e.getPlayer().hasPermission(permPrefix + "border.bordertype")) {
+                        // Restore default barrier type to player
+                        MetaDataValue metaDataValue = new MetaDataValue(addon.getSettings().getType().getId());
+                        user.putMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA, metaDataValue);
+                    }
+                });
 
         // Show the border if required one tick after   
-        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i -> 
-        show.showBorder(e.getPlayer(), i)));
+        Bukkit.getScheduler().runTask(addon.getPlugin(), () -> addon.getIslands().getIslandAt(e.getPlayer().getLocation()).ifPresent(i ->
+                show.showBorder(e.getPlayer(), i)));
     }
 
+    /**
+     * Handles player fall damage when using barrier-type borders.
+     *
+     * Detects when a player takes fall damage while standing on air (indicating they've
+     * crossed the barrier border) and teleports them back inside the island's protection zone.
+     * Only applies when:
+     * - The border type is set to BARRIER
+     * - The player has borders enabled
+     * - The event is a fall damage event
+     *
+     * @param e the entity damage event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent e) {
         // Only deal with fall damage in the right world if the barrier is on
@@ -120,11 +172,27 @@ public class PlayerListener implements Listener {
         }
     }
 
+    /**
+     * Handles player quit events.
+     *
+     * Clears any active border display for the leaving player, cleaning up resources and
+     * removing any visual indicators.
+     *
+     * @param e the player quit event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent e) {
         show.clearUser(User.getInstance(e.getPlayer()));
     }
 
+    /**
+     * Handles player respawn events.
+     *
+     * Clears the previous border display and shows the border again for the island where the
+     * player respawned. This ensures the border is properly updated after resurrection.
+     *
+     * @param e the player respawn event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
@@ -136,9 +204,13 @@ public class PlayerListener implements Listener {
     }
 
     /**
-     * Check if the border is on or off
-     * @param player player
-     * @return true if the border is on, false if not
+     * Check if the border is on or off for a player.
+     *
+     * Checks the player's metadata to determine if they have borders enabled, falling back to
+     * the addon's default setting if no metadata is found.
+     *
+     * @param player the player to check
+     * @return true if the border is enabled for this player, false if not
      */
     private boolean isOn(Player player) {
         // Check if border is off
@@ -148,6 +220,17 @@ public class PlayerListener implements Listener {
 
     }
 
+    /**
+     * Handles player teleport events.
+     *
+     * Manages teleportation by:
+     * - Clearing existing border displays before teleporting
+     * - Cancelling certain teleport types (Ender Pearl, Chorus Fruit) if they would take the player
+     *   outside their island's protection zone (unless the ALLOW_MOVE_BOX flag is set)
+     * - Showing the border for the destination island
+     *
+     * @param e the player teleport event
+     */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player player = e.getPlayer();
@@ -166,31 +249,43 @@ public class PlayerListener implements Listener {
         boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CHORUS_FRUIT;
 
         Bukkit.getScheduler().runTask(addon.getPlugin(), () ->
-        addon.getIslands().getIslandAt(to).ifPresentOrElse(i -> {
-            Optional<Flag> boxedEnderPearlFlag = i.getPlugin().getFlagsManager().getFlag("ALLOW_MOVE_BOX");
+                addon.getIslands().getIslandAt(to).ifPresentOrElse(i -> {
+                    Optional<Flag> boxedEnderPearlFlag = i.getPlugin().getFlagsManager().getFlag("ALLOW_MOVE_BOX");
 
-            if (isBlacklistedCause
-                    && (!i.getProtectionBoundingBox().contains(to.toVector())
+                    if (isBlacklistedCause
+                            && (!i.getProtectionBoundingBox().contains(to.toVector())
                             || !i.onIsland(player.getLocation()))) {
-                e.setCancelled(true);
-            }
+                        e.setCancelled(true);
+                    }
 
-            if (boxedEnderPearlFlag.isPresent()
-                    && boxedEnderPearlFlag.get().isSetForWorld(to.getWorld())
-                    && cause == TeleportCause.ENDER_PEARL) {
-                e.setCancelled(false);
-            }
+                    if (boxedEnderPearlFlag.isPresent()
+                            && boxedEnderPearlFlag.get().isSetForWorld(to.getWorld())
+                            && cause == TeleportCause.ENDER_PEARL) {
+                        e.setCancelled(false);
+                    }
 
-            show.showBorder(player, i);
-        }, () -> {
-            if (isBlacklistedCause) {
-                e.setCancelled(true);
-                return;
-            }
-        })
-                );
+                    show.showBorder(player, i);
+                }, () -> {
+                    if (isBlacklistedCause) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                })
+        );
     }
 
+    /**
+     * Handles player movement and prevents them from leaving their island's protection zone.
+     *
+     * When a player attempts to leave their island's protection range (if return teleport is enabled),
+     * this method:
+     * - Detects the crossing of the island boundary
+     * - Teleports the player back inside the protection zone
+     * - Uses ray tracing to find a safe position on the boundary
+     * - Creates necessary blocks (Netherrack, End Stone, or Stone) for safe landing
+     *
+     * @param e the player move event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
         Player p = e.getPlayer();
@@ -216,19 +311,24 @@ public class PlayerListener implements Listener {
         }
         optionalIsland.ifPresent(i -> {
             Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
-                    .multiply(new Vector(1,0,1));
+                    .multiply(new Vector(1, 0, 1));
             if (unitVector.lengthSquared() <= 0D) {
                 // Direction is zero, so nothing to do; cannot move.
                 return;
             }
             RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
-            if (r != null && checkFinite(r.getHitPosition())) {
+            if (r == null || !checkFinite(r.getHitPosition())) {
+                // Ray trace failed, so just teleport the player back to that island
                 inTeleport.add(p.getUniqueId());
-                Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+                Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+                return;
+            }
 
-                if (!e.getPlayer().isFlying() && addon.getSettings().isReturnTeleportBlock()
-                        && !addon.getIslands().isSafeLocation(targetPos)) {
-                    switch (targetPos.getWorld().getEnvironment()) {
+            inTeleport.add(p.getUniqueId());
+            Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+
+            if (!addon.getIslands().isSafeLocation(targetPos)) {
+                 switch (targetPos.getWorld().getEnvironment()) {
                     case NETHER:
                         targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
                         break;
@@ -238,13 +338,21 @@ public class PlayerListener implements Listener {
                     default:
                         targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.STONE);
                         break;
-                    }
                 }
                 Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+            } else {
+                Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
+
         });
     }
 
+    /**
+     * Validates that all coordinates of a vector are finite (not NaN or Infinite).
+     *
+     * @param toCheck the vector to check
+     * @return true if all X, Y, Z coordinates are finite, false otherwise
+     */
     public boolean checkFinite(Vector toCheck) {
         return NumberConversions.isFinite(toCheck.getX()) && NumberConversions.isFinite(toCheck.getY())
                 && NumberConversions.isFinite(toCheck.getZ());
@@ -252,9 +360,10 @@ public class PlayerListener implements Listener {
 
     /**
      * Check if the player is outside the island protection zone that they are supposed to be in.
+     *
      * @param player - player moving
-     * @param from - from location
-     * @param to - to location
+     * @param from   - from location
+     * @param to     - to location
      * @return true if outside the island protection zone
      */
     private boolean outsideCheck(Player player, Location from, Location to) {
@@ -277,6 +386,7 @@ public class PlayerListener implements Listener {
     /**
      * Runs a task while the player is mounting an entity and eject
      * if the entity went outside the protection range
+     *
      * @param event - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -305,6 +415,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Cancel the running task if the player was mounting an entity
+     *
      * @param event - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -328,6 +439,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Refreshes the barrier view when the player moves (more than just moving their head)
+     *
      * @param e event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -336,13 +448,14 @@ public class PlayerListener implements Listener {
         // Remove head movement
         if (isOn(player) && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands()
-            .getIslandAt(e.getPlayer().getLocation())
-            .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
+                    .getIslandAt(e.getPlayer().getLocation())
+                    .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
         }
     }
 
     /**
      * Refresh the view when riding in a vehicle
+     *
      * @param e event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -350,13 +463,14 @@ public class PlayerListener implements Listener {
         // Remove head movement
         if (!e.getFrom().toVector().equals(e.getTo().toVector())) {
             e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast)
-            .filter(this::isOn).forEach(p -> addon.getIslands().getIslandAt(p.getLocation())
-                    .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
+                    .filter(this::isOn).forEach(p -> addon.getIslands().getIslandAt(p.getLocation())
+                            .ifPresent(i -> show.refreshView(User.getInstance(p), i)));
         }
     }
 
     /**
      * Hide and then show the border to react to the change in protection area
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -372,36 +486,48 @@ public class PlayerListener implements Listener {
 
     /**
      * Bounces items back to inside the barrier if thrown by a player
+     *
      * @param event event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent event) {
         if (addon.getSettings().isBounceBack()
-                && addon.inGameWorld(event.getPlayer().getWorld()) 
+                && addon.inGameWorld(event.getPlayer().getWorld())
                 && isOn(event.getPlayer())
-                ) {
+        ) {
             // Get this island
-            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is ->  trackItem(event.getItemDrop(), is));
+            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is -> trackItem(event.getItemDrop(), is));
         }
     }
 
     /**
      * Bounces items back to inside the barrier if dropped when a player dies
+     *
      * @param event event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (addon.getSettings().isBounceBack()
-                && addon.inGameWorld(event.getPlayer().getWorld()) 
+                && addon.inGameWorld(event.getPlayer().getWorld())
                 && isOn(event.getPlayer())) {
             // Get this island
-            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is ->  {
+            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is -> {
                 event.getDrops().forEach(item -> trackItem(event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), item), is));
                 event.getDrops().clear(); // We handled them
             });
         }
     }
 
+    /**
+     * Tracks an item to prevent it from leaving the island's protection zone.
+     *
+     * This method monitors dropped items and bounces them back if they try to leave
+     * the protection range by reversing and reducing their velocity. Tracking stops after
+     * 20 seconds or when the item is picked up/despawned.
+     *
+     * @param item the item to track
+     * @param island the island whose protection zone should contain the item
+     */
     private void trackItem(Item item, Island island) {
         new BukkitRunnable() {
             int ticksActive = 0;
@@ -418,12 +544,12 @@ public class PlayerListener implements Listener {
                 // Check if the item is going outside the border
                 if (!island.onIsland(loc)) {
                     // Reverse the direction
-                    item.setVelocity(item.getVelocity().multiply(-0.5)); 
+                    item.setVelocity(item.getVelocity().multiply(-0.5));
                     this.cancel();
                 }
                 ticksActive++;
             }
-        }.runTaskTimer(addon.getPlugin(), 1L, 2L); // Check every 2 ticks (0.1 seconds)
+        }.runTaskTimer(addon.getPlugin(), 1L, 1L); // Check every 2 ticks (0.1 seconds)
     }
 
 }

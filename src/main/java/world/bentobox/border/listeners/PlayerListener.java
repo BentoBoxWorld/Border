@@ -239,7 +239,9 @@ public class PlayerListener implements Listener {
         }
         Location to = e.getTo();
 
-        show.clearUser(User.getInstance(player));
+        User user = User.getInstance(player);
+        show.hideBorder(user);
+        show.clearUser(user);
 
         if (!addon.inGameWorld(to.getWorld())) {
             return;

@@ -200,10 +200,11 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(addon.inGameWorld(any())).thenReturn(false);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
+        verify(show).hideBorder(user);
         verify(show).clearUser(user);
         mockedBukkit.verify(Bukkit::getScheduler, never());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
@@ -212,6 +213,7 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(addon.inGameWorld(any())).thenReturn(true);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
+        verify(show).hideBorder(user);
         verify(show).clearUser(user);
         mockedBukkit.verify(Bukkit::getScheduler);
     }

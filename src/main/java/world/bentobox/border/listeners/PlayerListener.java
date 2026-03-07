@@ -241,8 +241,8 @@ public class PlayerListener implements Listener {
         Location to = e.getTo();
 
         if (!addon.inGameWorld(to.getWorld())
-                || (!addon.getPlugin().getIWM().isIslandNether(to.getWorld()))
-                && !addon.getPlugin().getIWM().isIslandEnd(e.getTo().getWorld())) {
+                || (!addon.getPlugin().getIWM().isIslandNether(to.getWorld())
+                && !addon.getPlugin().getIWM().isIslandEnd(e.getTo().getWorld()))) {
             return;
         }
 

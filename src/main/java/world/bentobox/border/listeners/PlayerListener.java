@@ -38,6 +38,7 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -239,13 +240,15 @@ public class PlayerListener implements Listener {
         }
         Location to = e.getTo();
 
+        if (!addon.inGameWorld(to.getWorld())
+                || (!addon.getPlugin().getIWM().isIslandNether(to.getWorld()))
+                && !addon.getPlugin().getIWM().isIslandEnd(e.getTo().getWorld())) {
+            return;
+        }
+
         User user = User.getInstance(player);
         show.hideBorder(user);
         show.clearUser(user);
-
-        if (!addon.inGameWorld(to.getWorld())) {
-            return;
-        }
 
         TeleportCause cause = e.getCause();
         boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CONSUMABLE_EFFECT;
@@ -289,6 +292,13 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
+        if (!addon.inGameWorld(e.getTo().getWorld())
+                || (!addon.getPlugin().getIWM().isIslandNether(e.getTo().getWorld())
+                && !addon.getPlugin().getIWM().isIslandEnd(e.getTo().getWorld()))
+        )
+        {
+            return;
+        }
         Player p = e.getPlayer();
         if (!isOn(p)) {
             return;
@@ -297,13 +307,16 @@ public class PlayerListener implements Listener {
         if (!addon.getSettings().isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
             return;
         }
+        BentoBox.getInstance().logDebug("Player " + p.getName() + " is trying to leave the island protection zone.");
         // Move the player back inside the border
         if (addon.getIslands().getProtectedIslandAt(from).isPresent()) {
+            BentoBox.getInstance().logDebug("Player " + p.getName() + " is being teleported back inside the island protection zone.");
             e.setCancelled(true);
             inTeleport.add(p.getUniqueId());
             Util.teleportAsync(p, from).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             return;
         }
+        BentoBox.getInstance().logDebug("Player " + p.getName() + " is not on an island, trying to find the nearest island to teleport them back to.");
         // Backtrack - try to find island at current location, or fall back to the player's own island
         Optional<Island> optionalIsland = addon.getIslands().getIslandAt(p.getLocation());
         if (optionalIsland.isEmpty()) {
@@ -342,6 +355,7 @@ public class PlayerListener implements Listener {
                 }
                 Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             } else {
+                BentoBox.getInstance().logDebug("Ray trace did not found a valid position for player " + p.getName() + " so teleporting them back to their island home.");
                 Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
 

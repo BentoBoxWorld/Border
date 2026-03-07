@@ -9,7 +9,6 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
-import world.bentobox.bentobox.util.Util;
 import world.bentobox.border.commands.BorderColorCommand;
 import world.bentobox.border.commands.BorderTypeCommand;
 import world.bentobox.border.commands.IslandBorderCommand;
@@ -122,7 +121,7 @@ public class Border extends Addon {
      * @return true if world is being handled by Border
      */
     public boolean inGameWorld(World world) {
-        return gameModes.stream().anyMatch(gm -> gm.inWorld(Util.getWorld(world)));
+        return gameModes.stream().anyMatch(gm -> gm.inWorld(world));
     }
 
     public Set<BorderType> getAvailableBorderTypesView() {

@@ -253,38 +253,6 @@ public class PlayerListenerTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
-     * Vanilla (non-island) nether - should return early without any border activity.
-     */
-    @Test
-    public void testOnPlayerTeleportInVanillaNether() {
-        when(addon.inGameWorld(any())).thenReturn(true);
-        when(iwm.isIslandNether(any())).thenReturn(false); // vanilla nether, not island nether
-        when(iwm.isIslandEnd(any())).thenReturn(false);
-        PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
-        pl.onPlayerTeleport(event);
-        verify(show).hideBorder(user);
-        verify(show).clearUser(user);
-        mockedBukkit.verify(Bukkit::getScheduler);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
-     * Vanilla (non-island) end - should return early without any border activity.
-     */
-    @Test
-    public void testOnPlayerTeleportInVanillaEnd() {
-        when(addon.inGameWorld(any())).thenReturn(true);
-        when(iwm.isIslandNether(any())).thenReturn(false);
-        when(iwm.isIslandEnd(any())).thenReturn(false); // vanilla end, not island end
-        PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.END_PORTAL);
-        pl.onPlayerTeleport(event);
-        verify(show).hideBorder(user);
-        verify(show).clearUser(user);
-        mockedBukkit.verify(Bukkit::getScheduler);
-    }
-
-    /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test

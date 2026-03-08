@@ -121,6 +121,10 @@ public class Border extends Addon {
      * @return true if world is being handled by Border
      */
     public boolean inGameWorld(World world) {
+        if (world.getEnvironment() == World.Environment.NETHER &&
+                !getPlugin().getIWM().isIslandNether(world)) { return false;}
+        if (world.getEnvironment() == World.Environment.THE_END &&
+                !getPlugin().getIWM().isIslandEnd(world)) { return false;}
         return gameModes.stream().anyMatch(gm -> gm.inWorld(world));
     }
 

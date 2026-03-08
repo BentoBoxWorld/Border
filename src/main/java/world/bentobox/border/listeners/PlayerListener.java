@@ -239,16 +239,13 @@ public class PlayerListener implements Listener {
             return;
         }
         Location to = e.getTo();
-
-        if (!addon.inGameWorld(to.getWorld())
-                || (!addon.getPlugin().getIWM().isIslandNether(to.getWorld()))
-                && !addon.getPlugin().getIWM().isIslandEnd(e.getTo().getWorld())) {
-            return;
-        }
-
         User user = User.getInstance(player);
         show.hideBorder(user);
         show.clearUser(user);
+        if (!addon.inGameWorld(to.getWorld())) {
+            return;
+        }
+
 
         TeleportCause cause = e.getCause();
         boolean isBlacklistedCause = cause == TeleportCause.ENDER_PEARL || cause == TeleportCause.CONSUMABLE_EFFECT;
@@ -292,10 +289,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(PlayerMoveEvent e) {
-        if (!addon.inGameWorld(e.getTo().getWorld())
-                || (!addon.getPlugin().getIWM().isIslandNether(e.getTo().getWorld())
-                && !addon.getPlugin().getIWM().isIslandEnd(e.getTo().getWorld()))
-        )
+        if (!addon.inGameWorld(e.getTo().getWorld()))
         {
             return;
         }

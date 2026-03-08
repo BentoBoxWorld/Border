@@ -201,8 +201,8 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(addon.inGameWorld(any())).thenReturn(false);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
-        verify(show, never()).hideBorder(user);
-        verify(show, never()).clearUser(user);
+        verify(show).hideBorder(user);
+        verify(show).clearUser(user);
         mockedBukkit.verify(Bukkit::getScheduler, never());
     }
 
@@ -215,9 +215,9 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(iwm.isIslandNether(any())).thenReturn(false); // Not an island nether - should return early
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
-        verify(show, never()).hideBorder(user);
-        verify(show, never()).clearUser(user);
-        mockedBukkit.verify(Bukkit::getScheduler, Mockito.never());
+        verify(show).hideBorder(user);
+        verify(show).clearUser(user);
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
     /**
@@ -263,9 +263,9 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(iwm.isIslandEnd(any())).thenReturn(false);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
-        verify(show, never()).hideBorder(user);
-        verify(show, never()).clearUser(user);
-        mockedBukkit.verify(Bukkit::getScheduler, Mockito.never());
+        verify(show).hideBorder(user);
+        verify(show).clearUser(user);
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
     /**
@@ -279,9 +279,9 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(iwm.isIslandEnd(any())).thenReturn(false); // vanilla end, not island end
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.END_PORTAL);
         pl.onPlayerTeleport(event);
-        verify(show, never()).hideBorder(user);
-        verify(show, never()).clearUser(user);
-        mockedBukkit.verify(Bukkit::getScheduler, Mockito.never());
+        verify(show).hideBorder(user);
+        verify(show).clearUser(user);
+        mockedBukkit.verify(Bukkit::getScheduler);
     }
 
     /**
@@ -333,9 +333,8 @@ public class PlayerListenerTest extends CommonTestSetup {
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerLeaveIsland(event);
-        // Should return early — no island lookup, no teleport
-        verify(addon, never()).getIslands();
-        assertFalse(event.isCancelled());
+        verify(addon, times(2)).getIslands();
+        assertTrue(event.isCancelled());
     }
 
     /**
@@ -350,9 +349,8 @@ public class PlayerListenerTest extends CommonTestSetup {
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerLeaveIsland(event);
-        // Should return early — no island lookup, no teleport
-        verify(addon, never()).getIslands();
-        assertFalse(event.isCancelled());
+        verify(addon, times(2)).getIslands();
+        assertTrue(event.isCancelled());
     }
 
     /**

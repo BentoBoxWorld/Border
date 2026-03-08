@@ -327,14 +327,11 @@ public class PlayerListenerTest extends CommonTestSetup {
      */
     @Test
     public void testOnPlayerLeaveIslandVanillaNether() {
-        when(iwm.isIslandNether(any())).thenReturn(false); // vanilla nether, not island nether
-        when(iwm.isIslandEnd(any())).thenReturn(false);
-        when(island.onIsland(any())).thenReturn(false);
+        when(addon.inGameWorld(any())).thenReturn(false); // vanilla nether is not a game world
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerLeaveIsland(event);
-        verify(addon, times(2)).getIslands();
-        assertTrue(event.isCancelled());
+        verify(addon, never()).getIslands();
     }
 
     /**
@@ -343,14 +340,11 @@ public class PlayerListenerTest extends CommonTestSetup {
      */
     @Test
     public void testOnPlayerLeaveIslandVanillaEnd() {
-        when(iwm.isIslandNether(any())).thenReturn(false);
-        when(iwm.isIslandEnd(any())).thenReturn(false); // vanilla end, not island end
-        when(island.onIsland(any())).thenReturn(false);
+        when(addon.inGameWorld(any())).thenReturn(false); // vanilla end is not a game world
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerLeaveIsland(event);
-        verify(addon, times(2)).getIslands();
-        assertTrue(event.isCancelled());
+        verify(addon, never()).getIslands();
     }
 
     /**

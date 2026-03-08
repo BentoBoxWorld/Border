@@ -19,6 +19,8 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -72,6 +74,8 @@ public class PlayerListenerTest extends CommonTestSetup {
     private Vehicle vehicle;
     @Mock
     private GameModeAddon gma;
+    @Mock
+    private Block block;
     
     private MockedStatic<User> mockedUser;
 
@@ -438,6 +442,76 @@ public class PlayerListenerTest extends CommonTestSetup {
         assertFalse(event.isCancelled());
         // Verify teleportAsync was called to teleport the player back
         mockedUtil.verify(() -> Util.teleportAsync(any(), any()), times(2));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that when the ray-traced position is initially safe, the player is teleported there directly.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandSafeRayTracePositionTeleportsToTarget() {
+        // Extend range so rayTrace can succeed (exit point ~8.49 units away)
+        when(island.getRange()).thenReturn(15);
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        // isSafeLocation returns true (default from setUp) - player should be teleported to targetPos
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+        // Exactly one isSafeLocation check, one teleportAsync call (to targetPos)
+        verify(im).isSafeLocation(any());
+        mockedUtil.verify(() -> Util.teleportAsync(eq(player), any()), times(1));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that when the ray-traced position remains unsafe even after block placement,
+     * the player is teleported home as a fallback.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandUnsafeRayTracePositionFallsBackToHome() {
+        // Extend range so rayTrace can succeed (exit point ~8.49 units away)
+        when(island.getRange()).thenReturn(15);
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        // isSafeLocation always returns false — block placement does not help
+        when(im.isSafeLocation(any())).thenReturn(false);
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(world.getBlockAt(any(Location.class))).thenReturn(block);
+        when(block.getRelative(any())).thenReturn(block);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+        // Two isSafeLocation checks (before and after block placement), one teleportAsync to home
+        verify(im, times(2)).isSafeLocation(any());
+        mockedUtil.verify(() -> Util.teleportAsync(eq(player), any()), times(1));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that when the ray-traced position becomes safe after block placement,
+     * the player is teleported to that position.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandBecomeSafeAfterBlockPlacementTeleportsToTarget() {
+        // Extend range so rayTrace can succeed (exit point ~8.49 units away)
+        when(island.getRange()).thenReturn(15);
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        // isSafeLocation returns false first (before block placement), true second (after)
+        when(im.isSafeLocation(any())).thenReturn(false, true);
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(world.getBlockAt(any(Location.class))).thenReturn(block);
+        when(block.getRelative(any())).thenReturn(block);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+        // Two isSafeLocation checks, one teleportAsync to targetPos
+        verify(im, times(2)).isSafeLocation(any());
+        mockedUtil.verify(() -> Util.teleportAsync(eq(player), any()), times(1));
     }
 
     /**

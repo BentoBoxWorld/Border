@@ -334,8 +334,11 @@ public class PlayerListener implements Listener {
             inTeleport.add(p.getUniqueId());
             Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
 
-            if (!addon.getIslands().isSafeLocation(targetPos)) {
-                 switch (targetPos.getWorld().getEnvironment()) {
+            if (addon.getIslands().isSafeLocation(targetPos)) {
+                BentoBox.getInstance().logDebug("Ray trace found a valid safe position for player " + p.getName() + " and teleporting them there.");
+                Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+            } else {
+                switch (targetPos.getWorld().getEnvironment()) {
                     case NETHER:
                         targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
                         break;
@@ -346,10 +349,12 @@ public class PlayerListener implements Listener {
                         targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.STONE);
                         break;
                 }
-                Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
-            } else {
-                BentoBox.getInstance().logDebug("Ray trace found a valid safe position for player " + p.getName() + " and teleporting them there.");
-                Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+                if (!addon.getIslands().isSafeLocation(targetPos)) {
+                    BentoBox.getInstance().logDebug("Ray trace did not find a valid position for player " + p.getName() + " so teleporting them back to their island home.");
+                    Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+                } else {
+                    Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+                }
             }
 
         });

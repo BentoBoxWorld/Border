@@ -348,8 +348,8 @@ public class PlayerListener implements Listener {
                 }
                 Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             } else {
-                BentoBox.getInstance().logDebug("Ray trace found a valid safe position for player " + p.getName() + " and teleporting them there.");
-                Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+                BentoBox.getInstance().logDebug("Ray trace did not find a valid position for player " + p.getName() + " so teleporting them back to their island home.");
+                Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
             }
 
         });

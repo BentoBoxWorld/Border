@@ -14,6 +14,8 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.bukkit.World.Environment;
+
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.util.Util;
 
@@ -49,6 +51,44 @@ public class BorderTest extends CommonTestSetup {
         getGameModes().add(nonMatching);
 
         assertFalse(border.inGameWorld(world));
+    }
+
+    @Test
+    public void testInGameWorldReturnsFalseForVanillaNether() {
+        when(world.getEnvironment()).thenReturn(Environment.NETHER);
+        when(iwm.isIslandNether(world)).thenReturn(false);
+
+        assertFalse(border.inGameWorld(world));
+    }
+
+    @Test
+    public void testInGameWorldReturnsFalseForVanillaEnd() {
+        when(world.getEnvironment()).thenReturn(Environment.THE_END);
+        when(iwm.isIslandEnd(world)).thenReturn(false);
+
+        assertFalse(border.inGameWorld(world));
+    }
+
+    @Test
+    public void testInGameWorldDelegatesToGameModeForIslandNether() throws Exception {
+        when(world.getEnvironment()).thenReturn(Environment.NETHER);
+        when(iwm.isIslandNether(world)).thenReturn(true);
+        GameModeAddon matching = mock(GameModeAddon.class);
+        when(matching.inWorld(world)).thenReturn(true);
+        getGameModes().add(matching);
+
+        assertTrue(border.inGameWorld(world));
+    }
+
+    @Test
+    public void testInGameWorldDelegatesToGameModeForIslandEnd() throws Exception {
+        when(world.getEnvironment()).thenReturn(Environment.THE_END);
+        when(iwm.isIslandEnd(world)).thenReturn(true);
+        GameModeAddon matching = mock(GameModeAddon.class);
+        when(matching.inWorld(world)).thenReturn(true);
+        getGameModes().add(matching);
+
+        assertTrue(border.inGameWorld(world));
     }
 
     @Test

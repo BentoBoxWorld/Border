@@ -121,6 +121,25 @@ public class ShowWorldBorderTest extends CommonTestSetup {
         svwb.hideBorder(user);
         verify(mockPlayer).setWorldBorder(null);
     }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#clearUser(world.bentobox.bentobox.api.user.User)}.
+     */
+    @Test
+    public void testClearUser() {
+        svwb.clearUser(user);
+        verify(mockPlayer).setWorldBorder(null);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#refreshView(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    public void testRefreshView() {
+        svwb.refreshView(user, island);
+        verify(mockPlayer).setWorldBorder(wb);
+        verify(wb).setSize(200.0D);
+    }
     
     /**
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.

@@ -132,6 +132,7 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(gma.getPermissionPrefix()).thenReturn("bskyblock.");
         when(iwm.getAddon(world)).thenReturn(Optional.of(gma));
         when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.isIslandNether(any())).thenReturn(true);
 
         // Util
         CompletableFuture<Boolean> future = new CompletableFuture<>();
@@ -200,18 +201,53 @@ public class PlayerListenerTest extends CommonTestSetup {
         when(addon.inGameWorld(any())).thenReturn(false);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
+        verify(show).hideBorder(user);
         verify(show).clearUser(user);
         mockedBukkit.verify(Bukkit::getScheduler, never());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnPlayerTeleportInGameWorld() {
         when(addon.inGameWorld(any())).thenReturn(true);
+        when(iwm.isIslandNether(any())).thenReturn(false); // In-game world teleport (non-island nether) should still trigger scheduler
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
+        verify(show).hideBorder(user);
+        verify(show).clearUser(user);
+        mockedBukkit.verify(Bukkit::getScheduler);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Island nether world - should proceed with border management.
+     */
+    @Test
+    public void testOnPlayerTeleportInIslandNether() {
+        when(addon.inGameWorld(any())).thenReturn(true);
+        when(iwm.isIslandNether(any())).thenReturn(true);
+        when(iwm.isIslandEnd(any())).thenReturn(false);
+        PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
+        pl.onPlayerTeleport(event);
+        verify(show).hideBorder(user);
+        verify(show).clearUser(user);
+        mockedBukkit.verify(Bukkit::getScheduler);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Island end world - should proceed with border management.
+     */
+    @Test
+    public void testOnPlayerTeleportInIslandEnd() {
+        when(addon.inGameWorld(any())).thenReturn(true);
+        when(iwm.isIslandNether(any())).thenReturn(false);
+        when(iwm.isIslandEnd(any())).thenReturn(true);
+        PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.END_PORTAL);
+        pl.onPlayerTeleport(event);
+        verify(show).hideBorder(user);
         verify(show).clearUser(user);
         mockedBukkit.verify(Bukkit::getScheduler);
     }
@@ -251,7 +287,67 @@ public class PlayerListenerTest extends CommonTestSetup {
         pl.onPlayerLeaveIsland(event);
         verify(addon, never()).getIslands();
     }
-    
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that movement in a vanilla (non-island) nether world is ignored — players should NOT
+     * be teleported back when using the vanilla nether.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandVanillaNether() {
+        when(addon.inGameWorld(any())).thenReturn(false); // vanilla nether is not a game world
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        verify(addon, never()).getIslands();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that movement in a vanilla (non-island) end world is ignored.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandVanillaEnd() {
+        when(addon.inGameWorld(any())).thenReturn(false); // vanilla end is not a game world
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        verify(addon, never()).getIslands();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that a player trying to leave the protection zone in an island nether world is
+     * teleported back.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandIslandNetherReturnsTeleport() {
+        when(iwm.isIslandNether(any())).thenReturn(true);
+        when(iwm.isIslandEnd(any())).thenReturn(false);
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertTrue(event.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Tests that a player trying to leave the protection zone in an island end world is
+     * teleported back.
+     */
+    @Test
+    public void testOnPlayerLeaveIslandIslandEndReturnsTeleport() {
+        when(iwm.isIslandNether(any())).thenReturn(false);
+        when(iwm.isIslandEnd(any())).thenReturn(true);
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertTrue(event.isCancelled());
+    }
+
+
     /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */

@@ -78,6 +78,16 @@ public class ShowWorldBorder implements BorderShower {
         user.getPlayer().setWorldBorder(null);
     }
 
+    @Override
+    public void clearUser(User user) {
+        user.getPlayer().setWorldBorder(null);
+    }
+
+    @Override
+    public void refreshView(User user, Island island) {
+        showBorder(user.getPlayer(), island);
+    }
+
     /**
      * Teleport player back within the island space they are in
      * @param entity player

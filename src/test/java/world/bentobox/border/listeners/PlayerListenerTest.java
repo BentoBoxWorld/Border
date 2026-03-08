@@ -212,7 +212,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     @Test
     public void testOnPlayerTeleportInGameWorld() {
         when(addon.inGameWorld(any())).thenReturn(true);
-        when(iwm.isIslandNether(any())).thenReturn(false); // Not an island nether - should return early
+        when(iwm.isIslandNether(any())).thenReturn(false); // In-game world teleport (non-island nether) should still trigger scheduler
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
         verify(show).hideBorder(user);

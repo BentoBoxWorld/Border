@@ -2,9 +2,9 @@
 border:
   toggle:
     description: kenarlığı açar/kapatır
-    border-on: "&a Sınır etkin."
-    border-off: "&a Kenarlık devre dışı."
+    border-on: '<green>Sınır etkin.</green>'
+    border-off: '<green>Kenarlık devre dışı.</green>'
   set-type:
     description: kenarlığın türünü değiştirir
-    changed: "&a Kenarlık türü &b[type]&a olarak değiştirildi."
-    error-unavailable-type: "&c Bu tür kullanılamıyor veya mevcut değil."
+    changed: '<green>Kenarlık türü <aqua>[type]</aqua> olarak değiştirildi.</green>'
+    error-unavailable-type: '<red>Bu tür kullanılamıyor veya mevcut değil.</red>'

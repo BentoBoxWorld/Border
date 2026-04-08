@@ -2,9 +2,9 @@
 border:
   toggle:
     description: přepíná hranice ostrova zapnuto/vypnuto
-    border-on: "&a Hranice zapnuta."
-    border-off: "&a Hranice vypnuta."
+    border-on: '<green>Hranice zapnuta.</green>'
+    border-off: '<green>Hranice vypnuta.</green>'
   set-type:
     description: změní typ ohraničení
-    changed: "&a Typ ohraničení změněn na &b[type]&a."
-    error-unavailable-type: "&c Tento typ je nedostupný nebo neexistuje."
+    changed: '<green>Typ ohraničení změněn na <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>Tento typ je nedostupný nebo neexistuje.</red>'

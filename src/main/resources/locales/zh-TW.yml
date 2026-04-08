@@ -2,9 +2,9 @@
 border:
   toggle:
     description: 開啟/關閉 顯示邊界
-    border-on: "&a開啟 顯示邊界"
-    border-off: "&a關閉 顯示邊界"
+    border-on: '<green>開啟 顯示邊界</green>'
+    border-off: '<green>關閉 顯示邊界</green>'
   set-type:
     description: 更改邊框的類型
-    changed: "&a 邊框類型更改為 &b[type]&a。"
-    error-unavailable-type: "&c 此類型不可用或不存在。"
+    changed: '<green>邊框類型更改為 <aqua>[type]</aqua>。</green>'
+    error-unavailable-type: '<red>此類型不可用或不存在。</red>'

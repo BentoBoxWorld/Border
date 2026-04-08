@@ -1,9 +1,9 @@
 border:
   toggle:
     description: 启用/禁用边界屏障
-    border-on: '&a边界屏障已启用.'
-    border-off: '&a边界屏障已禁用.'
+    border-on: '<green>边界屏障已启用.</green>'
+    border-off: '<green>边界屏障已禁用.</green>'
   set-type:
     description: 更改边界屏障类型
-    changed: '&a边界屏障已更改为: &b[type]&a.'
-    error-unavailable-type: '&c该屏障类型不可用或不存在.'
+    changed: '<green>边界屏障已更改为: <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>该屏障类型不可用或不存在.</red>'

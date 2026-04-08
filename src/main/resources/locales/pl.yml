@@ -2,9 +2,9 @@
 border:
   toggle:
     description: Pokazuj border on/off
-    border-on: "&aBorder jest wyswietlany"
-    border-off: "&aBorder jest nie wyswietlany"
+    border-on: '<green>Border jest wyswietlany</green>'
+    border-off: '<green>Border jest nie wyswietlany</green>'
   set-type:
     description: zmienia rodzaj obramowania
-    changed: "&a Typ obramowania został zmieniony na &b[typ]&a."
-    error-unavailable-type: "&c Ten typ jest niedostępny lub nie istnieje."
+    changed: '<green>Typ obramowania został zmieniony na <aqua>[typ]</aqua>.</green>'
+    error-unavailable-type: '<red>Ten typ jest niedostępny lub nie istnieje.</red>'

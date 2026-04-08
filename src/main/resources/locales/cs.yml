@@ -8,7 +8,3 @@ border:
     description: změní typ ohraničení
     changed: '<green>Typ ohraničení změněn na <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Tento typ je nedostupný nebo neexistuje.</red>'
-  set-color:
-    description: 'changes the color of the border'
-    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
-    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

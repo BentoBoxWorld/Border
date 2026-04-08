@@ -8,7 +8,3 @@ border:
     description: mijenja vrstu obruba
     changed: '<green>Vrsta obruba promijenjena je u <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Ova vrsta je nedostupna ili ne postoji.</red>'
-  set-color:
-    description: 'changes the color of the border'
-    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
-    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

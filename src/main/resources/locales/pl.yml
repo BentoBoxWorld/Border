@@ -8,7 +8,3 @@ border:
     description: zmienia rodzaj obramowania
     changed: '<green>Typ obramowania został zmieniony na <aqua>[typ]</aqua>.</green>'
     error-unavailable-type: '<red>Ten typ jest niedostępny lub nie istnieje.</red>'
-  set-color:
-    description: 'changes the color of the border'
-    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
-    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

@@ -8,7 +8,3 @@ border:
     description: thay đổi loại đường viền đảo
     changed: '<green>Loại đường viền đảo đã thay đổi thành <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Loại này không có sẵn hoặc không tồn tại.</red>'
-  set-color:
-    description: 'changes the color of the border'
-    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
-    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

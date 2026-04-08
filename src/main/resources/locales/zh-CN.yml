@@ -7,7 +7,3 @@ border:
     description: 更改边界屏障类型
     changed: '<green>边界屏障已更改为: <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>该屏障类型不可用或不存在.</red>'
-  set-color:
-    description: 'changes the color of the border'
-    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
-    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

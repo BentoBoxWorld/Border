@@ -2,9 +2,13 @@
 border:
   toggle:
     description: Ki/be kapcsolja a border-t.
-    border-on: "&fBorder: &abekapcsolva"
-    border-off: "&fBorder: &ckikapcsolva"
+    border-on: '<white>Border: <green>bekapcsolva</green></white>'
+    border-off: '<white>Border: <red>kikapcsolva</red></white>'
   set-type:
     description: Megváltoztatja a border típusát!
-    changed: "&fA border típusa megváltozott: &b[type]"
-    error-unavailable-type: "&cHiba! Ez a típus nem létezik vagy nem elérhető."
+    changed: '<white>A border típusa megváltozott: <aqua>[type]</aqua></white>'
+    error-unavailable-type: '<red>Hiba! Ez a típus nem létezik vagy nem elérhető.</red>'
+  set-color:
+    description: 'changes the color of the border'
+    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

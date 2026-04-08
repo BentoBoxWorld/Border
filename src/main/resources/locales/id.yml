@@ -2,9 +2,13 @@
 border:
   toggle:
     description: toggles the border on/off
-    border-on: "&a Border enabled."
-    border-off: "&a Border disabled."
+    border-on: '<green>Border enabled.</green>'
+    border-off: '<green>Border disabled.</green>'
   set-type:
     description: changes the type of the border
-    changed: "&a Jenis batas diubah menjadi &b[type]&a."
-    error-unavailable-type: "&c Jenis ini tidak tersedia atau tidak ada."
+    changed: '<green>Jenis batas diubah menjadi <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>Jenis ini tidak tersedia atau tidak ada.</red>'
+  set-color:
+    description: 'changes the color of the border'
+    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

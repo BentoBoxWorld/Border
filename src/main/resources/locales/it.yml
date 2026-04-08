@@ -2,9 +2,13 @@
 border:
   toggle:
     description: attiva o disattiva il bordo
-    border-on: "&a Bordo attivato."
-    border-off: "&c Bordo disattivato."
+    border-on: '<green>Bordo attivato.</green>'
+    border-off: '<red>Bordo disattivato.</red>'
   set-type:
     description: cambia il tipo di bordo
-    changed: "&a Il tipo di bordo è stato modificato in &b[type]&a."
-    error-unavailable-type: "&c Questo tipo non è disponibile o non esiste."
+    changed: '<green>Il tipo di bordo è stato modificato in <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>Questo tipo non è disponibile o non esiste.</red>'
+  set-color:
+    description: 'changes the color of the border'
+    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

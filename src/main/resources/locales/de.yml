@@ -2,11 +2,13 @@
 border:
   toggle:
     description: Schaltet die Grenze ein / aus
-    border-on: "&a Grenze aktiviert."
-    border-off: "&a Grenze deaktiviert."
+    border-on: '<green>Grenze aktiviert.</green>'
+    border-off: '<green>Grenze deaktiviert.</green>'
   set-type:
-    description: 'Ändert die Art der Grenze
-
-'
-    changed: "&a Grenzen Typ geändert zu &b[type]&a."
-    error-unavailable-type: "&c Dieser Typ ist nicht verfügbar oder existiert nicht"
+    description: 'Ändert die Art der Grenze'
+    changed: '<green>Grenzen Typ geändert zu <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>Dieser Typ ist nicht verfügbar oder existiert nicht</red>'
+  set-color:
+    description: 'changes the color of the border'
+    changed: '<green>Border color changed to <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>That color is invalid. Valid colors are: red, green, blue.</red>'

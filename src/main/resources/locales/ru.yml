@@ -15,5 +15,4 @@ border:
   set-color:
     description: меняет цвет границы
     changed: <green>Цвет границы изменён на <aqua>[color]</aqua>.</green>
-    error-invalid-color: '<red>Недопустимый цвет. Допустимые цвета: красный, зеленый,
-      синий.</red>'
+    error-invalid-color: '<red>Недопустимый цвет. Допустимые значения: red, green, blue.</red>'

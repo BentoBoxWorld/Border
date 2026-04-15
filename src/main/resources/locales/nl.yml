@@ -8,3 +8,7 @@ border:
     description: verandert het type rand
     changed: '<green>Randtype gewijzigd in <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Dit type is niet beschikbaar of bestaat niet.</red>'
+  set-color:
+    description: verandert de kleur van de rand
+    changed: '<green>Randkleur gewijzigd in <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Die kleur is ongeldig. Geldige kleuren: red, green, blue.</red>'

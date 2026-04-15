@@ -8,3 +8,7 @@ border:
     description: Megváltoztatja a border típusát!
     changed: '<white>A border típusa megváltozott: <aqua>[type]</aqua></white>'
     error-unavailable-type: '<red>Hiba! Ez a típus nem létezik vagy nem elérhető.</red>'
+  set-color:
+    description: Megváltoztatja a border színét
+    changed: '<white>A border színe megváltozott: <aqua>[color]</aqua></white>'
+    error-invalid-color: '<red>Érvénytelen szín. Érvényes színek: red, green, blue.</red>'

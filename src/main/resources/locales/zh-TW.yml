@@ -8,3 +8,7 @@ border:
     description: 更改邊框的類型
     changed: '<green>邊框類型更改為 <aqua>[type]</aqua>。</green>'
     error-unavailable-type: '<red>此類型不可用或不存在。</red>'
+  set-color:
+    description: 更改邊框的顏色
+    changed: '<green>邊框顏色更改為 <aqua>[color]</aqua>。</green>'
+    error-invalid-color: '<red>此顏色無效。可用顏色: red, green, blue。</red>'

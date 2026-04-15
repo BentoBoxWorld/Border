@@ -8,3 +8,7 @@ border:
     description: modifică tipul de chenar
     changed: '<green>Tipul de chenar s-a schimbat în <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Acest tip este indisponibil sau nu există.</red>'
+  set-color:
+    description: modifică culoarea chenarului
+    changed: '<green>Culoarea chenarului a fost schimbată în <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Această culoare este invalidă. Culori valide: red, green, blue.</red>'

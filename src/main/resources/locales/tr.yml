@@ -8,3 +8,7 @@ border:
     description: kenarlığın türünü değiştirir
     changed: '<green>Kenarlık türü <aqua>[type]</aqua> olarak değiştirildi.</green>'
     error-unavailable-type: '<red>Bu tür kullanılamıyor veya mevcut değil.</red>'
+  set-color:
+    description: kenarlığın rengini değiştirir
+    changed: '<green>Kenarlık rengi <aqua>[color]</aqua> olarak değiştirildi.</green>'
+    error-invalid-color: '<red>Bu renk geçersiz. Geçerli renkler: red, green, blue.</red>'

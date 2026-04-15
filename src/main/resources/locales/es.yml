@@ -8,3 +8,7 @@ border:
     description: '<gray>Cambia el tipo de borde</gray>'
     changed: '<gray>Tipo de borde cambiado a <aqua>[type]</aqua>.</gray>'
     error-unavailable-type: '<gray>Este tipo no está disponible o no existe.</gray>'
+  set-color:
+    description: '<gray>Cambia el color del borde</gray>'
+    changed: '<gray>Color de borde cambiado a <aqua>[color]</aqua>.</gray>'
+    error-invalid-color: '<red>Color inválido. Colores válidos: red, green, blue.</red>'

@@ -8,3 +8,7 @@ border:
     description: changes the type of the border
     changed: '<green>Jenis batas diubah menjadi <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Jenis ini tidak tersedia atau tidak ada.</red>'
+  set-color:
+    description: mengubah warna batas
+    changed: '<green>Warna batas diubah menjadi <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Warna tidak valid. Warna yang valid: red, green, blue.</red>'

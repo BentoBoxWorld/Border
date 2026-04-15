@@ -6,5 +6,9 @@ border:
     border-off: '<green>Border jest nie wyswietlany</green>'
   set-type:
     description: zmienia rodzaj obramowania
-    changed: '<green>Typ obramowania został zmieniony na <aqua>[typ]</aqua>.</green>'
+    changed: '<green>Typ obramowania został zmieniony na <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Ten typ jest niedostępny lub nie istnieje.</red>'
+  set-color:
+    description: zmienia kolor obramowania
+    changed: '<green>Kolor obramowania został zmieniony na <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Ten kolor jest nieprawidłowy. Poprawne kolory: red, green, blue.</red>'

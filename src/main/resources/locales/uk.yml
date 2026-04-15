@@ -6,5 +6,9 @@ border:
     border-off: '<green>Межа вимкнена.</green>'
   set-type:
     description: змінює тип рамки
-    changed: 'Тип рамки <green> змінено на <aqua>[type]</aqua>.</green>'
+    changed: '<green>Тип рамки змінено на <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Цей тип недоступний або не існує.</red>'
+  set-color:
+    description: змінює колір рамки
+    changed: '<green>Колір рамки змінено на <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Цей колір недійсний. Дійсні кольори: red, green, blue.</red>'

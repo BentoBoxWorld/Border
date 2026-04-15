@@ -8,3 +8,7 @@ border:
     description: 境界線の種類を変更します
     changed: '<green>枠線のタイプが <aqua>[type]</aqua> に変更されました。</green>'
     error-unavailable-type: '<red>このタイプは使用できないか、存在しません。</red>'
+  set-color:
+    description: 境界線の色を変更します
+    changed: '<green>境界線の色が <aqua>[color]</aqua> に変更されました。</green>'
+    error-invalid-color: '<red>無効な色です。有効な色: red, green, blue。</red>'

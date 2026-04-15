@@ -8,3 +8,7 @@ border:
     description: maina apmales veidu
     changed: '<green>Apmales veids mainīts uz <aqua>[type]</aqua>.</green>'
     error-unavailable-type: '<red>Šis veids nav pieejams vai neeksistē.</red>'
+  set-color:
+    description: maina apmales krāsu
+    changed: '<green>Apmales krāsa mainīta uz <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Šī krāsa nav derīga. Derīgās krāsas: red, green, blue.</red>'

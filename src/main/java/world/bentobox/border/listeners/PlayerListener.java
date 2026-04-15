@@ -307,7 +307,7 @@ public class PlayerListener implements Listener {
             return;
         }
         // Backtrack - try to find island at current location, or fall back to the player's own island
-        Optional<Island> optionalIsland = addon.getIslands().getIslandAt(p.getLocation());
+        Optional<Island> optionalIsland = addon.getIslands().getIslandAt(Objects.requireNonNull(p.getLocation()));
         if (optionalIsland.isEmpty()) {
             optionalIsland = Optional
                     .ofNullable(addon.getIslands().getIsland(p.getWorld(), User.getInstance(p)));
@@ -447,7 +447,7 @@ public class PlayerListener implements Listener {
         // Remove head movement
         if (isOn(player) && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands()
-                    .getIslandAt(e.getPlayer().getLocation())
+                    .getIslandAt(Objects.requireNonNull(e.getPlayer().getLocation()))
                     .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
         }
     }

@@ -28,7 +28,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Player.Spigot;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;

@@ -20,7 +20,7 @@ class SettingsTest {
     /**
      */
     @BeforeEach
-    protected void setUp() {
+    void setUp() {
         settings = new Settings();
     }
 

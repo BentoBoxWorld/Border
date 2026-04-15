@@ -49,7 +49,7 @@ class PerPlayerBorderProxyTest {
     private AutoCloseable closeable;
 
     @BeforeEach
-    protected void setUp() {
+    void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
@@ -61,7 +61,7 @@ class PerPlayerBorderProxyTest {
     }
 
     @AfterEach
-    protected void tearDown() throws Exception {
+    void tearDown() throws Exception {
         mockedUser.closeOnDemand();
         closeable.close();
     }

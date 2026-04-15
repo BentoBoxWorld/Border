@@ -86,42 +86,33 @@ public class ShowBarrier implements BorderShower {
 
     private void showWalls(Player player, Location loc, int xMin, int xMax, int zMin, int zMax, boolean max) {
         if (loc.getBlockX() - xMin < BARRIER_RADIUS) {
-            
-            // Close to min x
-            for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
-                    showPlayer(player, xMin-1, loc.getBlockY() + y, z, max);
-                }
-            }
-        }
-        if (loc.getBlockZ() - zMin < BARRIER_RADIUS) {
-
-            // Close to min z
-            for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
-                    showPlayer(player, x, loc.getBlockY() + y, zMin-1, max);
-                }
-            }
+            showWallAlongZ(player, loc, xMin - 1, zMin, zMax, max);
         }
         if (xMax - loc.getBlockX() < BARRIER_RADIUS) {
-
-            // Close to max x
-            for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
-                    showPlayer(player, xMax, loc.getBlockY() + y, z, max); // not xMax+1, that's outside the region
-                }
-            }
+            showWallAlongZ(player, loc, xMax, zMin, zMax, max); // not xMax+1, that's outside the region
+        }
+        if (loc.getBlockZ() - zMin < BARRIER_RADIUS) {
+            showWallAlongX(player, loc, xMin, xMax, zMin - 1, max);
         }
         if (zMax - loc.getBlockZ() < BARRIER_RADIUS) {
+            showWallAlongX(player, loc, xMin, xMax, zMax, max); // not zMax+1, that's outside the region
+        }
+    }
 
-            // Close to max z
-            for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
-                for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
-                    showPlayer(player, x, loc.getBlockY() + y, zMax, max); // not zMax+1, that's outside the region
-                }
+    private void showWallAlongZ(Player player, Location loc, int x, int zMin, int zMax, boolean max) {
+        for (int z = Math.max(loc.getBlockZ() - BARRIER_RADIUS, zMin); z < loc.getBlockZ() + BARRIER_RADIUS && z < zMax; z++) {
+            for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+                showPlayer(player, x, loc.getBlockY() + y, z, max);
             }
         }
+    }
 
+    private void showWallAlongX(Player player, Location loc, int xMin, int xMax, int z, boolean max) {
+        for (int x = Math.max(loc.getBlockX() - BARRIER_RADIUS, xMin); x < loc.getBlockX() + BARRIER_RADIUS && x < xMax; x++) {
+            for (int y = -BARRIER_RADIUS; y < BARRIER_RADIUS; y++) {
+                showPlayer(player, x, loc.getBlockY() + y, z, max);
+            }
+        }
     }
 
     /**
@@ -138,21 +129,25 @@ public class ShowBarrier implements BorderShower {
                 && player.getLocation().getBlockZ() == k) {
             teleportEntity(player);
         }
-        
+
         Location l = new Location(player.getWorld(), i, j, k);
-        Util.getChunkAtAsync(l).thenAccept(c -> {
-            if (addon.getSettings().isShowParticles()) {
-                if (j < player.getWorld().getMinHeight() || j > player.getWorld().getMaxHeight()) {
-                    User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_RED, i + 0.5D, j + 0.0D, k + 0.5D);
-                } else {
-                    User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, PARTICLE_DUST_BLUE, i + 0.5D, j + 0.0D, k + 0.5D);
-                }
-            }
-            if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
-                player.sendBlockChange(l, Material.BARRIER.createBlockData());
-                barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
-            }
-        });
+        Util.getChunkAtAsync(l).thenAccept(c -> renderBorderBlock(player, l, i, j, k, max));
+    }
+
+    private void renderBorderBlock(Player player, Location l, int i, int j, int k, boolean max) {
+        if (addon.getSettings().isShowParticles()) {
+            spawnBorderParticle(player, i, j, k, max);
+        }
+        if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
+            player.sendBlockChange(l, Material.BARRIER.createBlockData());
+            barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
+        }
+    }
+
+    private void spawnBorderParticle(Player player, int i, int j, int k, boolean max) {
+        boolean outOfWorld = j < player.getWorld().getMinHeight() || j > player.getWorld().getMaxHeight();
+        Particle.DustOptions dust = outOfWorld ? PARTICLE_DUST_RED : PARTICLE_DUST_BLUE;
+        User.getInstance(player).spawnParticle(max ? MAX_PARTICLE : PARTICLE, dust, i + 0.5D, j + 0.0D, k + 0.5D);
     }
 
     /**

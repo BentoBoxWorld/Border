@@ -48,8 +48,7 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-
-
+        // Test stub — difficulty is fixed via getDifficulty()
     }
 
     @Override

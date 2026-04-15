@@ -2,9 +2,13 @@
 border:
   toggle:
     description: schakelt de rand in/uit
-    border-on: "&a Rand ingeschakeld."
-    border-off: "&a Grens uitgeschakeld."
+    border-on: '<green>Rand ingeschakeld.</green>'
+    border-off: '<green>Grens uitgeschakeld.</green>'
   set-type:
     description: verandert het type rand
-    changed: "&a Randtype gewijzigd in &b[type]&a."
-    error-unavailable-type: "&c Dit type is niet beschikbaar of bestaat niet."
+    changed: '<green>Randtype gewijzigd in <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>Dit type is niet beschikbaar of bestaat niet.</red>'
+  set-color:
+    description: verandert de kleur van de rand
+    changed: '<green>Randkleur gewijzigd in <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Die kleur is ongeldig. Geldige kleuren: red, green, blue.</red>'

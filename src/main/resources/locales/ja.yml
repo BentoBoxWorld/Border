@@ -2,9 +2,13 @@
 border:
   toggle:
     description: 境界線のオン/オフを切り替えます
-    border-on: "&a 境界線が有効です。"
-    border-off: "&a 境界線が無効になっています。"
+    border-on: '<green>境界線が有効です。</green>'
+    border-off: '<green>境界線が無効になっています。</green>'
   set-type:
     description: 境界線の種類を変更します
-    changed: "&a 枠線のタイプが &b[type]&a に変更されました。"
-    error-unavailable-type: "&c このタイプは使用できないか、存在しません。"
+    changed: '<green>枠線のタイプが <aqua>[type]</aqua> に変更されました。</green>'
+    error-unavailable-type: '<red>このタイプは使用できないか、存在しません。</red>'
+  set-color:
+    description: 境界線の色を変更します
+    changed: '<green>境界線の色が <aqua>[color]</aqua> に変更されました。</green>'
+    error-invalid-color: '<red>無効な色です。有効な色: red, green, blue。</red>'

@@ -2,9 +2,13 @@
 border:
   toggle:
     description: pārslēdz iespēju redzēt robežu
-    border-on: "&a Robeža ieslēgta."
-    border-off: "&a Robeža izslēgta."
+    border-on: '<green>Robeža ieslēgta.</green>'
+    border-off: '<green>Robeža izslēgta.</green>'
   set-type:
     description: maina apmales veidu
-    changed: "&a Apmales veids mainīts uz &b[type]&a."
-    error-unavailable-type: "&c Šis veids nav pieejams vai neeksistē."
+    changed: '<green>Apmales veids mainīts uz <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: '<red>Šis veids nav pieejams vai neeksistē.</red>'
+  set-color:
+    description: maina apmales krāsu
+    changed: '<green>Apmales krāsa mainīta uz <aqua>[color]</aqua>.</green>'
+    error-invalid-color: '<red>Šī krāsa nav derīga. Derīgās krāsas: red, green, blue.</red>'

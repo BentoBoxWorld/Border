@@ -40,7 +40,7 @@ import world.bentobox.border.listeners.BorderShower;
  * @author tastybento
  *
  */
-public class BorderTypeCommandTest extends CommonTestSetup {
+class BorderTypeCommandTest extends CommonTestSetup {
     @Mock
     private CompositeCommand ac;
     @Mock
@@ -62,7 +62,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      */
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
 
         // Command manager
@@ -113,7 +113,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
     
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         super.tearDown();
     }
 
@@ -121,7 +121,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("border.type", ic.getPermission());
         assertEquals("border.set-type.description", ic.getDescription());
         assertTrue(ic.isOnlyPlayer());
@@ -131,7 +131,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteWrongWorld() {
+    void testCanExecuteWrongWorld() {
         when(user.getWorld()).thenReturn(mock(World.class));
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.wrong-world");
@@ -141,7 +141,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         when(im.getIsland(world, user)).thenReturn(null);
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
@@ -151,7 +151,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOk() {
+    void testCanExecuteOk() {
         assertTrue(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
     }
@@ -160,7 +160,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringShowHelp() {
+    void testExecuteUserStringListOfStringShowHelp() {
         assertFalse(ic.execute(user, "", List.of("arg", "two")));
         verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
     }
@@ -169,7 +169,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringWrongType() {
+    void testExecuteUserStringListOfStringWrongType() {
         assertFalse(ic.execute(user, "", List.of("unknown")));
         verify(user).sendMessage("border.set-type.error-unavailable-type");
     }
@@ -178,7 +178,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringToggle() {
+    void testExecuteUserStringListOfStringToggle() {
         assertTrue(ic.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("border.set-type.changed","[type]","barrier");
     }
@@ -187,7 +187,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSetExplicitly() {
+    void testExecuteUserStringListOfStringSetExplicitly() {
         assertTrue(ic.execute(user, "", List.of("barrier")));
         verify(user).sendMessage("border.set-type.changed","[type]","barrier");
         assertTrue(ic.execute(user, "", List.of("vanilla")));
@@ -199,7 +199,7 @@ public class BorderTypeCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testTabCompleteUserStringListOfString() {
+    void testTabCompleteUserStringListOfString() {
         Optional<List<String>> l = ic.tabComplete(user, "", Collections.emptyList());
         assertTrue(l.isPresent());
         List<String> ll = l.get();

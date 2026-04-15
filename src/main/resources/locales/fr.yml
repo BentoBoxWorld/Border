@@ -2,9 +2,13 @@
 border:
   toggle:
     description: Activer / Désactiver la bordure
-    border-on: "&a La bordure est désactivée."
-    border-off: "&a La bordure est activée."
+    border-on: '<green>La bordure est désactivée.</green>'
+    border-off: '<green>La bordure est activée.</green>'
   set-type:
     description: change le type de bordure
-    changed: "&a Le type de bordure a été remplacé par &b[type]&a."
-    error-unavailable-type: "&c Ce type n'est pas disponible ou n'existe pas."
+    changed: '<green>Le type de bordure a été remplacé par <aqua>[type]</aqua>.</green>'
+    error-unavailable-type: "<red>Ce type n'est pas disponible ou n'existe pas.</red>"
+  set-color:
+    description: change la couleur de la bordure
+    changed: '<green>La couleur de la bordure a été changée en <aqua>[color]</aqua>.</green>'
+    error-invalid-color: "<red>Cette couleur n'est pas valide. Couleurs valides : red, green, blue.</red>"

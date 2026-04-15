@@ -38,7 +38,6 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -308,47 +307,46 @@ public class PlayerListener implements Listener {
             return;
         }
         // Backtrack - try to find island at current location, or fall back to the player's own island
-        Optional<Island> optionalIsland = addon.getIslands().getIslandAt(p.getLocation());
+        Optional<Island> optionalIsland = addon.getIslands().getIslandAt(Objects.requireNonNull(p.getLocation()));
         if (optionalIsland.isEmpty()) {
             optionalIsland = Optional
                     .ofNullable(addon.getIslands().getIsland(p.getWorld(), User.getInstance(p)));
         }
-        optionalIsland.ifPresent(i -> {
-            Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
-                    .multiply(new Vector(1, 0, 1));
-            if (unitVector.lengthSquared() <= 0D) {
-                // Direction is zero, so nothing to do; cannot move.
-                return;
-            }
-            RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
-            if (r == null || !checkFinite(r.getHitPosition())) {
-                // Ray trace failed, so just teleport the player back to that island
-                inTeleport.add(p.getUniqueId());
-                Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
-                return;
-            }
+        optionalIsland.ifPresent(i -> backtrackToIsland(p, i));
+    }
 
+    private void backtrackToIsland(Player p, Island i) {
+        Vector unitVector = i.getProtectionCenter().toVector().subtract(p.getLocation().toVector()).normalize()
+                .multiply(new Vector(1, 0, 1));
+        if (unitVector.lengthSquared() <= 0D) {
+            // Direction is zero, so nothing to do; cannot move.
+            return;
+        }
+        RayTraceResult r = i.getProtectionBoundingBox().rayTrace(p.getLocation().toVector(), unitVector, i.getRange());
+        if (r == null || !checkFinite(r.getHitPosition())) {
+            // Ray trace failed, so just teleport the player back to that island
             inTeleport.add(p.getUniqueId());
-            Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
+            Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+            return;
+        }
 
-            if (!addon.getIslands().isSafeLocation(targetPos)) {
-                 switch (targetPos.getWorld().getEnvironment()) {
-                    case NETHER:
-                        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
-                        break;
-                    case THE_END:
-                        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.END_STONE);
-                        break;
-                    default:
-                        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(Material.STONE);
-                        break;
-                }
-                Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
-            } else {
-                Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
-            }
+        inTeleport.add(p.getUniqueId());
+        Location targetPos = r.getHitPosition().toLocation(p.getWorld(), p.getLocation().getYaw(), p.getLocation().getPitch());
 
-        });
+        if (addon.getIslands().isSafeLocation(targetPos)) {
+            Util.teleportAsync(p, i.getHome("")).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+            return;
+        }
+        targetPos.getBlock().getRelative(BlockFace.DOWN).setType(safeLandingMaterial(targetPos));
+        Util.teleportAsync(p, targetPos).thenRun(() -> inTeleport.remove(p.getUniqueId()));
+    }
+
+    private Material safeLandingMaterial(Location targetPos) {
+        return switch (targetPos.getWorld().getEnvironment()) {
+            case NETHER -> Material.NETHERRACK;
+            case THE_END -> Material.END_STONE;
+            default -> Material.STONE;
+        };
     }
 
     /**
@@ -406,13 +404,10 @@ public class PlayerListener implements Listener {
             if (!addon.inGameWorld(loc.getWorld())) {
                 return;
             }
-            // Eject from mount if outside the protection range
-            if (addon.getIslands().getProtectedIslandAt(loc).isEmpty()) {
-                // Force the dismount event for custom entities
-                if (!event.getMount().eject()) {
-                    var dismountEvent = new EntityDismountEvent(player, event.getMount());
-                    Bukkit.getPluginManager().callEvent(dismountEvent);
-                }
+            // Eject from mount if outside the protection range; force dismount for custom entities
+            if (addon.getIslands().getProtectedIslandAt(loc).isEmpty() && !event.getMount().eject()) {
+                var dismountEvent = new EntityDismountEvent(player, event.getMount());
+                Bukkit.getPluginManager().callEvent(dismountEvent);
             }
         }, 1, 20));
     }
@@ -452,7 +447,7 @@ public class PlayerListener implements Listener {
         // Remove head movement
         if (isOn(player) && !e.getFrom().toVector().equals(e.getTo().toVector())) {
             addon.getIslands()
-                    .getIslandAt(e.getPlayer().getLocation())
+                    .getIslandAt(Objects.requireNonNull(e.getPlayer().getLocation()))
                     .ifPresent(i -> show.refreshView(User.getInstance(e.getPlayer()), i));
         }
     }
@@ -499,8 +494,8 @@ public class PlayerListener implements Listener {
                 && addon.inGameWorld(event.getPlayer().getWorld())
                 && isOn(event.getPlayer())
         ) {
-            // Get this island
-            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is -> trackItem(event.getItemDrop(), is));
+            Location loc = event.getPlayer().getLocation();
+            addon.getIslands().getIslandAt(Objects.requireNonNull(loc)).ifPresent(is -> trackItem(event.getItemDrop(), is));
         }
     }
 
@@ -514,9 +509,9 @@ public class PlayerListener implements Listener {
         if (addon.getSettings().isBounceBack()
                 && addon.inGameWorld(event.getPlayer().getWorld())
                 && isOn(event.getPlayer())) {
-            // Get this island
-            addon.getIslands().getIslandAt(event.getPlayer().getLocation()).ifPresent(is -> {
-                event.getDrops().forEach(item -> trackItem(event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), item), is));
+            Location loc = event.getPlayer().getLocation();
+            addon.getIslands().getIslandAt(Objects.requireNonNull(loc)).ifPresent(is -> {
+                event.getDrops().forEach(item -> trackItem(event.getPlayer().getWorld().dropItemNaturally(loc, item), is));
                 event.getDrops().clear(); // We handled them
             });
         }

@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test;
  * @author tastybento
  *
  */
-public class SettingsTest {
+class SettingsTest {
 
     private Settings settings;
 
     /**
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         settings = new Settings();
     }
 
@@ -28,7 +28,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setDisabledGameModes(java.util.Set)}.
      */
     @Test
-    public void testSetDisabledGameModes() {
+    void testSetDisabledGameModes() {
         settings.setDisabledGameModes(Collections.singleton("test"));
         assertTrue(settings.getDisabledGameModes().contains("test"));
         assertEquals(1, settings.getDisabledGameModes().size());
@@ -38,7 +38,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#getDisabledGameModes()}.
      */
     @Test
-    public void testGetDisabledGameModes() {
+    void testGetDisabledGameModes() {
         assertTrue(settings.getDisabledGameModes().isEmpty());
     }
 
@@ -46,7 +46,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#isUseBarrierBlocks()}.
      */
     @Test
-    public void testIsUseBarrierBlocks() {
+    void testIsUseBarrierBlocks() {
         assertTrue(settings.isUseBarrierBlocks());
     }
 
@@ -54,7 +54,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setUseBarrierBlocks(boolean)}.
      */
     @Test
-    public void testSetUseBarrierBlocks() {
+    void testSetUseBarrierBlocks() {
         settings.setUseBarrierBlocks(false);
         assertFalse(settings.isUseBarrierBlocks());
     }
@@ -63,7 +63,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#isShowByDefault()}.
      */
     @Test
-    public void testIsShowByDefault() {
+    void testIsShowByDefault() {
         assertTrue(settings.isShowByDefault());
     }
 
@@ -71,7 +71,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setShowByDefault(boolean)}.
      */
     @Test
-    public void testSetShowByDefault() {
+    void testSetShowByDefault() {
         settings.setShowByDefault(false);
         assertFalse(settings.isShowByDefault());
     }
@@ -80,7 +80,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#isShowMaxBorder()}.
      */
     @Test
-    public void testIsShowMaxBorder() {
+    void testIsShowMaxBorder() {
         assertTrue(settings.isShowMaxBorder());
     }
 
@@ -88,7 +88,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setShowMaxBorder(boolean)}.
      */
     @Test
-    public void testSetShowMaxBorder() {
+    void testSetShowMaxBorder() {
         settings.setShowMaxBorder(false);
         assertFalse(settings.isShowMaxBorder());
     }
@@ -97,7 +97,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#getType()}.
      */
     @Test
-    public void testGetType() {
+    void testGetType() {
         assertEquals(BorderType.VANILLA, settings.getType());
     }
 
@@ -105,7 +105,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setType(BorderType)}.
      */
     @Test
-    public void testSetType() {
+    void testSetType() {
         assertEquals(BorderType.VANILLA, settings.getType());
         settings.setType(BorderType.BARRIER);
         assertEquals(BorderType.BARRIER, settings.getType());
@@ -115,7 +115,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#isReturnTeleport()}.
      */
     @Test
-    public void testIsReturnTeleport() {
+    void testIsReturnTeleport() {
         assertTrue(settings.isReturnTeleport());
     }
 
@@ -123,7 +123,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setReturnTeleport(boolean)}.
      */
     @Test
-    public void testSetReturnTeleport() {
+    void testSetReturnTeleport() {
         settings.setReturnTeleport(false);
         assertFalse(settings.isReturnTeleport());
     }
@@ -132,7 +132,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#getBarrierOffset()}.
      */
     @Test
-    public void testGetBarrierOffset() {
+    void testGetBarrierOffset() {
         assertEquals(0, settings.getBarrierOffset());
     }
     
@@ -140,7 +140,7 @@ public class SettingsTest {
      * Test method for {@link world.bentobox.border.Settings#setBarrierOffset(int)}.
      */
     @Test
-    public void testsetBarrierOffset() {
+    void testsetBarrierOffset() {
         assertEquals(0, settings.getBarrierOffset());
         settings.setBarrierOffset(-234);
         assertEquals(0, settings.getBarrierOffset());

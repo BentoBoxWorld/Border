@@ -27,7 +27,7 @@ import world.bentobox.border.listeners.BorderShower;
 /**
  * Tests for {@link PerPlayerBorderProxy} border selection logic.
  */
-public class PerPlayerBorderProxyTest {
+class PerPlayerBorderProxyTest {
 
     @Mock
     private Border addon;
@@ -49,7 +49,7 @@ public class PerPlayerBorderProxyTest {
     private AutoCloseable closeable;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
@@ -61,13 +61,13 @@ public class PerPlayerBorderProxyTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         mockedUser.closeOnDemand();
         closeable.close();
     }
 
     @Test
-    public void testShowBorderUsesDefaultWhenNoMetadata() {
+    void testShowBorderUsesDefaultWhenNoMetadata() {
         when(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA)).thenReturn(Optional.empty());
         PerPlayerBorderProxy proxy = new PerPlayerBorderProxy(addon, customBorder, vanillaBorder);
 
@@ -78,7 +78,7 @@ public class PerPlayerBorderProxyTest {
     }
 
     @Test
-    public void testShowBorderUsesCustomWhenMetadataBarrier() {
+    void testShowBorderUsesCustomWhenMetadataBarrier() {
         MetaDataValue metaDataValue = mock(MetaDataValue.class);
         when(metaDataValue.asByte()).thenReturn(BorderType.BARRIER.getId());
         when(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA)).thenReturn(Optional.of(metaDataValue));
@@ -91,7 +91,7 @@ public class PerPlayerBorderProxyTest {
     }
 
     @Test
-    public void testHideBorderFallsBackWhenTypeUnavailable() {
+    void testHideBorderFallsBackWhenTypeUnavailable() {
         MetaDataValue metaDataValue = mock(MetaDataValue.class);
         when(metaDataValue.asByte()).thenReturn(BorderType.BARRIER.getId());
         when(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA)).thenReturn(Optional.of(metaDataValue));
@@ -105,7 +105,7 @@ public class PerPlayerBorderProxyTest {
     }
 
     @Test
-    public void testTeleportEntityUsesCustomWhenBarrier() {
+    void testTeleportEntityUsesCustomWhenBarrier() {
         MetaDataValue metaDataValue = mock(MetaDataValue.class);
         when(metaDataValue.asByte()).thenReturn(BorderType.BARRIER.getId());
         when(user.getMetaData(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA)).thenReturn(Optional.of(metaDataValue));

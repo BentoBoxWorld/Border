@@ -22,13 +22,13 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Tests for {@link Border} behavior that does not require a full Bukkit runtime.
  */
-public class BorderTest extends CommonTestSetup {
+class BorderTest extends CommonTestSetup {
 
     private Border border;
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         border = new Border();
         mockedUtil.when(() -> Util.getWorld(world)).thenReturn(world);
@@ -36,7 +36,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testInGameWorldReturnsTrueWhenAnyGameModeMatches() throws Exception {
+    void testInGameWorldReturnsTrueWhenAnyGameModeMatches() throws Exception {
         GameModeAddon matching = mock(GameModeAddon.class);
         when(matching.inWorld(world)).thenReturn(true);
         getGameModes().add(matching);
@@ -45,7 +45,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testInGameWorldReturnsFalseWhenNoGameModeMatches() throws Exception {
+    void testInGameWorldReturnsFalseWhenNoGameModeMatches() throws Exception {
         GameModeAddon nonMatching = mock(GameModeAddon.class);
         when(nonMatching.inWorld(world)).thenReturn(false);
         getGameModes().add(nonMatching);
@@ -54,7 +54,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testInGameWorldReturnsFalseForVanillaNether() {
+    void testInGameWorldReturnsFalseForVanillaNether() {
         when(world.getEnvironment()).thenReturn(Environment.NETHER);
         when(iwm.isIslandNether(world)).thenReturn(false);
 
@@ -62,7 +62,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testInGameWorldReturnsFalseForVanillaEnd() {
+    void testInGameWorldReturnsFalseForVanillaEnd() {
         when(world.getEnvironment()).thenReturn(Environment.THE_END);
         when(iwm.isIslandEnd(world)).thenReturn(false);
 
@@ -70,7 +70,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testInGameWorldDelegatesToGameModeForIslandNether() throws Exception {
+    void testInGameWorldDelegatesToGameModeForIslandNether() throws Exception {
         when(world.getEnvironment()).thenReturn(Environment.NETHER);
         when(iwm.isIslandNether(world)).thenReturn(true);
         GameModeAddon matching = mock(GameModeAddon.class);
@@ -81,7 +81,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testInGameWorldDelegatesToGameModeForIslandEnd() throws Exception {
+    void testInGameWorldDelegatesToGameModeForIslandEnd() throws Exception {
         when(world.getEnvironment()).thenReturn(Environment.THE_END);
         when(iwm.isIslandEnd(world)).thenReturn(true);
         GameModeAddon matching = mock(GameModeAddon.class);
@@ -92,7 +92,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetAvailableBorderTypesViewIsUnmodifiable() {
+    void testGetAvailableBorderTypesViewIsUnmodifiable() {
         Set<BorderType> view = border.getAvailableBorderTypesView();
         assertTrue(view.contains(BorderType.VANILLA));
         assertTrue(view.contains(BorderType.BARRIER));
@@ -100,7 +100,7 @@ public class BorderTest extends CommonTestSetup {
     }
 
     @Test
-    public void testGetSettingsReturnsConfiguredInstance() {
+    void testGetSettingsReturnsConfiguredInstance() {
         Settings settings = new Settings();
         setField(border, "settings", settings);
         assertSame(settings, border.getSettings());

@@ -28,7 +28,7 @@ import world.bentobox.border.Settings;
  * @author tastybento
  *
  */
-public class ShowWorldBorderTest extends CommonTestSetup {
+class ShowWorldBorderTest extends CommonTestSetup {
     @Mock
     private Border addon;
     private Settings settings;
@@ -45,7 +45,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      */
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
@@ -71,12 +71,12 @@ public class ShowWorldBorderTest extends CommonTestSetup {
     
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         super.tearDown();
     }
 
     @Test
-    public void testShowVirtualWorldBorder() {
+    void testShowVirtualWorldBorder() {
         assertNotNull(svwb);
     }
 
@@ -84,7 +84,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorder() {
+    void testShowBorder() {
         svwb.showBorder(mockPlayer, island);
         verify(wb).setSize(200.0D);
         
@@ -94,7 +94,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderWithOffset() {
+    void testShowBorderWithOffset() {
         settings.setBarrierOffset(10);
         svwb.showBorder(mockPlayer, island);
         verify(wb).setSize(220.0D);
@@ -105,7 +105,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderWithLargeOffset() {
+    void testShowBorderWithLargeOffset() {
         settings.setBarrierOffset(10000);
         svwb.showBorder(mockPlayer, island);
         verify(wb).setSize(800.0D); // Max size
@@ -116,7 +116,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#hideBorder(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testHideBorder() {
+    void testHideBorder() {
         // Nothing to hide
         svwb.hideBorder(user);
         verify(mockPlayer).setWorldBorder(null);
@@ -126,7 +126,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#clearUser(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testClearUser() {
+    void testClearUser() {
         svwb.clearUser(user);
         verify(mockPlayer).setWorldBorder(null);
     }
@@ -135,7 +135,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowWorldBorder#refreshView(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testRefreshView() {
+    void testRefreshView() {
         svwb.refreshView(user, island);
         verify(mockPlayer).setWorldBorder(wb);
         verify(wb).setSize(200.0D);
@@ -146,7 +146,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Tests that border is shown when player is in an island nether world.
      */
     @Test
-    public void testShowBorderInIslandNetherWorld() {
+    void testShowBorderInIslandNetherWorld() {
         // Setup: Player is in a nether environment that IS an island nether world
         when(world.getEnvironment()).thenReturn(Environment.NETHER);
         when(iwm.isIslandNether(world)).thenReturn(true);
@@ -164,7 +164,7 @@ public class ShowWorldBorderTest extends CommonTestSetup {
      * Tests that border is NOT shown when player is in a non-island nether world.
      */
     @Test
-    public void testShowBorderInNonIslandNetherWorld() {
+    void testShowBorderInNonIslandNetherWorld() {
         // Setup: Player is in a nether environment that is NOT an island nether world
         when(world.getEnvironment()).thenReturn(Environment.NETHER);
         when(iwm.isIslandNether(world)).thenReturn(false);

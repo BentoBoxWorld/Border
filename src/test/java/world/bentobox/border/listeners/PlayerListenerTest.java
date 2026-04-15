@@ -24,6 +24,7 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -38,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent;
 import world.bentobox.bentobox.api.user.User;
@@ -51,7 +53,7 @@ import world.bentobox.border.Settings;
  * @author tastybento
  *
  */
-public class PlayerListenerTest extends CommonTestSetup {
+class PlayerListenerTest extends CommonTestSetup {
     
     @Mock
     private Border addon;
@@ -81,7 +83,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      */
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         mockedUser.when(() -> User.getInstance(any(Player.class))).thenReturn(user);
@@ -144,7 +146,7 @@ public class PlayerListenerTest extends CommonTestSetup {
     
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         mockedUser.closeOnDemand();
         super.tearDown();
     }
@@ -153,7 +155,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#PlayerListener(world.bentobox.border.Border)}.
      */
     @Test
-    public void testPlayerListener() {
+    void testPlayerListener() {
         assertNotNull(pl);
     }
 
@@ -161,8 +163,8 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#processEvent(PlayerJoinEvent)}.
      */
     @Test
-    public void testOnPlayerJoinNoPerms() {
-        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+    void testOnPlayerJoinNoPerms() {
+        PlayerJoinEvent event = new PlayerJoinEvent(player, Component.empty());
         pl.processEvent(event);
         verify(user).putMetaData(eq(BorderShower.BORDER_STATE_META_DATA), any());
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_BORDERTYPE_META_DATA), any());
@@ -176,8 +178,8 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent)}.
      */
     @Test
-    public void testOnPlayerQuit() {
-        PlayerQuitEvent event = new PlayerQuitEvent(player, "");
+    void testOnPlayerQuit() {
+        PlayerQuitEvent event = new PlayerQuitEvent(player, Component.empty(), QuitReason.DISCONNECTED);
         pl.onPlayerQuit(event);
         verify(show).clearUser(user);
     }
@@ -186,7 +188,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
-    public void testOnPlayerRespawn() {
+    void testOnPlayerRespawn() {
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, from, false, false, false, RespawnReason.DEATH);
         pl.onPlayerRespawn(event);
         mockedBukkit.verify(Bukkit::getScheduler);
@@ -197,7 +199,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnPlayerTeleportNotInGameWorld() {
+    void testOnPlayerTeleportNotInGameWorld() {
         when(addon.inGameWorld(any())).thenReturn(false);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
         pl.onPlayerTeleport(event);
@@ -210,7 +212,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
-    public void testOnPlayerTeleportInGameWorld() {
+    void testOnPlayerTeleportInGameWorld() {
         when(addon.inGameWorld(any())).thenReturn(true);
         when(iwm.isIslandNether(any())).thenReturn(false); // In-game world teleport (non-island nether) should still trigger scheduler
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, TeleportCause.NETHER_PORTAL);
@@ -225,7 +227,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Island nether world - should proceed with border management.
      */
     @Test
-    public void testOnPlayerTeleportInIslandNether() {
+    void testOnPlayerTeleportInIslandNether() {
         when(addon.inGameWorld(any())).thenReturn(true);
         when(iwm.isIslandNether(any())).thenReturn(true);
         when(iwm.isIslandEnd(any())).thenReturn(false);
@@ -241,7 +243,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Island end world - should proceed with border management.
      */
     @Test
-    public void testOnPlayerTeleportInIslandEnd() {
+    void testOnPlayerTeleportInIslandEnd() {
         when(addon.inGameWorld(any())).thenReturn(true);
         when(iwm.isIslandNether(any())).thenReturn(false);
         when(iwm.isIslandEnd(any())).thenReturn(true);
@@ -256,7 +258,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandNoReturnTeleport() {
+    void testOnPlayerLeaveIslandNoReturnTeleport() {
         settings.setReturnTeleport(false);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerLeaveIsland(event);
@@ -267,7 +269,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportOutsideCheckSameXZ() {
+    void testOnPlayerLeaveIslandReturnTeleportOutsideCheckSameXZ() {
         
         when(to.toVector()).thenReturn(new Vector(1,2,3)); // Same as from
         settings.setReturnTeleport(true);
@@ -278,37 +280,11 @@ public class PlayerListenerTest extends CommonTestSetup {
     
     /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Movement in any non-game world (vanilla nether, vanilla end, or otherwise) must be ignored.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportOutsideCheckNotInGameWorld() {
+    void testOnPlayerLeaveIslandIgnoredWhenNotInGameWorld() {
         when(addon.inGameWorld(any())).thenReturn(false);
-        settings.setReturnTeleport(true);
-        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-        pl.onPlayerLeaveIsland(event);
-        verify(addon, never()).getIslands();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
-     * Tests that movement in a vanilla (non-island) nether world is ignored — players should NOT
-     * be teleported back when using the vanilla nether.
-     */
-    @Test
-    public void testOnPlayerLeaveIslandVanillaNether() {
-        when(addon.inGameWorld(any())).thenReturn(false); // vanilla nether is not a game world
-        settings.setReturnTeleport(true);
-        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-        pl.onPlayerLeaveIsland(event);
-        verify(addon, never()).getIslands();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
-     * Tests that movement in a vanilla (non-island) end world is ignored.
-     */
-    @Test
-    public void testOnPlayerLeaveIslandVanillaEnd() {
-        when(addon.inGameWorld(any())).thenReturn(false); // vanilla end is not a game world
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerLeaveIsland(event);
@@ -321,7 +297,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * teleported back.
      */
     @Test
-    public void testOnPlayerLeaveIslandIslandNetherReturnsTeleport() {
+    void testOnPlayerLeaveIslandIslandNetherReturnsTeleport() {
         when(iwm.isIslandNether(any())).thenReturn(true);
         when(iwm.isIslandEnd(any())).thenReturn(false);
         when(island.onIsland(any())).thenReturn(false);
@@ -337,7 +313,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * teleported back.
      */
     @Test
-    public void testOnPlayerLeaveIslandIslandEndReturnsTeleport() {
+    void testOnPlayerLeaveIslandIslandEndReturnsTeleport() {
         when(iwm.isIslandNether(any())).thenReturn(false);
         when(iwm.isIslandEnd(any())).thenReturn(true);
         when(island.onIsland(any())).thenReturn(false);
@@ -352,7 +328,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportOutsideSpectator() {
+    void testOnPlayerLeaveIslandReturnTeleportOutsideSpectator() {
         when(player.getGameMode()).thenReturn(GameMode.SPECTATOR);
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -364,7 +340,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportOutsideShowByDefaultFalse() {
+    void testOnPlayerLeaveIslandReturnTeleportOutsideShowByDefaultFalse() {
         settings.setShowByDefault(false);
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -376,7 +352,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleporOnIsland() {
+    void testOnPlayerLeaveIslandReturnTeleporOnIsland() {
         when(island.onIsland(any())).thenReturn(true);
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -388,7 +364,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportOutsideIsland() {
+    void testOnPlayerLeaveIslandReturnTeleportOutsideIsland() {
         when(island.onIsland(any())).thenReturn(false);
         settings.setReturnTeleport(true);
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -401,7 +377,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerLeaveIslandReturnTeleportWaaayOutsideIsland() {
+    void testOnPlayerLeaveIslandReturnTeleportWaaayOutsideIsland() {
         // Need to backtrack to nearest island
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
         when(island.onIsland(any())).thenReturn(false);
@@ -419,7 +395,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * and getIslandAt returns empty. The plugin should fall back to the player's own island.
      */
     @Test
-    public void testOnPlayerLeaveIslandTeleportsWhenCompletelyOutsideIsland() {
+    void testOnPlayerLeaveIslandTeleportsWhenCompletelyOutsideIsland() {
         // Player is completely outside any island - getIslandAt returns empty
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
@@ -438,7 +414,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMove() {
+    void testOnPlayerMove() {
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerMove(event);
         verify(show).refreshView(any(),any());
@@ -448,7 +424,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnPlayerMoveHeadOnly() {
+    void testOnPlayerMoveHeadOnly() {
         when(to.toVector()).thenReturn(new Vector(1,2,3));// Same as from
         PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
         pl.onPlayerMove(event);
@@ -459,7 +435,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onVehicleMove(org.bukkit.event.vehicle.VehicleMoveEvent)}.
      */
     @Test
-    public void testOnVehicleMove() {
+    void testOnVehicleMove() {
         VehicleMoveEvent event = new VehicleMoveEvent(vehicle, from, to);
         pl.onVehicleMove(event);
         verify(show).refreshView(any(),any());
@@ -469,7 +445,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onVehicleMove(org.bukkit.event.vehicle.VehicleMoveEvent)}.
      */
     @Test
-    public void testOnVehicleMoveHeadOnly() {
+    void testOnVehicleMoveHeadOnly() {
         when(to.toVector()).thenReturn(new Vector(1,2,3));// Same as from
         VehicleMoveEvent event = new VehicleMoveEvent(vehicle, from, to);
         pl.onVehicleMove(event);
@@ -480,7 +456,7 @@ public class PlayerListenerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onProtectionRangeChange(world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent)}.
      */
     @Test
-    public void testOnProtectionRangeChange() {
+    void testOnProtectionRangeChange() {
         UUID uuid = UUID.randomUUID();
         IslandProtectionRangeChangeEvent event = new IslandProtectionRangeChangeEvent(island, uuid, false, from, 0, 0);
         pl.onProtectionRangeChange(event);

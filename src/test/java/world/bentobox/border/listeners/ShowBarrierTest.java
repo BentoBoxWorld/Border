@@ -34,7 +34,7 @@ import world.bentobox.border.Settings;
  * @author tastybento
  *
  */
-public class ShowBarrierTest extends CommonTestSetup {
+class ShowBarrierTest extends CommonTestSetup {
     @Mock
     private Border addon;
     @Mock
@@ -54,7 +54,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      */
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         settings = new Settings();
         settings.setShowMaxBorder(false);
@@ -99,7 +99,7 @@ public class ShowBarrierTest extends CommonTestSetup {
     
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         if (mockedUser != null) {
             mockedUser.close();
         }
@@ -110,7 +110,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#ShowBarrier(world.bentobox.border.Border)}.
      */
     @Test
-    public void testShowBarrier() {
+    void testShowBarrier() {
         assertNotNull(sb);
     }
 
@@ -118,7 +118,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorder() {
+    void testShowBorderNearBorder() {
         sb.showBorder(player, island);
         verify(player, times(131)).getLocation();        
         mockedUtil.verify(() ->  Util.getChunkAtAsync(any(Location.class)), times(120));
@@ -128,7 +128,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorderNoBarrierBlocks() {
+    void testShowBorderNearBorderNoBarrierBlocks() {
         settings.setUseBarrierBlocks(false);
         sb.showBorder(player, island);
         verify(player).getLocation();        
@@ -140,7 +140,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderFarBorderWithOffset() {
+    void testShowBorderFarBorderWithOffset() {
         // Large offset means that the player never sees the border at this position
         settings.setBarrierOffset(50);
         sb.showBorder(player, island);
@@ -153,7 +153,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorderWithOffset() {
+    void testShowBorderNearBorderWithOffset() {
         // Large offset means that the player never sees the border at this position
         settings.setBarrierOffset(2);
         sb.showBorder(player, island);
@@ -165,7 +165,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNotNearMaxBorder() {
+    void testShowBorderNotNearMaxBorder() {
         settings.setShowMaxBorder(true);
         // Not close to the max border, so the times will be the same as above
         sb.showBorder(player, island);
@@ -178,7 +178,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorderShowMaxBorder() {
+    void testShowBorderNearBorderShowMaxBorder() {
         settings.setShowMaxBorder(true);
         // Shrink max min
         when(island.getMinX()).thenReturn(-100);
@@ -196,7 +196,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorder2() {
+    void testShowBorderNearBorder2() {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(99);
         when(location.toVector()).thenReturn(new Vector(0,0,99));
@@ -210,7 +210,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorder3() {
+    void testShowBorderNearBorder3() {
         when(location.getBlockX()).thenReturn(99);
         when(location.getBlockZ()).thenReturn(0);
         when(location.toVector()).thenReturn(new Vector(99,0,0));
@@ -224,7 +224,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorder4() {
+    void testShowBorderNearBorder4() {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(-99);
         when(location.toVector()).thenReturn(new Vector(0,0,-99));
@@ -238,7 +238,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderNearBorder5() {
+    void testShowBorderNearBorder5() {
         when(location.getBlockX()).thenReturn(-99);
         when(location.getBlockZ()).thenReturn(0);
         when(location.toVector()).thenReturn(new Vector(-99,0,0));
@@ -252,7 +252,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#showBorder(org.bukkit.entity.Player, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testShowBorderAwayFromBorder() {
+    void testShowBorderAwayFromBorder() {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
         when(location.toVector()).thenReturn(new Vector(0,0,0));
@@ -266,7 +266,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#hideBorder(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testHideBorder() {
+    void testHideBorder() {
         // Nothing to hide
         sb.hideBorder(user);
         verify(user).getUniqueId();
@@ -276,7 +276,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#clearUser(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
-    public void testClearUser() {
+    void testClearUser() {
         sb.clearUser(user);
         verify(user).getUniqueId();
     }
@@ -285,7 +285,7 @@ public class ShowBarrierTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.listeners.ShowBarrier#refreshView(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
-    public void testRefreshView() {
+    void testRefreshView() {
         sb.refreshView(user, island);
         verify(user).getPlayer();
     }

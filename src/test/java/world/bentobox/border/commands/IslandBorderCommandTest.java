@@ -42,7 +42,7 @@ import world.bentobox.border.listeners.BorderShower;
  * @author tastybento
  *
  */
-public class IslandBorderCommandTest extends CommonTestSetup {
+class IslandBorderCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -64,7 +64,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      */
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -120,7 +120,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      */
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         super.tearDown();
     }
 
@@ -128,7 +128,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.IslandBorderCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("border.toggle", ic.getPermission());
         assertEquals("border.toggle.description", ic.getDescription());
         assertTrue(ic.isOnlyPlayer());
@@ -141,7 +141,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteWrongWorld() {
+    void testCanExecuteWrongWorld() {
         when(user.getWorld()).thenReturn(mock(World.class));
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.wrong-world");
@@ -151,7 +151,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
@@ -161,7 +161,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteOk() {
+    void testCanExecuteOk() {
         assertTrue(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
     }
@@ -170,7 +170,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringDefault() {
+    void testExecuteUserStringListOfStringDefault() {
         // Uses the default in settings
         assertTrue(ic.execute(user, "", Collections.emptyList()));
         verify(user).getMetaData("Border_state");
@@ -181,7 +181,7 @@ public class IslandBorderCommandTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.border.commands.BorderTypeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringToggle() {
+    void testExecuteUserStringListOfStringToggle() {
         when(user.getMetaData(BorderShower.BORDER_STATE_META_DATA)).thenReturn(Optional.of(new MetaDataValue(true)));
         assertTrue(ic.execute(user, "", Collections.emptyList()));
         verify(user).getMetaData("Border_state");

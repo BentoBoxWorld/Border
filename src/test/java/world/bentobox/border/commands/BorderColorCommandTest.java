@@ -38,7 +38,7 @@ import world.bentobox.border.listeners.BorderShower;
 /**
  * Tests for {@link BorderColorCommand}
  */
-public class BorderColorCommandTest extends CommonTestSetup {
+class BorderColorCommandTest extends CommonTestSetup {
 
     @Mock
     private CompositeCommand ac;
@@ -53,7 +53,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
 
         // Command manager
@@ -99,7 +99,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         super.tearDown();
     }
 
@@ -107,7 +107,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Test method for {@link BorderColorCommand#setup()}.
      */
     @Test
-    public void testSetup() {
+    void testSetup() {
         assertEquals("border.color", ic.getPermission());
         assertEquals("border.set-color.description", ic.getDescription());
         assertTrue(ic.isOnlyPlayer());
@@ -117,7 +117,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Test method for {@link BorderColorCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecuteWrongWorld() {
+    void testCanExecuteWrongWorld() {
         when(user.getWorld()).thenReturn(mock(World.class));
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.wrong-world");
@@ -127,7 +127,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Test method for {@link BorderColorCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecuteNoIsland() {
+    void testCanExecuteNoIsland() {
         when(im.getIsland(world, user)).thenReturn(null);
         assertFalse(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
@@ -137,7 +137,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Test method for {@link BorderColorCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testCanExecuteOk() {
+    void testCanExecuteOk() {
         assertTrue(ic.canExecute(user, "", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.wrong-world");
     }
@@ -147,7 +147,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * No arguments should show help.
      */
     @Test
-    public void testExecuteNoArgs() {
+    void testExecuteNoArgs() {
         assertFalse(ic.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
@@ -157,7 +157,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Too many arguments should show help.
      */
     @Test
-    public void testExecuteTooManyArgs() {
+    void testExecuteTooManyArgs() {
         assertFalse(ic.execute(user, "", List.of("red", "extra")));
         verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
@@ -167,7 +167,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Unknown color should send error message.
      */
     @Test
-    public void testExecuteInvalidColor() {
+    void testExecuteInvalidColor() {
         assertFalse(ic.execute(user, "", List.of("purple")));
         verify(user).sendMessage("border.set-color.error-invalid-color");
     }
@@ -177,7 +177,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * No permission for the specific color should deny.
      */
     @Test
-    public void testExecuteNoPermission() {
+    void testExecuteNoPermission() {
         when(user.hasPermission("bskyblock.border.color.red")).thenReturn(false);
         assertFalse(ic.execute(user, "", List.of("red")));
         verify(user).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
@@ -188,7 +188,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Successfully set red.
      */
     @Test
-    public void testExecuteSetRed() {
+    void testExecuteSetRed() {
         when(user.hasPermission("bskyblock.border.color.red")).thenReturn(true);
         assertTrue(ic.execute(user, "", List.of("red")));
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_COLOR_META_DATA), any());
@@ -202,7 +202,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Successfully set green.
      */
     @Test
-    public void testExecuteSetGreen() {
+    void testExecuteSetGreen() {
         when(user.hasPermission("bskyblock.border.color.green")).thenReturn(true);
         assertTrue(ic.execute(user, "", List.of("green")));
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_COLOR_META_DATA), any());
@@ -214,7 +214,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Successfully set blue.
      */
     @Test
-    public void testExecuteSetBlue() {
+    void testExecuteSetBlue() {
         when(user.hasPermission("bskyblock.border.color.blue")).thenReturn(true);
         assertTrue(ic.execute(user, "", List.of("blue")));
         verify(user).putMetaData(eq(PerPlayerBorderProxy.BORDER_COLOR_META_DATA), any());
@@ -226,7 +226,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Color argument should be case-insensitive.
      */
     @Test
-    public void testExecuteCaseInsensitive() {
+    void testExecuteCaseInsensitive() {
         when(user.hasPermission("bskyblock.border.color.red")).thenReturn(true);
         assertTrue(ic.execute(user, "", List.of("RED")));
         verify(user).sendMessage("border.set-color.changed", "[color]", "red");
@@ -237,7 +237,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * All colors returned when user has all permissions.
      */
     @Test
-    public void testTabCompleteAllPermissions() {
+    void testTabCompleteAllPermissions() {
         when(user.hasPermission(anyString())).thenReturn(true);
         Optional<List<String>> result = ic.tabComplete(user, "", Collections.emptyList());
         assertTrue(result.isPresent());
@@ -253,7 +253,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * No colors returned when user has no permissions.
      */
     @Test
-    public void testTabCompleteNoPermissions() {
+    void testTabCompleteNoPermissions() {
         when(user.hasPermission(anyString())).thenReturn(false);
         Optional<List<String>> result = ic.tabComplete(user, "", Collections.emptyList());
         assertTrue(result.isPresent());
@@ -265,7 +265,7 @@ public class BorderColorCommandTest extends CommonTestSetup {
      * Only permitted colors are returned.
      */
     @Test
-    public void testTabCompletePartialPermissions() {
+    void testTabCompletePartialPermissions() {
         when(user.hasPermission(anyString())).thenReturn(false);
         when(user.hasPermission("bskyblock.border.color.red")).thenReturn(true);
         Optional<List<String>> result = ic.tabComplete(user, "", Collections.emptyList());

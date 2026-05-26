@@ -62,10 +62,10 @@ public class ShowWorldBorder implements BorderShower {
                 .orElseGet(() -> addon.getSettings().getColor());
         switch(borderColor) {
             case RED:
-                wb.changeSize(wb.getSize() - 0.1, MAX_TICKS);
+                wb.setSize(wb.getSize() - 0.1, MAX_TICKS);
                 break;
             case GREEN:
-                wb.changeSize(wb.getSize() + 0.1, MAX_TICKS);
+                wb.setSize(wb.getSize() + 0.1, MAX_TICKS);
                 break;
             case BLUE:
                 break;

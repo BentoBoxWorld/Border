@@ -1,5 +1,6 @@
 package world.bentobox.border.listeners;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,8 +21,12 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -74,6 +80,16 @@ class PlayerListenerTest extends CommonTestSetup {
     private Vehicle vehicle;
     @Mock
     private GameModeAddon gma;
+    @Mock
+    private PlayerDeathEvent deathEvent;
+    @Mock
+    private ItemSpawnEvent itemSpawnEvent;
+    @Mock
+    private Item item;
+    @Mock
+    private ItemStack itemStack;
+    @Mock
+    private Location farAway;
     
     private MockedStatic<User> mockedUser;
 
@@ -462,6 +478,86 @@ class PlayerListenerTest extends CommonTestSetup {
         pl.onProtectionRangeChange(event);
         verify(show).hideBorder(user);
         verify(show).showBorder(player, island);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     * The drops must be left in the event for death chest plugins and the server to handle.
+     */
+    @Test
+    void testOnPlayerDeathLeavesDropsAlone() {
+        List<ItemStack> drops = new ArrayList<>();
+        drops.add(itemStack);
+        when(deathEvent.getPlayer()).thenReturn(player);
+        when(deathEvent.getDrops()).thenReturn(drops);
+        pl.onPlayerDeath(deathEvent);
+        assertEquals(1, drops.size());
+        verify(world, never()).dropItemNaturally(any(Location.class), any(ItemStack.class));
+        // The death spot is remembered, and forgotten again next tick
+        verify(sch).runTask(eq(plugin), any(Runnable.class));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onDeathDropSpawn(org.bukkit.event.entity.ItemSpawnEvent)}.
+     * An item spawning at a fresh death spot is a death drop and gets the bounce-back tracking.
+     */
+    @Test
+    void testDeathDropsAreTrackedWhenTheySpawn() {
+        List<ItemStack> drops = new ArrayList<>();
+        drops.add(itemStack);
+        when(deathEvent.getPlayer()).thenReturn(player);
+        when(deathEvent.getDrops()).thenReturn(drops);
+        pl.onPlayerDeath(deathEvent);
+        when(itemSpawnEvent.getLocation()).thenReturn(to);
+        when(itemSpawnEvent.getEntity()).thenReturn(item);
+        pl.onDeathDropSpawn(itemSpawnEvent);
+        verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), eq(1L), eq(1L));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onDeathDropSpawn(org.bukkit.event.entity.ItemSpawnEvent)}.
+     */
+    @Test
+    void testItemSpawnWithNoRecentDeathIsIgnored() {
+        pl.onDeathDropSpawn(itemSpawnEvent);
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), eq(1L), eq(1L));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onDeathDropSpawn(org.bukkit.event.entity.ItemSpawnEvent)}.
+     */
+    @Test
+    void testItemSpawnFarFromDeathIsNotTracked() {
+        List<ItemStack> drops = new ArrayList<>();
+        drops.add(itemStack);
+        when(deathEvent.getPlayer()).thenReturn(player);
+        when(deathEvent.getDrops()).thenReturn(drops);
+        pl.onPlayerDeath(deathEvent);
+        when(farAway.getWorld()).thenReturn(world);
+        when(farAway.distanceSquared(to)).thenReturn(100.0);
+        when(itemSpawnEvent.getLocation()).thenReturn(farAway);
+        pl.onDeathDropSpawn(itemSpawnEvent);
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), eq(1L), eq(1L));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    void testOnPlayerDeathBounceBackDisabled() {
+        settings.setBounceBack(false);
+        pl.onPlayerDeath(deathEvent);
+        verify(sch, never()).runTask(any(), any(Runnable.class));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    void testOnPlayerDeathNoDrops() {
+        when(deathEvent.getDrops()).thenReturn(new ArrayList<>());
+        pl.onPlayerDeath(deathEvent);
+        verify(sch, never()).runTask(any(), any(Runnable.class));
     }
 
 }

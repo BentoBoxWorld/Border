@@ -1,7 +1,9 @@
 package world.bentobox.border.listeners;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -71,10 +74,18 @@ import world.bentobox.border.commands.IslandBorderCommand;
 public class PlayerListener implements Listener {
 
     private static final Vector XZ = new Vector(1, 0, 1);
+    /** How close to a death spot, in blocks, an item must spawn to count as a death drop. */
+    private static final double DEATH_DROP_RADIUS_SQUARED = 5 * 5D;
     private final Border addon;
     private final Set<UUID> inTeleport;
     private final BorderShower show;
     private final Map<Player, BukkitTask> mountedPlayers = new HashMap<>();
+    /** Death spots whose drops the server has yet to spawn. Entries last one tick. */
+    private final List<DeathDrops> pendingDeathDrops = new ArrayList<>();
+
+    /** A death whose drops will spawn this tick, and the island they must stay on. */
+    private record DeathDrops(Location location, Island island) {
+    }
 
     /**
      * Constructs a new PlayerListener.
@@ -500,21 +511,52 @@ public class PlayerListener implements Listener {
     }
 
     /**
-     * Bounces items back to inside the barrier if dropped when a player dies
+     * Remembers where a player died so that the items the server is about to drop there can
+     * be bounced back inside the barrier.
+     * <p>
+     * The drops list must not be touched here: taking the items out of the event and dropping
+     * them by hand breaks every plugin that stores death drops (death chests, graves, keep
+     * inventory). Instead this runs at MONITOR, after those plugins have decided what happens
+     * to the items, and only notes the death spot. Whatever the server then actually drops is
+     * picked up in {@link #onDeathDropSpawn(ItemSpawnEvent)} and tracked from there.
+     *
+     * @param event event
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!addon.getSettings().isBounceBack()
+                || event.getDrops().isEmpty()
+                || !addon.inGameWorld(event.getPlayer().getWorld())
+                || !isOn(event.getPlayer())) {
+            return;
+        }
+        Location loc = event.getPlayer().getLocation();
+        addon.getIslands().getIslandAt(Objects.requireNonNull(loc)).ifPresent(is -> {
+            DeathDrops deathDrops = new DeathDrops(loc, is);
+            pendingDeathDrops.add(deathDrops);
+            // The server spawns the drops in this tick, straight after the event returns
+            Bukkit.getScheduler().runTask(addon.getPlugin(), () -> pendingDeathDrops.remove(deathDrops));
+        });
+    }
+
+    /**
+     * Tracks death drops as the server spawns them, so they cannot leave the island's
+     * protection zone. Items spawning this tick near a recorded death spot are the drops the
+     * server kept after every plugin had its say on the death event.
      *
      * @param event event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        if (addon.getSettings().isBounceBack()
-                && addon.inGameWorld(event.getPlayer().getWorld())
-                && isOn(event.getPlayer())) {
-            Location loc = event.getPlayer().getLocation();
-            addon.getIslands().getIslandAt(Objects.requireNonNull(loc)).ifPresent(is -> {
-                event.getDrops().forEach(item -> trackItem(event.getPlayer().getWorld().dropItemNaturally(loc, item), is));
-                event.getDrops().clear(); // We handled them
-            });
+    public void onDeathDropSpawn(ItemSpawnEvent event) {
+        if (pendingDeathDrops.isEmpty()) {
+            return;
         }
+        Location loc = event.getLocation();
+        pendingDeathDrops.stream()
+                .filter(dd -> Objects.equals(loc.getWorld(), dd.location().getWorld()))
+                .filter(dd -> loc.distanceSquared(dd.location()) <= DEATH_DROP_RADIUS_SQUARED)
+                .findFirst()
+                .ifPresent(dd -> trackItem(event.getEntity(), dd.island()));
     }
 
     /**

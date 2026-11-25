@@ -99,6 +99,50 @@ class BorderTest extends CommonTestSetup {
         assertThrows(UnsupportedOperationException.class, () -> view.add(BorderType.VANILLA));
     }
 
+    /**
+     * A game mode's request applies in its own worlds only and leaves the config alone.
+     */
+    @Test
+    void testGameModeRequest() {
+        Settings settings = new Settings();
+        settings.setReturnTeleport(false);
+        setField(border, "settings", settings);
+        border.setDescription(new world.bentobox.bentobox.api.addons.AddonDescription.Builder("main", "Border", "1").build());
+        GameModeAddon gm = mock(GameModeAddon.class);
+        when(gm.getDescription())
+                .thenReturn(new world.bentobox.bentobox.api.addons.AddonDescription.Builder("main", "Boxed", "1").build());
+        when(gm.inWorld(world)).thenReturn(true);
+        // The border type is each player's choice and cannot be asked for
+        border.requester = (g, n) -> java.util.Map.of("return-teleport", true, "type", "BARRIER");
+
+        border.loadRequests(gm);
+
+        assertTrue(border.getSettings(world).isReturnTeleport());
+        assertSame(BorderType.VANILLA, border.getSettings(world).getType());
+        assertFalse(border.getSettings().isReturnTeleport());
+        assertFalse(border.getSettings(mock(org.bukkit.World.class)).isReturnTeleport());
+    }
+
+    /**
+     * The admin can ignore requests.
+     */
+    @Test
+    void testGameModeRequestIgnored() {
+        Settings settings = new Settings();
+        settings.setReturnTeleport(false);
+        settings.setIgnoreRequests(Set.of("boxed"));
+        setField(border, "settings", settings);
+        GameModeAddon gm = mock(GameModeAddon.class);
+        when(gm.getDescription())
+                .thenReturn(new world.bentobox.bentobox.api.addons.AddonDescription.Builder("main", "Boxed", "1").build());
+        when(gm.inWorld(world)).thenReturn(true);
+        border.requester = (g, n) -> java.util.Map.of("return-teleport", true);
+
+        border.loadRequests(gm);
+
+        assertFalse(border.getSettings(world).isReturnTeleport());
+    }
+
     @Test
     void testGetSettingsReturnsConfiguredInstance() {
         Settings settings = new Settings();

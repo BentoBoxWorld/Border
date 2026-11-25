@@ -73,6 +73,12 @@ import world.bentobox.border.commands.IslandBorderCommand;
  */
 public class PlayerListener implements Listener {
 
+    /**
+     * Permission, after the game mode's prefix, that lets a player walk outside the border
+     */
+    public static final String BYPASS_PERM = "border.bypass";
+
+
     private static final Vector XZ = new Vector(1, 0, 1);
     /** How close to a death spot, in blocks, an item must spawn to count as a death drop. */
     private static final double DEATH_DROP_RADIUS_SQUARED = 5 * 5D;
@@ -215,6 +221,17 @@ public class PlayerListener implements Listener {
     }
 
     /**
+     * Checks if a player is free to walk outside the border. Operators always are, so that
+     * admins can go anywhere, and so is anyone with the game mode's border bypass permission.
+     * @param player player
+     * @return true if the player must not be moved back inside the border
+     */
+    boolean canBypass(Player player) {
+        return player.isOp() || addon.getPlugin().getIWM().getAddon(player.getWorld())
+                .map(gm -> player.hasPermission(gm.getPermissionPrefix() + BYPASS_PERM)).orElse(false);
+    }
+
+    /**
      * Check if the border is on or off for a player.
      *
      * Checks the player's metadata to determine if they have borders enabled, falling back to
@@ -303,11 +320,11 @@ public class PlayerListener implements Listener {
             return;
         }
         Player p = e.getPlayer();
-        if (!isOn(p)) {
+        if (!isOn(p) || canBypass(p)) {
             return;
         }
         Location from = e.getFrom();
-        if (!addon.getSettings().isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
+        if (!addon.getSettings(e.getPlayer().getWorld()).isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
             return;
         }
         // Move the player back inside the border
@@ -405,7 +422,8 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player player) || !isOn(player) || !addon.getSettings().isReturnTeleport()) {
+        if (!(entity instanceof Player player) || !isOn(player) || canBypass(player)
+                || !addon.getSettings(player.getWorld()).isReturnTeleport()) {
             return;
         }
 
@@ -501,7 +519,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent event) {
-        if (addon.getSettings().isBounceBack()
+        if (addon.getSettings(event.getPlayer().getWorld()).isBounceBack()
                 && addon.inGameWorld(event.getPlayer().getWorld())
                 && isOn(event.getPlayer())
         ) {
@@ -524,7 +542,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        if (!addon.getSettings().isBounceBack()
+        if (!addon.getSettings(event.getPlayer().getWorld()).isBounceBack()
                 || event.getDrops().isEmpty()
                 || !addon.inGameWorld(event.getPlayer().getWorld())
                 || !isOn(event.getPlayer())) {

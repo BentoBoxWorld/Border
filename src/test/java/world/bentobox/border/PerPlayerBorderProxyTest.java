@@ -53,6 +53,7 @@ class PerPlayerBorderProxyTest {
         closeable = MockitoAnnotations.openMocks(this);
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
+        when(addon.getSettings(org.mockito.ArgumentMatchers.nullable(org.bukkit.World.class))).thenReturn(settings);
         when(addon.getAvailableBorderTypesView()).thenReturn(EnumSet.of(BorderType.VANILLA, BorderType.BARRIER));
 
         mockedUser = Mockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);

@@ -47,7 +47,7 @@ public class ShowWorldBorder implements BorderShower {
         Location l = island.getProtectionCenter().toVector().toLocation(player.getWorld());
         WorldBorder wb = Bukkit.createWorldBorder();
         wb.setCenter(l);
-        double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings().getBarrierOffset()) * 2D);
+        double size = Math.min(island.getRange() * 2D, (island.getProtectionRange() + addon.getSettings(island.getWorld()).getBarrierOffset()) * 2D);
         wb.setSize(size);
         wb.setWarningDistance(0);
         BorderColor borderColor = user.getMetaData(PerPlayerBorderProxy.BORDER_COLOR_META_DATA)

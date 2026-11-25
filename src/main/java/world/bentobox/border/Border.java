@@ -37,6 +37,14 @@ public class Border extends Addon {
     private final Config<Settings> config = new Config<>(this, Settings.class);
 
     private final @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
+    private final Map<GameModeAddon, Settings> gameModeSettings = new HashMap<>();
+    /**
+     * How game modes are asked for the settings they want
+     */
+    java.util.function.BiFunction<GameModeAddon, String, Map<String, Object>> requester = GameModeRequests::ask;
+    private static final Set<String> REQUESTABLE = Set.of("bounce-back", "return-teleport",
+            "return-teleport-safety-block", "use-barrier-blocks", "show-max-border", "show-particles",
+            "barrier-offset");
 
     private final Set<BorderType> availableBorderTypes = EnumSet.of(BorderType.VANILLA, BorderType.BARRIER);
 
@@ -51,12 +59,14 @@ public class Border extends Addon {
     @Override
     public void onEnable() {
         gameModes.clear();
+        gameModeSettings.clear();
         // Register commands
         getPlugin().getAddonsManager().getGameModeAddons().forEach(gameModeAddon -> {
 
             if (!this.settings.getDisabledGameModes().contains(gameModeAddon.getDescription().getName())) {
 
                 gameModes.add(gameModeAddon);
+                loadRequests(gameModeAddon);
 
                 log("Border hooking into " + gameModeAddon.getDescription().getName());
                 gameModeAddon.getPlayerCommand().ifPresent(c -> new IslandBorderCommand(this, c, "border"));
@@ -114,6 +124,51 @@ public class Border extends Addon {
 
     public Settings getSettings() {
         return this.settings;
+    }
+
+    /**
+     * Gets the settings that apply in a world. These are the settings from the config unless
+     * the world's game mode asked for different ones and the admin allows that. The border
+     * type, color and whether it is shown are each player's choice and are not affected.
+     * @param world a world, may be null
+     * @return settings for the world
+     */
+    public Settings getSettings(World world) {
+        if (world != null && !gameModeSettings.isEmpty()) {
+            for (Map.Entry<GameModeAddon, Settings> en : gameModeSettings.entrySet()) {
+                if (en.getKey().inWorld(world)) {
+                    return en.getValue();
+                }
+            }
+        }
+        return settings;
+    }
+
+    /**
+     * Settings a game mode may ask for: how the border behaves, not how it looks to a player
+     * or which game modes it is used in.
+     */
+    static boolean isRequestable(String path) {
+        return REQUESTABLE.contains(path);
+    }
+
+    /**
+     * Asks a game mode which settings it needs and works out the settings for its worlds.
+     */
+    void loadRequests(GameModeAddon gm) {
+        String name = gm.getDescription().getName();
+        if (!settings.isAllowRequests() || settings.getIgnoreRequests().stream().anyMatch(name::equalsIgnoreCase)) {
+            return;
+        }
+        Map<String, Object> requests = requester.apply(gm, getDescription().getName());
+        if (requests.isEmpty()) {
+            return;
+        }
+        GameModeRequests.Result<Settings> result = GameModeRequests.apply(settings, requests, Border::isRequestable);
+        result.refused().forEach(r -> logWarning(name + " asked for something that cannot be done: " + r));
+        log(name + " asked for these settings in its worlds: "
+                + (result.applied().isEmpty() ? "none that differ from the config" : String.join(", ", result.applied())));
+        gameModeSettings.put(gm, result.settings());
     }
 
     /**

@@ -113,7 +113,7 @@ class BorderTest extends CommonTestSetup {
                 .thenReturn(new world.bentobox.bentobox.api.addons.AddonDescription.Builder("main", "Boxed", "1").build());
         when(gm.inWorld(world)).thenReturn(true);
         // The border type is each player's choice and cannot be asked for
-        when(gm.getRequestedSettings("Border")).thenReturn(java.util.Map.of("return-teleport", true, "type", "BARRIER"));
+        border.requester = (g, n) -> java.util.Map.of("return-teleport", true, "type", "BARRIER");
 
         border.loadRequests(gm);
 
@@ -136,7 +136,7 @@ class BorderTest extends CommonTestSetup {
         when(gm.getDescription())
                 .thenReturn(new world.bentobox.bentobox.api.addons.AddonDescription.Builder("main", "Boxed", "1").build());
         when(gm.inWorld(world)).thenReturn(true);
-        when(gm.getRequestedSettings("Border")).thenReturn(java.util.Map.of("return-teleport", true));
+        border.requester = (g, n) -> java.util.Map.of("return-teleport", true);
 
         border.loadRequests(gm);
 

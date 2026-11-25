@@ -8,7 +8,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.Config;
-import world.bentobox.bentobox.api.configuration.RequestedSettings;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.border.commands.BorderColorCommand;
 import world.bentobox.border.commands.BorderTypeCommand;
@@ -39,6 +38,10 @@ public class Border extends Addon {
 
     private final @NonNull List<GameModeAddon> gameModes = new ArrayList<>();
     private final Map<GameModeAddon, Settings> gameModeSettings = new HashMap<>();
+    /**
+     * How game modes are asked for the settings they want
+     */
+    java.util.function.BiFunction<GameModeAddon, String, Map<String, Object>> requester = GameModeRequests::ask;
     private static final Set<String> REQUESTABLE = Set.of("bounce-back", "return-teleport",
             "return-teleport-safety-block", "use-barrier-blocks", "show-max-border", "show-particles",
             "barrier-offset");
@@ -157,17 +160,11 @@ public class Border extends Addon {
         if (!settings.isAllowRequests() || settings.getIgnoreRequests().stream().anyMatch(name::equalsIgnoreCase)) {
             return;
         }
-        Map<String, Object> requests;
-        try {
-            requests = gm.getRequestedSettings(getDescription().getName());
-        } catch (LinkageError e) {
-            // This BentoBox is too old to have requests
-            return;
-        }
+        Map<String, Object> requests = requester.apply(gm, getDescription().getName());
         if (requests.isEmpty()) {
             return;
         }
-        RequestedSettings.Result<Settings> result = RequestedSettings.apply(settings, requests, Border::isRequestable);
+        GameModeRequests.Result<Settings> result = GameModeRequests.apply(settings, requests, Border::isRequestable);
         result.refused().forEach(r -> logWarning(name + " asked for something that cannot be done: " + r));
         log(name + " asked for these settings in its worlds: "
                 + (result.applied().isEmpty() ? "none that differ from the config" : String.join(", ", result.applied())));

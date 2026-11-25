@@ -73,6 +73,12 @@ import world.bentobox.border.commands.IslandBorderCommand;
  */
 public class PlayerListener implements Listener {
 
+    /**
+     * Permission, after the game mode's prefix, that lets a player walk outside the border
+     */
+    public static final String BYPASS_PERM = "border.bypass";
+
+
     private static final Vector XZ = new Vector(1, 0, 1);
     /** How close to a death spot, in blocks, an item must spawn to count as a death drop. */
     private static final double DEATH_DROP_RADIUS_SQUARED = 5 * 5D;
@@ -223,6 +229,17 @@ public class PlayerListener implements Listener {
      * @param player the player to check
      * @return true if the border is enabled for this player, false if not
      */
+    /**
+     * Checks if a player is free to walk outside the border. Operators always are, so that
+     * admins can go anywhere, and so is anyone with the game mode's border bypass permission.
+     * @param player player
+     * @return true if the player must not be moved back inside the border
+     */
+    boolean canBypass(Player player) {
+        return player.isOp() || addon.getPlugin().getIWM().getAddon(player.getWorld())
+                .map(gm -> player.hasPermission(gm.getPermissionPrefix() + BYPASS_PERM)).orElse(false);
+    }
+
     private boolean isOn(Player player) {
         // Check if border is off
         User user = User.getInstance(player);
@@ -303,7 +320,7 @@ public class PlayerListener implements Listener {
             return;
         }
         Player p = e.getPlayer();
-        if (!isOn(p)) {
+        if (!isOn(p) || canBypass(p)) {
             return;
         }
         Location from = e.getFrom();
@@ -405,7 +422,8 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player player) || !isOn(player) || !addon.getSettings().isReturnTeleport()) {
+        if (!(entity instanceof Player player) || !isOn(player) || canBypass(player)
+                || !addon.getSettings().isReturnTeleport()) {
             return;
         }
 

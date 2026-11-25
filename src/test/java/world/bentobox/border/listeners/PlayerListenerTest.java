@@ -1,5 +1,6 @@
 package world.bentobox.border.listeners;
 
+import static org.mockito.Mockito.mock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -339,6 +340,37 @@ class PlayerListenerTest extends CommonTestSetup {
         assertTrue(event.isCancelled());
     }
 
+
+    /**
+     * Operators are free to walk outside the border.
+     */
+    @Test
+    void testOnPlayerLeaveIslandOpIsNotMovedBack() {
+        when(iwm.isIslandNether(any())).thenReturn(true);
+        when(island.onIsland(any())).thenReturn(false);
+        when(player.isOp()).thenReturn(true);
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+    }
+
+    /**
+     * Players with the bypass permission of the game mode are free to walk outside the border.
+     */
+    @Test
+    void testOnPlayerLeaveIslandBypassPermission() {
+        GameModeAddon gm = mock(GameModeAddon.class);
+        when(gm.getPermissionPrefix()).thenReturn("boxed.");
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gm));
+        when(player.hasPermission("boxed.border.bypass")).thenReturn(true);
+        when(iwm.isIslandNether(any())).thenReturn(true);
+        when(island.onIsland(any())).thenReturn(false);
+        settings.setReturnTeleport(true);
+        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+        pl.onPlayerLeaveIsland(event);
+        assertFalse(event.isCancelled());
+    }
 
     /**
      * Test method for {@link world.bentobox.border.listeners.PlayerListener#onPlayerLeaveIsland(org.bukkit.event.player.PlayerMoveEvent)}.

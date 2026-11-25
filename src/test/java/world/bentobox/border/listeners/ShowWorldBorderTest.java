@@ -49,6 +49,7 @@ class ShowWorldBorderTest extends CommonTestSetup {
         super.setUp();
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
+        when(addon.getSettings(org.mockito.ArgumentMatchers.nullable(org.bukkit.World.class))).thenReturn(settings);
         
         // Island
         when(island.getRange()).thenReturn(400);

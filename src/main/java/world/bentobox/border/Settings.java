@@ -87,6 +87,47 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "barrier-offset")
     private int barrierOffset = 0;
     
+    @ConfigComment("")
+    @ConfigComment("Game modes can ask for the settings they need in their own worlds, so that you do not")
+    @ConfigComment("have to set them up by hand. Only how the border behaves can be asked for: bounce-back,")
+    @ConfigComment("return-teleport, return-teleport-safety-block, use-barrier-blocks, show-max-border,")
+    @ConfigComment("show-particles and barrier-offset. Nothing in this file is changed and other game modes")
+    @ConfigComment("keep the settings above. What was asked for is listed in the console at startup.")
+    @ConfigComment("Set to false to ignore all requests.")
+    @ConfigEntry(path = "game-mode-requests.allow")
+    private boolean allowRequests = true;
+    @ConfigComment("Game modes whose requests are ignored, e.g. Boxed. They use the settings above.")
+    @ConfigEntry(path = "game-mode-requests.ignore")
+    private Set<String> ignoreRequests = new HashSet<>();
+
+    /**
+     * @return true if game modes may ask for settings in their own worlds
+     */
+    public boolean isAllowRequests() {
+        return allowRequests;
+    }
+
+    /**
+     * @param allowRequests true if game modes may ask for settings in their own worlds
+     */
+    public void setAllowRequests(boolean allowRequests) {
+        this.allowRequests = allowRequests;
+    }
+
+    /**
+     * @return names of the game modes whose requests are ignored
+     */
+    public Set<String> getIgnoreRequests() {
+        return ignoreRequests;
+    }
+
+    /**
+     * @param ignoreRequests names of the game modes whose requests are ignored
+     */
+    public void setIgnoreRequests(Set<String> ignoreRequests) {
+        this.ignoreRequests = ignoreRequests;
+    }
+
     /**
      * @param disabledGameModes new disabledGameModes value.
      */

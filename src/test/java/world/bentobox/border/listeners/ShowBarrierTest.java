@@ -59,6 +59,7 @@ class ShowBarrierTest extends CommonTestSetup {
         settings = new Settings();
         settings.setShowMaxBorder(false);
         when(addon.getSettings()).thenReturn(settings);
+        when(addon.getSettings(org.mockito.ArgumentMatchers.nullable(org.bukkit.World.class))).thenReturn(settings);
         
         // Island
         when(island.getGameMode()).thenReturn("bskyblock");

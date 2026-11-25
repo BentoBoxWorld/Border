@@ -324,7 +324,7 @@ public class PlayerListener implements Listener {
             return;
         }
         Location from = e.getFrom();
-        if (!addon.getSettings().isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
+        if (!addon.getSettings(e.getPlayer().getWorld()).isReturnTeleport() || !outsideCheck(e.getPlayer(), from, e.getTo())) {
             return;
         }
         // Move the player back inside the border
@@ -423,7 +423,7 @@ public class PlayerListener implements Listener {
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof Player player) || !isOn(player) || canBypass(player)
-                || !addon.getSettings().isReturnTeleport()) {
+                || !addon.getSettings(player.getWorld()).isReturnTeleport()) {
             return;
         }
 
@@ -519,7 +519,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent event) {
-        if (addon.getSettings().isBounceBack()
+        if (addon.getSettings(event.getPlayer().getWorld()).isBounceBack()
                 && addon.inGameWorld(event.getPlayer().getWorld())
                 && isOn(event.getPlayer())
         ) {
@@ -542,7 +542,7 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        if (!addon.getSettings().isBounceBack()
+        if (!addon.getSettings(event.getPlayer().getWorld()).isBounceBack()
                 || event.getDrops().isEmpty()
                 || !addon.inGameWorld(event.getPlayer().getWorld())
                 || !isOn(event.getPlayer())) {

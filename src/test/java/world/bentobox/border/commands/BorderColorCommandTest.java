@@ -91,6 +91,7 @@ class BorderColorCommandTest extends CommonTestSetup {
         // Settings
         Settings settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
+        when(addon.getSettings(org.mockito.ArgumentMatchers.nullable(org.bukkit.World.class))).thenReturn(settings);
 
         ic = new BorderColorCommand(addon, ac, "color");
         // Pre-populate the island field (canExecute sets it; execute depends on it)

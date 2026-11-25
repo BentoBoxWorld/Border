@@ -45,3 +45,14 @@ show-particles: true
 # This does not extend the protection range, but will enable players to go outside their protected area.
 # The barrier will not go further than the island distance. Minimum and default value is 0.
 barrier-offset: 0
+# 
+# Game modes can ask for the settings they need in their own worlds, so that you do not
+# have to set them up by hand. Only how the border behaves can be asked for: bounce-back,
+# return-teleport, return-teleport-safety-block, use-barrier-blocks, show-max-border,
+# show-particles and barrier-offset. Nothing in this file is changed and other game modes
+# keep the settings above. What was asked for is listed in the console at startup.
+# Set to false to ignore all requests.
+game-mode-requests:
+  allow: true
+  # Game modes whose requests are ignored, e.g. Boxed. They use the settings above.
+  ignore: []

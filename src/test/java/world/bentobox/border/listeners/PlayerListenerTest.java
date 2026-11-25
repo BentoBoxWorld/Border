@@ -111,6 +111,7 @@ class PlayerListenerTest extends CommonTestSetup {
         // Settings
         settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
+        when(addon.getSettings(org.mockito.ArgumentMatchers.nullable(org.bukkit.World.class))).thenReturn(settings);
         
         // Locations
         when(to.getWorld()).thenReturn(world);
@@ -578,6 +579,7 @@ class PlayerListenerTest extends CommonTestSetup {
     @Test
     void testOnPlayerDeathBounceBackDisabled() {
         settings.setBounceBack(false);
+        when(deathEvent.getPlayer()).thenReturn(player);
         pl.onPlayerDeath(deathEvent);
         verify(sch, never()).runTask(any(), any(Runnable.class));
     }
@@ -588,6 +590,7 @@ class PlayerListenerTest extends CommonTestSetup {
     @Test
     void testOnPlayerDeathNoDrops() {
         when(deathEvent.getDrops()).thenReturn(new ArrayList<>());
+        when(deathEvent.getPlayer()).thenReturn(player);
         pl.onPlayerDeath(deathEvent);
         verify(sch, never()).runTask(any(), any(Runnable.class));
     }

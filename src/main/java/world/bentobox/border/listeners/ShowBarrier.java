@@ -64,7 +64,7 @@ public class ShowBarrier implements BorderShower {
                 || !Objects.requireNonNull(User.getInstance(player)).getMetaData(BORDER_STATE_META_DATA).map(MetaDataValue::asBoolean).orElse(addon.getSettings().isShowByDefault())) {
             return;
         }
-        int offset = addon.getSettings().getBarrierOffset();
+        int offset = addon.getSettings(player.getWorld()).getBarrierOffset();
         // Get the locations to show
         Location loc = player.getLocation();
         showWalls(player, loc,
@@ -73,7 +73,7 @@ public class ShowBarrier implements BorderShower {
                 Math.max(island.getMinZ(),island.getMinProtectedZ() - offset),
                 Math.min(island.getMaxZ(), island.getMaxProtectedZ() + offset), false);
         // If the max border needs to be shown, show it as well
-        if (addon.getSettings().isShowMaxBorder()) {
+        if (addon.getSettings(player.getWorld()).isShowMaxBorder()) {
 
             showWalls(player, loc,
                     island.getMinX(),
@@ -124,7 +124,7 @@ public class ShowBarrier implements BorderShower {
      */
     private void showPlayer(Player player, int i, int j, int k, boolean max) {
         // Get if on or in border
-        if (addon.getSettings().isUseBarrierBlocks()
+        if (addon.getSettings(player.getWorld()).isUseBarrierBlocks()
                 && player.getLocation().getBlockX() == i
                 && player.getLocation().getBlockZ() == k) {
             teleportEntity(player);
@@ -135,10 +135,10 @@ public class ShowBarrier implements BorderShower {
     }
 
     private void renderBorderBlock(Player player, Location l, int i, int j, int k, boolean max) {
-        if (addon.getSettings().isShowParticles()) {
+        if (addon.getSettings(player.getWorld()).isShowParticles()) {
             spawnBorderParticle(player, i, j, k, max);
         }
-        if (addon.getSettings().isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
+        if (addon.getSettings(player.getWorld()).isUseBarrierBlocks() && (l.getBlock().isEmpty() || l.getBlock().isLiquid())) {
             player.sendBlockChange(l, Material.BARRIER.createBlockData());
             barrierBlocks.computeIfAbsent(player.getUniqueId(), u -> new HashSet<>()).add(new BarrierBlock(l, l.getBlock().getBlockData()));
         }

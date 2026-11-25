@@ -108,6 +108,7 @@ class IslandBorderCommandTest extends CommonTestSetup {
         // Settings
         Settings settings = new Settings();
         when(addon.getSettings()).thenReturn(settings);
+        when(addon.getSettings(org.mockito.ArgumentMatchers.nullable(org.bukkit.World.class))).thenReturn(settings);
 
         // Players Manager
         when(addon.getPlayers()).thenReturn(pm);

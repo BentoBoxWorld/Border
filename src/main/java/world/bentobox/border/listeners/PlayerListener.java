@@ -221,15 +221,6 @@ public class PlayerListener implements Listener {
     }
 
     /**
-     * Check if the border is on or off for a player.
-     *
-     * Checks the player's metadata to determine if they have borders enabled, falling back to
-     * the addon's default setting if no metadata is found.
-     *
-     * @param player the player to check
-     * @return true if the border is enabled for this player, false if not
-     */
-    /**
      * Checks if a player is free to walk outside the border. Operators always are, so that
      * admins can go anywhere, and so is anyone with the game mode's border bypass permission.
      * @param player player
@@ -240,6 +231,15 @@ public class PlayerListener implements Listener {
                 .map(gm -> player.hasPermission(gm.getPermissionPrefix() + BYPASS_PERM)).orElse(false);
     }
 
+    /**
+     * Check if the border is on or off for a player.
+     *
+     * Checks the player's metadata to determine if they have borders enabled, falling back to
+     * the addon's default setting if no metadata is found.
+     *
+     * @param player the player to check
+     * @return true if the border is enabled for this player, false if not
+     */
     private boolean isOn(Player player) {
         // Check if border is off
         User user = User.getInstance(player);

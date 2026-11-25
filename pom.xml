@@ -42,16 +42,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <junit.version>5.10.2</junit.version>
-        <mockito.version>5.11.0</mockito.version>
+        <mockito.version>5.20.0</mockito.version>
         <!-- More visible way how to change dependency versions -->
-        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
-        <bentobox.version>3.12.0</bentobox.version>
+        <paper.version>26.3.build.231-stable</paper.version>
+        <bentobox.version>3.23.7</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>4.8.5</build.version>
+        <build.version>4.9.0</build.version>
         <build.number>-LOCAL</build.number>
         <!-- Sonar Cloud -->
         <sonar.projectKey>BentoBoxWorld_Border</sonar.projectKey>
@@ -143,8 +143,8 @@
     <dependencies>
         <dependency>
             <groupId>org.mockbukkit.mockbukkit</groupId>
-            <artifactId>mockbukkit-v1.21</artifactId>
-            <version>4.110.0</version>
+            <artifactId>mockbukkit-v26.3</artifactId>
+            <version>4.119.0</version>
             <scope>test</scope>
          </dependency>
         <dependency>
@@ -302,7 +302,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
+                <version>0.8.15</version>
                 <configuration>
                     <append>true</append>
                     <excludes>
